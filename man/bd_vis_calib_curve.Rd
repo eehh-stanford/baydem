@@ -5,7 +5,7 @@
 \title{Visualize the calibration curve with equifinal and non-equifinal time spans}
 \usage{
 bd_vis_calib_curve(ymin, ymax, calibDf, invertCol = "gray90",
-  pointCol = "black", pointPch = 19, ...)
+  pointCol = "black", pointPch = 19, pointCex = 1, ...)
 }
 \arguments{
 \item{ymin}{The minimum calendar date for plotting (AD)}

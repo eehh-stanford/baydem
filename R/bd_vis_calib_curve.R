@@ -13,7 +13,7 @@
 #' @param ... Additional inputs to plots
 #'
 #' @export
-bd_vis_calib_curve <- function(ymin,ymax,calibDf,invertCol='gray90',pointCol='black',pointPch=19,...) {
+bd_vis_calib_curve <- function(ymin,ymax,calibDf,invertCol='gray90',pointCol='black',pointPch=19,pointCex=1,...) {
     y_curve <- 1950 - calibDf$yearBP
     phi_curve  <- exp(-calibDf$uncalYearBP/8033)
     ind <- (y_curve >= ymin) & (y_curve <= ymax)
@@ -37,5 +37,5 @@ bd_vis_calib_curve <- function(ymin,ymax,calibDf,invertCol='gray90',pointCol='bl
     }
 
     # Draw calibration curve points
-    points(yVect,phiVect,col=pointCol,pch=pointPch)
+    points(yVect,phiVect,col=pointCol,pch=pointPch,cex=pointCex)
 }
