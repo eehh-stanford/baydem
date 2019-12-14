@@ -1,4 +1,4 @@
-#' @title Plot the 50% quantile curve
+#' @title Plot the 50 percent quantile curve
 #'
 #' @description Plot the 50% quantile curve
 #'
@@ -14,8 +14,8 @@
 #' @export
 bd_plot_50_percent_quantile <- function(an,add=F,...) {
 
-  # The index of the 50% quantile
-  ind50 <- which(an$probs == 0.5) # The index in probs / Qdens of the 50% quantile
+  # The index of the 50 percent quantile
+  ind50 <- which(an$probs == 0.5) # The index in probs / Qdens of the 50 percent quantile
   if(add) {
     lines(an$y,an$Qdens[ind50,],...)
   } else {

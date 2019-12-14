@@ -13,11 +13,8 @@
 #'   numChains     -- (4)    Number of chains
 #'   sampsPerChain -- (2000) Number of samples per chain
 #'   initList      --        The initializations for each chain. The default is
-#'                           to sample from prior using hyperparameters
-#'   adaptDelta    -- (.99)  The value of the adapt_delta parameter, an input to
-#'                           stan. The stan default is 0.8, but a higher value
-#'                           is sensible for a mixture model with more than a
-#'                           few parameters, hence use 0.99 by default
+#'                           to set this using a mixture fit to the summed
+#'                           density
 #'
 #' @param prob List with the fields `phi_m` (vector of radiocarbon measurements as fraction modern),
 #' `sig_m` (vector of measurement errors for phi_m), and `hp` (list of hyperparameters).
@@ -38,14 +35,12 @@ bd_do_inference <- function(prob, calibDf,saveFile=NA) {
     haveWarmup <- exists("warmup", where = prob$control) == T
     haveInitList <- exists("initList", where = prob$control) == T
     haveStanControl <- exists("stanControl", where = prob$control) == T
-    #haveAdaptDelta <- exists("adaptDelta", where = prob$control) == T
   } else {
     haveNumChains <- F
     haveSampsPerChain <- F
     haveWarmup <- F
     haveInitList <- F
     haveStanControl <- F
-    #haveAdaptDelta <- F
   }
 
   if (haveNumChains) {
@@ -66,23 +61,16 @@ bd_do_inference <- function(prob, calibDf,saveFile=NA) {
     warmup <- floor(sampsPerChain/2)
   }
 
-
-  if (haveInitList) {
-    initList <- prob$control$initList
-  } else {
-    initList <- bd_sample_prior(prob$hp, numChains)
-  }
-
   if (haveStanControl) {
     stanControl <- prob$control$stanControl
   } else {
     stanControl <- NA
   }
 
+  # initList is added below
   controlFinal <- list(numChains = numChains,
                        sampsPerChain = sampsPerChain,
                        warmup = warmup,
-                       initList = initList,
                        stanControl = stanControl)
 
   if (prob$hp$fitType == "gaussmix") {
@@ -93,6 +81,29 @@ bd_do_inference <- function(prob, calibDf,saveFile=NA) {
     mumax <- prob$hp$mumax
     ygrid <- seq(ymin, ymax, by = prob$hp$dy)
     M <- bd_calc_meas_matrix(ygrid, prob$phi_m, prob$sig_m, calibDf)
+
+    if (haveInitList) {
+      initList <- prob$control$initList
+    } else {
+      # Set it using the summed density
+      f_spdf <- colSums(M)
+      # Sample 1000 times from the summed density to do a mixture fit
+      xmix <- sample.int(length(f_spdf),1000,replace=T,prob=f_spdf)
+      gaussMix <- mixtools::normalmixEM(xmix,k=prob$hp$K,maxit=20000)
+      indSort <- order(gaussMix$mu)
+      init0 <- list()
+      init0$pi <- gaussMix$lambda[indSort]
+      init0$mu <- ymin + (ymax-ymin)*(gaussMix$mu[indSort]-1)/length(ygrid-1)
+      init0$sig <- gaussMix$sig[indSort]*prob$hp$dy
+
+      # Each chain needs an initialization for stan
+      initList <- list()
+      for(cc in 1:numChains) {
+        initList[[cc]] <- init0
+      }
+    }
+    controlFinal$initList <- initList 
+   
     Mt <- t(M)
     N <- dim(M)[1]
     G <- dim(M)[2]

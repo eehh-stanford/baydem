@@ -44,9 +44,7 @@ A vector of relative densities (f_spec1 / f_spec2)
 A vector of relative densities (f_spec1 / f_spec2)
 }
 \description{
-For each sample, calculate the time it takes for the density to decrease by half from the peak
-
-Calculate the relative density at two dates (or a range of dates / the peak)
+Calculate the relative density at two dates, and/or a range of dates and/or the peak value (see details).
 }
 \details{
 Calculate the relative density for two dates or, more generally, for two

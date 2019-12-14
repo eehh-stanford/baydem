@@ -2,7 +2,7 @@
 % Please edit documentation in R/bd_plot_50_percent_quantile.R
 \name{bd_plot_50_percent_quantile}
 \alias{bd_plot_50_percent_quantile}
-\title{Plot the 50% quantile curve}
+\title{Plot the 50 percent quantile curve}
 \usage{
 bd_plot_50_percent_quantile(an, add = F, ...)
 }
