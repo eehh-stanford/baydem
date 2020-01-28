@@ -9,11 +9,9 @@ bd_summarize_trunc_gauss_mix_sample(th, ymin, ymax, N = 1000)
 \arguments{
 \item{th}{The Gaussian mixture parameterization}
 
-\item{ymin}{The lower truncation value}
+\item{ymin}{The upper truncation value}
 
 \item{N}{(Default 1000) The number of points use for identifying slope changes}
-
-\item{ymin}{The upper truncation value}
 }
 \value{
 A list consisting of ylo / yhi (specifying the time periods), indPeak, ypeak, fpeak, and pattern (see Description)

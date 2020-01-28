@@ -8,7 +8,7 @@ Authors@R: c(
     )
 Description: Bayesian tools for reconstructing past and present demography. This is
     the package described in used in Price et al. (2019): 
-    Price, M.H., J.M. Capriles, J. Hoggarth, R.K. Bocinsky, and J.H. Jones (2019). 
+    Price, M.H., J.M. Capriles, J. Hoggarth, R.K. Bocinsky, and J.H. Jones (2029). 
     Bayesian probability distributions: Improving demographic reconstructions using 14C dates. 
     *Proceedings of the National Academy of Sciences*, in review.
 License: MIT + file LICENSE
@@ -41,7 +41,7 @@ VignetteBuilder:
     knitr
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
 Depends: 
     R (>= 3.1)

@@ -4,8 +4,14 @@
 \alias{bd_calc_meas_matrix}
 \title{Calculate the measurement matrix given N observations and G grid points}
 \usage{
-bd_calc_meas_matrix(ygrid, phi_m, sig_m, calibDf, useSpacing = T,
-  addCalibUnc = T)
+bd_calc_meas_matrix(
+  ygrid,
+  phi_m,
+  sig_m,
+  calibDf,
+  useSpacing = T,
+  addCalibUnc = T
+)
 }
 \arguments{
 \item{ygrid}{A vector of calendar dates indexed by g}

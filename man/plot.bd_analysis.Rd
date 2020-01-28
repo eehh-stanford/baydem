@@ -4,8 +4,7 @@
 \alias{plot.bd_analysis}
 \title{Plot the result of a call to bayDem_analyzeSoln}
 \usage{
-\method{plot}{bd_analysis}(x, plotType = "density", showSPDF = F,
-  showSim = F, ...)
+\method{plot}{bd_analysis}(x, plotType = "density", showSPDF = F, showSim = F, ...)
 }
 \arguments{
 \item{x}{A list-like object of class \code{baydem::bd_analysis} with information on the quantiles of the density function and growth rate}
@@ -31,14 +30,14 @@ The optional variables plotType, showSPDF and showSim control the type of
 plot that is made and characteristics of that plot.
 
 The default plotType is 'density'.
-This plots the density the 50% density quantile (solid) and
+This plots the density the 50\% density quantile (solid) and
 the bounding quantiles given the level variable, lev,
 using in bayDem_analyzeSoln (dashed).
 Optionally, the summed probability density and known target distribution
 from a simulation can be added.
 
 plotType 'rate' yields a plot of the rate (deriveative of density divided by density)
-instead of density. This plots the 50% rate quantile (solid) and the
+instead of density. This plots the 50\% rate quantile (solid) and the
 bounding quantiles given the level variable, lev, used in bayDem_analyzeSoln (dashed).
 Optionally, the rate for the known target distribution from a simulation can be added.
 Shaded rectangles are added to the plot using an$growthState with the coloring positive / green,

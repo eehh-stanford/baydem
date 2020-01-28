@@ -19,24 +19,10 @@ bd_calc_relative_density(soln, spec1, spec2, ind = NA, anal = NA)
 \item{ind}{(Optional) Indices at which to do the calculation. By default,
 all the samples in anal are used.}
 
-\item{anal}{The result of a call to bd_analyze_soln}
+\item{anal}{(Optional) The result of a call to bd_analyze_soln. This is only
+needed if either spec1 or spec2 is 'peak'}
 
 \item{propChange}{(Default 0.5) The proportional}
-
-\item{anal}{(Optional) The result of a call to bd_analyze_soln. This is only
-needed if either spec1 or spec2 is 'peak'}
-
-\item{soln}{The result of a call to bd_do_inference}
-
-\item{anal}{The result of a call to bd_analyze_soln}
-
-\item{spec2}{The specification for the second density (see details)}
-
-\item{ind}{(Optional) Indices at which to do the calculation. By default,
-all the samples in anal are used.}
-
-\item{anal}{(Optional) The result of a call to bd_analyze_soln. This is only
-needed if either spec1 or spec2 is 'peak'}
 }
 \value{
 A vector of relative densities (f_spec1 / f_spec2)
