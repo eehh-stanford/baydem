@@ -14,11 +14,24 @@ Description: Bayesian tools for reconstructing past and present demography. This
 License: MIT + file LICENSE
 Depends:
     magrittr
-
 Imports:
-    knitr
+    rstan,
+    evd,
+    stats,
+    miscTools,
+    tibble,
+    base,
+    dplyr,
+    utils,
+    graphics,
+    distr,
+    gtools,
+    RGeode
 Suggests:
-    pkgdown
+    pkgdown,
+    covr,
+    knitr,
+    usethis
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

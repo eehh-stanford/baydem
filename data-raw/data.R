@@ -1,4 +1,5 @@
 ## Download and read the IntCal13, Marine13, and SHCal13 calibration curves
+requireNamespace("usethis", quietly = TRUE)
 library(tidyverse)
 library(magrittr)
 library(httr)
