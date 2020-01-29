@@ -17,7 +17,7 @@
 #' @export
 
 
-bd_phi2y <- function(y_curve,phi_curve,phi_known,ii_lo,ii_hi) {
-    y <- y_curve[ii_lo] + (y_curve[ii_hi] - y_curve[ii_lo])*(phi_known-phi_curve[ii_lo])/(phi_curve[ii_hi]-phi_curve[ii_lo])
-    return(y)
+bd_phi2y <- function(y_curve, phi_curve, phi_known, ii_lo, ii_hi) {
+  y <- y_curve[ii_lo] + (y_curve[ii_hi] - y_curve[ii_lo]) * (phi_known - phi_curve[ii_lo]) / (phi_curve[ii_hi] - phi_curve[ii_lo])
+  return(y)
 }

@@ -34,19 +34,22 @@ bd_sample_gauss_mix <- function(N, th, ymin = NA, ymax = NA) {
     normMix <- distr::Norm(mean = th[2], sd = th[3])
   } else if (K == 2) {
     normMix <- distr::UnivarMixingDistribution(distr::Norm(mean = th[3], sd = th[5]),
-                                               distr::Norm(mean = th[4], sd = th[6]),
-                                               mixCoeff = th[1:2])
+      distr::Norm(mean = th[4], sd = th[6]),
+      mixCoeff = th[1:2]
+    )
   } else if (K == 3) {
     normMix <- distr::UnivarMixingDistribution(distr::Norm(mean = th[4], sd = th[7]),
-                                               distr::Norm(mean = th[5], sd = th[8]), ,
-                                               distr::Norm(mean = th[6], sd = th[9]),
-                                               mixCoeff = th[1:3])
+      distr::Norm(mean = th[5], sd = th[8]), ,
+      distr::Norm(mean = th[6], sd = th[9]),
+      mixCoeff = th[1:3]
+    )
   } else if (K == 4) {
     normMix <- distr::UnivarMixingDistribution(distr::Norm(mean = th[5], sd = th[9]),
-                                               distr::Norm(mean = th[6], sd = th[10]), ,
-                                               distr::Norm(mean = th[7], sd = th[11]),
-                                               distr::Norm(mean = th[8], sd = th[12]),
-                                               mixCoeff = th[1:4])
+      distr::Norm(mean = th[6], sd = th[10]), ,
+      distr::Norm(mean = th[7], sd = th[11]),
+      distr::Norm(mean = th[8], sd = th[12]),
+      mixCoeff = th[1:4]
+    )
   } else {
     stop("The maximum number of supported mixture components is 4")
   }

@@ -28,12 +28,15 @@ bd_sample_prior <- function(hp, N) {
   samps <- list()
   if (hp$fitType == "gaussmix") {
     for (n in 1:N) {
-      samps[[n]] <- list(fitType = hp$fitType,
-                         sig = abs(stats::rgamma(hp$K,
-                                                 shape = hp$sigAlpha,
-                                                 rate = hp$sigBeta)),
-                         mu = sort(stats::runif(hp$K, hp$ymin, hp$ymax)),
-                         pi = as.vector(gtools::rdirichlet(1, rep(hp$dirichParam, hp$K))))
+      samps[[n]] <- list(
+        fitType = hp$fitType,
+        sig = abs(stats::rgamma(hp$K,
+          shape = hp$sigAlpha,
+          rate = hp$sigBeta
+        )),
+        mu = sort(stats::runif(hp$K, hp$ymin, hp$ymax)),
+        pi = as.vector(gtools::rdirichlet(1, rep(hp$dirichParam, hp$K)))
+      )
     }
   } else {
     stop(paste("Unrecognized fit type:", hp$fitType))

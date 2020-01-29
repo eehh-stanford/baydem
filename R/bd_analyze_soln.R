@@ -72,17 +72,17 @@ bd_analyze_soln <- function(soln, y = NA, th_sim = NA, lev = 0.025, rateProp = N
   # N x G, where N is the number of samples in TH and G is the length of the vector y.
   # Because bd_calc_gauss_mix_pdf_mat is called with ymin and ymax, the density
   # is normalized to integrate to 1 on the interval ymin to ymax.
-  fMat <- bd_calc_gauss_mix_pdf_mat(TH,y,ymin=soln$prob$hp$ymin,ymax=soln$prob$hp$ymax)
+  fMat <- bd_calc_gauss_mix_pdf_mat(TH, y, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax)
 
   # Calculate the rate for each sample and grid point (f' / f, where f is density)
-  rateMat <- bd_calc_gauss_mix_pdf_mat(TH,y,ymin=soln$prob$hp$ymin,ymax=soln$prob$hp$ymax,type='rate')
+  rateMat <- bd_calc_gauss_mix_pdf_mat(TH, y, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax, type = "rate")
 
   # Calculate the quantiles of the normalized density matrix
   Qdens <- bd_calc_quantiles(fMat, probs)
 
   # Normalized 50% densities (not normalized to integrate to 1)
   f50 <- Qdens[2, ] # The second row gives the 50% quantiles
-  #f50 <- f50 / sum(f50) / dy
+  # f50 <- f50 / sum(f50) / dy
 
   # Restrict to indices with enough probability mass (if necessary)
   if (!is.na(rateProp)) {
@@ -108,30 +108,32 @@ bd_analyze_soln <- function(soln, y = NA, th_sim = NA, lev = 0.025, rateProp = N
   f_spdf <- colSums(M)
   f_spdf <- f_spdf / sum(f_spdf) / dy
 
-  out <- list(y = y,
-              f_spdf = f_spdf,
-              Qdens = Qdens,
-              Qrate = Qrate,
-              probs = probs,
-              rateProp = rateProp,
-              rateInd = rateInd,
-              growthState = growthState,
-              dy = dy)
+  out <- list(
+    y = y,
+    f_spdf = f_spdf,
+    Qdens = Qdens,
+    Qrate = Qrate,
+    probs = probs,
+    rateProp = rateProp,
+    rateInd = rateInd,
+    growthState = growthState,
+    dy = dy
+  )
   class(out) <- "bd_analysis"
 
-  if(doSummary) {
+  if (doSummary) {
     summList <- list()
-    for(n in 1:numSamp) {
-      th <- TH[n,]
-      summList[[n]] <- bd_summarize_trunc_gauss_mix_sample(th,soln$prob$hp$ymin,soln$prob$hp$ymax)
+    for (n in 1:numSamp) {
+      th <- TH[n, ]
+      summList[[n]] <- bd_summarize_trunc_gauss_mix_sample(th, soln$prob$hp$ymin, soln$prob$hp$ymax)
     }
     out$summList <- summList
   }
 
   haveSim <- !all(is.na(th_sim))
   if (haveSim) {
-    f_sim <- bd_calc_gauss_mix_pdf(th_sim,y,ymin=soln$prob$hp$ymin,ymax=soln$prob$hp$ymax)
-    rate_sim <- bd_calc_gauss_mix_pdf(th_sim,y,ymin=soln$prob$hp$ymin,ymax=soln$prob$hp$ymax,type='rate')
+    f_sim <- bd_calc_gauss_mix_pdf(th_sim, y, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax)
+    rate_sim <- bd_calc_gauss_mix_pdf(th_sim, y, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax, type = "rate")
     out$f_sim <- f_sim
     out$rate_sim <- rate_sim
   }

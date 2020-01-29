@@ -37,40 +37,40 @@
 #' @return A list consisting of ylo / yhi (specifying the time periods), indPeak, ypeak, fpeak, and pattern (see Description)
 #'
 #' @export
-bd_summarize_trunc_gauss_mix_sample <- function(th,ymin,ymax,N=1000) {
+bd_summarize_trunc_gauss_mix_sample <- function(th, ymin, ymax, N = 1000) {
   # (1) Calculate the derivative of the density
-  K <- length(th)/3 # Number of mixtures
-  y <- seq(ymin,ymax,len=N)
-  fprime <- bd_calc_gauss_mix_pdf(th,y,ymin,ymax,type='derivative')
-  
+  K <- length(th) / 3 # Number of mixtures
+  y <- seq(ymin, ymax, len = N)
+  fprime <- bd_calc_gauss_mix_pdf(th, y, ymin, ymax, type = "derivative")
+
   # (2) Identify locations in y where the derivative changes sign. This happens
   #     if fprime[n] * fprime[n+1] is less than zero. Then, numerically
   #     estimate the exact y-value of the crossing.
-  ind <- which(fprime[1:(length(fprime)-1)] * fprime[2:length(fprime)] < 0)
+  ind <- which(fprime[1:(length(fprime) - 1)] * fprime[2:length(fprime)] < 0)
   M <- length(ind) # Number of cross-overs
 
   # Vectors for y / f values of crossings
-  ycross <- rep(NA,M)
-  fcross <- rep(NA,M)
+  ycross <- rep(NA, M)
+  fcross <- rep(NA, M)
 
-  if(M > 0) {
+  if (M > 0) {
     # Objective function to maximize
     rootFun <- function(y) {
-      return(bd_calc_gauss_mix_pdf(th,y,ymin,ymax,type='derivative'))
+      return(bd_calc_gauss_mix_pdf(th, y, ymin, ymax, type = "derivative"))
     }
 
     # Iterate over crossings
-    for(m in 1:M) {
-      root <- uniroot(rootFun,lower=y[ind[m]],upper=y[ind[m]+1])
+    for (m in 1:M) {
+      root <- uniroot(rootFun, lower = y[ind[m]], upper = y[ind[m] + 1])
       ycross[m] <- root$root
-      fcross[m] <- bd_calc_gauss_mix_pdf(th,ycross[m],ymin,ymax)
+      fcross[m] <- bd_calc_gauss_mix_pdf(th, ycross[m], ymin, ymax)
     }
   }
 
   # (3-4) Create the vector of critical points, calculate densities, and
   #       identify peak
-  ycrit <- c(ymin,ycross,ymax)
-  fcrit <- c(bd_calc_gauss_mix_pdf(th,ymin,ymin,ymax),fcross,bd_calc_gauss_mix_pdf(th,ymin,ymin,ymax))
+  ycrit <- c(ymin, ycross, ymax)
+  fcrit <- c(bd_calc_gauss_mix_pdf(th, ymin, ymin, ymax), fcross, bd_calc_gauss_mix_pdf(th, ymin, ymin, ymax))
   indPeak <- which.max(fcrit)
   ypeak <- ycrit[indPeak]
   fpeak <- fcrit[indPeak]
@@ -78,13 +78,13 @@ bd_summarize_trunc_gauss_mix_sample <- function(th,ymin,ymax,N=1000) {
   # (5) Create ylo, yhi, and slope
   numPer <- length(ycrit) - 1 # Number of periods
   ylo <- ycrit[1:numPer]
-  yhi <- ycrit[2:(numPer+1)]
+  yhi <- ycrit[2:(numPer + 1)]
   df <- diff(fcrit)
-  slope <- rep('pos',numPer)
-  slope[df < 0] <- 'neg'
+  slope <- rep("pos", numPer)
+  slope[df < 0] <- "neg"
 
   # (6) Create the pattern (then return the result)
-  pattern <- c(slope,as.character(indPeak))
+  pattern <- c(slope, as.character(indPeak))
 
-  return(list(periods=data.frame(ylo=ylo,yhi=yhi,slope=slope),indPeak=indPeak,ypeak=ypeak,fpeak=fpeak,pattern=pattern))
+  return(list(periods = data.frame(ylo = ylo, yhi = yhi, slope = slope), indPeak = indPeak, ypeak = ypeak, fpeak = fpeak, pattern = pattern))
 }

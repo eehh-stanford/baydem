@@ -30,7 +30,7 @@
 #' fit (the result of the call to stan),
 #' and control (the control parameters used)
 #'
-bd_do_inference <- function(prob, calibDf,saveFile=NA) {
+bd_do_inference <- function(prob, calibDf, saveFile = NA) {
   # Unpack and/or define the control parameters
   if (exists("control", where = prob) == T) {
     haveNumChains <- exists("numChains", where = prob$control) == T
@@ -38,14 +38,14 @@ bd_do_inference <- function(prob, calibDf,saveFile=NA) {
     haveWarmup <- exists("warmup", where = prob$control) == T
     haveInitList <- exists("initList", where = prob$control) == T
     haveStanControl <- exists("stanControl", where = prob$control) == T
-    #haveAdaptDelta <- exists("adaptDelta", where = prob$control) == T
+    # haveAdaptDelta <- exists("adaptDelta", where = prob$control) == T
   } else {
     haveNumChains <- F
     haveSampsPerChain <- F
     haveWarmup <- F
     haveInitList <- F
     haveStanControl <- F
-    #haveAdaptDelta <- F
+    # haveAdaptDelta <- F
   }
 
   if (haveNumChains) {
@@ -63,7 +63,7 @@ bd_do_inference <- function(prob, calibDf,saveFile=NA) {
   if (haveWarmup) {
     warmup <- prob$control$warmup
   } else {
-    warmup <- floor(sampsPerChain/2)
+    warmup <- floor(sampsPerChain / 2)
   }
 
 
@@ -79,11 +79,13 @@ bd_do_inference <- function(prob, calibDf,saveFile=NA) {
     stanControl <- NA
   }
 
-  controlFinal <- list(numChains = numChains,
-                       sampsPerChain = sampsPerChain,
-                       warmup = warmup,
-                       initList = initList,
-                       stanControl = stanControl)
+  controlFinal <- list(
+    numChains = numChains,
+    sampsPerChain = sampsPerChain,
+    warmup = warmup,
+    initList = initList,
+    stanControl = stanControl
+  )
 
   if (prob$hp$fitType == "gaussmix") {
     # Stan needs all the inputs and hyperparameters as variables in R's workspace
@@ -118,8 +120,8 @@ bd_do_inference <- function(prob, calibDf,saveFile=NA) {
 
   # If a save file was input, save the result to file. This is especially
   # useful for parallel batch runs
-  if(!is.na(saveFile)) {
-    saveRDS(soln,saveFile)
+  if (!is.na(saveFile)) {
+    saveRDS(soln, saveFile)
   }
   return(soln)
 }

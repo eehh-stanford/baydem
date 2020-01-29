@@ -16,15 +16,15 @@
 #' @export
 
 bd_extract_param <- function(fit, asList = F) {
-  if(class(fit) != 'stanfit') {
-    stop(paste('Expected fit to be class stanfit, but it is',class(fit)))
+  if (class(fit) != "stanfit") {
+    stop(paste("Expected fit to be class stanfit, but it is", class(fit)))
   }
   # as.matrix is defined for class stanfit and excludes warmup samples
   TH <- as.matrix(fit)
   # Remove the final column, which is the log-posterior, not a parameter
-  TH <- TH[,-ncol(TH)]
+  TH <- TH[, -ncol(TH)]
 
-  if(!asList) {
+  if (!asList) {
     return(TH)
   } else {
     # The total number of (non-warmup) samples

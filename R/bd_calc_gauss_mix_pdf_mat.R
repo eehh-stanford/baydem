@@ -21,14 +21,14 @@
 #'
 #' @export
 
-bd_calc_gauss_mix_pdf_mat <- function(TH, y, ymin=NA, ymax=NA, type='density') {
+bd_calc_gauss_mix_pdf_mat <- function(TH, y, ymin = NA, ymax = NA, type = "density") {
   S <- dim(TH)[1] # number of samples
   G <- length(y) # number of y-values (usually grid points)
-  fMat <- matrix(NA,S,G)
+  fMat <- matrix(NA, S, G)
 
   # Iterate over samples to fill fMat
   for (s in 1:S) {
-    fMat[s, ] <- bd_calc_gauss_mix_pdf(TH[s, ], y, ymin=ymin, ymax=ymax, type=type)
+    fMat[s, ] <- bd_calc_gauss_mix_pdf(TH[s, ], y, ymin = ymin, ymax = ymax, type = type)
   }
   return(fMat)
 }

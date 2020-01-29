@@ -21,7 +21,7 @@ if (getRversion() >= "2.15.1") {
 #' @author Michael Holton Price <MichaelHoltonPrice@gmail.com>
 
 bd_load_calib_curve <- function(calibCurve) {
-  if (!(calibCurve %in% c("intcal13","marine13","shcal13"))) {
+  if (!(calibCurve %in% c("intcal13", "marine13", "shcal13"))) {
     stop(paste("Unknown calibration curve name:", calibCurve))
   }
 
@@ -29,12 +29,13 @@ bd_load_calib_curve <- function(calibCurve) {
   # calibDf <- calibDf[,1:3]
   # colnames(calibDf) <- c('yearBP','uncalYearBP','uncalYearBPError')
 
-  if(calibCurve == "intcal13")
+  if (calibCurve == "intcal13") {
     calibCurve <- baydem::intcal13
-  else if(calibCurve == "marine13")
+  } else if (calibCurve == "marine13") {
     calibCurve <- baydem::marine13
-  else if(calibCurve == "shcal13")
+  } else if (calibCurve == "shcal13") {
     calibCurve <- baydem::shcal13
+  }
 
   calibDf <- calibCurve %>%
     dplyr::select(

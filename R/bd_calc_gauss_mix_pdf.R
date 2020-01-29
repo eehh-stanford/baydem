@@ -18,26 +18,26 @@
 #' @return The output vector with length G
 #'
 #' @export
-bd_calc_gauss_mix_pdf <- function(th, y, ymin=NA, ymax=NA, type='density') {
+bd_calc_gauss_mix_pdf <- function(th, y, ymin = NA, ymax = NA, type = "density") {
   # First, determine whether ymin and ymax are input
   doNorm <- !is.na(ymin)
 
   # Determine number of mixtures (and also do error checking on length(th))
-  if(length(th) %% 3 == 0) {
+  if (length(th) %% 3 == 0) {
     # Correct length
     K <- length(th) / 3
   } else {
-    stop('Unsupported length of parameter vector th')
+    stop("Unsupported length of parameter vector th")
   }
 
   # Check that type is valid
-  if(!type %in% c('density','cumulative','derivative','rate')) {
-    stop('type must be density, cumulative, derivative, or rate')
+  if (!type %in% c("density", "cumulative", "derivative", "rate")) {
+    stop("type must be density, cumulative, derivative, or rate")
   }
 
   # If type is rate, no normalization is needed.
   # Hence, if type is rate then ymin and ymax are ignored if they are input.
-  if(type == 'rate') {
+  if (type == "rate") {
     doNorm <- F
   }
 
@@ -49,21 +49,21 @@ bd_calc_gauss_mix_pdf <- function(th, y, ymin=NA, ymax=NA, type='density') {
   sigRep <- as.vector(t(matrix(th[(2 * K + 1):(3 * K)], G, nrow = K)))
 
   # Do the calculation
-  if(type == 'density') {
-    output <- rowSums(matrix(stats::dnorm(yRep, muRep, sigRep) * wRep,ncol=K))
-  } else if(type == 'cumulative') {
-    output <- rowSums(matrix(stats::pnorm(yRep, muRep, sigRep) * wRep,ncol=K))
-  } else if(type == 'derivative') {
-    output <- rowSums(matrix(miscTools::ddnorm(yRep, muRep, sigRep) * wRep,ncol=K))
-  } else if(type == 'rate') {
-    output1 <- rowSums(matrix(miscTools::ddnorm(yRep, muRep, sigRep) * wRep,ncol=K)) # the numerator
-    output2 <- rowSums(matrix(stats::dnorm(yRep, muRep, sigRep) * wRep,ncol=K)) # the denominator
+  if (type == "density") {
+    output <- rowSums(matrix(stats::dnorm(yRep, muRep, sigRep) * wRep, ncol = K))
+  } else if (type == "cumulative") {
+    output <- rowSums(matrix(stats::pnorm(yRep, muRep, sigRep) * wRep, ncol = K))
+  } else if (type == "derivative") {
+    output <- rowSums(matrix(miscTools::ddnorm(yRep, muRep, sigRep) * wRep, ncol = K))
+  } else if (type == "rate") {
+    output1 <- rowSums(matrix(miscTools::ddnorm(yRep, muRep, sigRep) * wRep, ncol = K)) # the numerator
+    output2 <- rowSums(matrix(stats::dnorm(yRep, muRep, sigRep) * wRep, ncol = K)) # the denominator
     output <- output1 / output2
   } else { # This should not be reached. Throw an error just in case
-    stop('type must be density, cumulative, derivative, or rate')
+    stop("type must be density, cumulative, derivative, or rate")
   }
-  if(doNorm) {
-    normFact <- diff(bd_calc_gauss_mix_pdf(th,c(ymin,ymax),type='cumulative'))
+  if (doNorm) {
+    normFact <- diff(bd_calc_gauss_mix_pdf(th, c(ymin, ymax), type = "cumulative"))
     output <- output / normFact
   }
   return(output)

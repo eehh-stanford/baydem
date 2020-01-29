@@ -25,8 +25,8 @@
 #' plotType 'shadeddensity' yields a plot of the density with shaded rectangles
 #' indicating the growth state. As with the plotType 'rate',
 #' this is done using the vector an$growthState with the coloring
-#'positive / green, zero / grey, negative / red, and missing / white.
-#'Optionally, the known target distribution from a simulation can be added.
+#' positive / green, zero / grey, negative / red, and missing / white.
+#' Optionally, the known target distribution from a simulation can be added.
 #'
 #' @param x A list-like object of class \code{baydem::bd_analysis} with information on the quantiles of the density function and growth rate
 #' @param plotType (default: 'density') The type of plot to make.
@@ -39,12 +39,11 @@
 #' @export
 plot.bd_analysis <-
   function(
-    x,
-    plotType = "density",
-    showSPDF = F,
-    showSim = F,
-    ...
-  ) {
+           x,
+           plotType = "density",
+           showSPDF = F,
+           showSim = F,
+           ...) {
 
     # Is the true, target density available because this was a simulation?
     haveSim <- "f_sim" %in% names(x)
@@ -69,10 +68,11 @@ plot.bd_analysis <-
 
       # Make an empty plot
       graphics::plot(1,
-                     xlim = range(x$y),
-                     ylim = c(0, plotMaxF),
-                     xlab = "Calendar Date [AD]",
-                     ylab = "Density")
+        xlim = range(x$y),
+        ylim = c(0, plotMaxF),
+        xlab = "Calendar Date [AD]",
+        ylab = "Density"
+      )
       # Plot the summed probability density
       if (showSPDF) {
         graphics::lines(x$y, x$f_spdf, col = "black", lwd = 3, ...)
@@ -82,14 +82,13 @@ plot.bd_analysis <-
       indMin <- which.min(x$probs)
       ind50 <- which(x$probs == 0.5) # The index in probs / Qdens of the 50% quantile
       indMax <- which.max(x$probs)
-      polygon(c(x$y,rev(x$y)),c(x$Qdens[indMin,],rev(x$Qdens[indMax,])),col=adjustcolor("grey",alpha.f=0.5),border=NA,xlab=NULL)
-      lines(x$y,x$Qdens[ind50,],lwd=3)
+      polygon(c(x$y, rev(x$y)), c(x$Qdens[indMin, ], rev(x$Qdens[indMax, ])), col = adjustcolor("grey", alpha.f = 0.5), border = NA, xlab = NULL)
+      lines(x$y, x$Qdens[ind50, ], lwd = 3)
 
       # If necessary, plot the true target density
       if (showSim) {
         graphics::lines(x$y, x$f_sim, col = "blue", lwd = 3, lty = 1)
       }
-
     } else if (tolower(plotType) == "rate") {
       # Plot the rate
       # If showSPDF is true it is ignored for this plot type
@@ -105,10 +104,11 @@ plot.bd_analysis <-
 
       # Make an empty plot
       graphics::plot(1,
-                     xlim = range(x$y),
-                     ylim = c(plotMinR, plotMaxR),
-                     xlab = "Calendar Date [AD]",
-                     ylab = "Growth Rate")
+        xlim = range(x$y),
+        ylim = c(plotMinR, plotMaxR),
+        xlab = "Calendar Date [AD]",
+        ylab = "Growth Rate"
+      )
 
       # Add growth band rectangles
       # The rle command gives a run length encoding,
@@ -133,8 +133,9 @@ plot.bd_analysis <-
         r0 <- plotMinR
         r1 <- plotMaxR
         graphics::polygon(c(y0, y1, y1, y0), c(r0, r0, r1, r1),
-                          col = grDevices::adjustcolor(bandCol, alpha.f = .5),
-                          border = NA)
+          col = grDevices::adjustcolor(bandCol, alpha.f = .5),
+          border = NA
+        )
         firstInd <- lastInd + 1
       }
 
@@ -154,7 +155,6 @@ plot.bd_analysis <-
       if (showSim) {
         graphics::lines(x$y[x$rateInd], x$rate_sim[x$rateInd], col = "blue", lwd = 3, lty = 1)
       }
-
     } else if (tolower(plotType) == "shadeddensity") {
       # Plot the density shaded by growth state
 
@@ -170,10 +170,12 @@ plot.bd_analysis <-
       }
 
       # Make an empty plot
-      graphics::plot(1, xlim = range(x$y),
-                     ylim = c(0, plotMaxF),
-                     xlab = "Calendar Date [AD]",
-                     ylab = "Density")
+      graphics::plot(1,
+        xlim = range(x$y),
+        ylim = c(0, plotMaxF),
+        xlab = "Calendar Date [AD]",
+        ylab = "Density"
+      )
 
       # Add growth band rectangles
       # The rle command gives a run length encoding, consisting of lengths and values of repeated elements of growthState
@@ -197,10 +199,12 @@ plot.bd_analysis <-
         f0 <- 0
         f1 <- plotMaxF
         graphics::polygon(c(y0, y1, y1, y0),
-                          c(f0, f0, f1, f1),
-                          col = grDevices::adjustcolor(bandCol,
-                                                       alpha.f = .5),
-                          border = NA)
+          c(f0, f0, f1, f1),
+          col = grDevices::adjustcolor(bandCol,
+            alpha.f = .5
+          ),
+          border = NA
+        )
         firstInd <- lastInd + 1
       }
 
@@ -219,7 +223,6 @@ plot.bd_analysis <-
       if (showSim) {
         graphics::lines(x$y, x$f_sim, col = "blue", lwd = 3, lty = 1)
       }
-
     } else {
       stop("Unrecognized plot type")
     }

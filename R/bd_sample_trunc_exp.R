@@ -13,15 +13,15 @@
 #'
 #' @export
 
-bd_sample_trunc_exp <- function(N,r0,ymin,ymax) {
+bd_sample_trunc_exp <- function(N, r0, ymin, ymax) {
   # Call RGeode::rexptr for the sampling. rexptr cannot be used direclty
   # because it does not support r0 being zero or negative. The input to rexptr
   # is -r0.
-  if(r0 > 0) {
-    return(ymax - RGeode::rexptr(N,r0,range=c(0,ymax-ymin)))
-  } else if(r0 == 0) {
-    return(runif(N,ymin,ymax))
+  if (r0 > 0) {
+    return(ymax - RGeode::rexptr(N, r0, range = c(0, ymax - ymin)))
+  } else if (r0 == 0) {
+    return(runif(N, ymin, ymax))
   } else {
-    return(RGeode::rexptr(N,-r0,range=c(ymin,ymax)))
+    return(RGeode::rexptr(N, -r0, range = c(ymin, ymax)))
   }
 }

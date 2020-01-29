@@ -29,7 +29,7 @@
 #'
 #' @export
 
-bd_calc_meas_matrix <- function(ygrid, phi_m, sig_m, calibDf, useSpacing=T, addCalibUnc=T) {
+bd_calc_meas_matrix <- function(ygrid, phi_m, sig_m, calibDf, useSpacing = T, addCalibUnc = T) {
   # ygrid is in AD
   ygrid_BP <- 1950 - ygrid
 
@@ -58,7 +58,7 @@ bd_calc_meas_matrix <- function(ygrid, phi_m, sig_m, calibDf, useSpacing=T, addC
   M <- exp(-(PHI_m - MU_k)^2 / (SIG_sq) / 2) / sqrt(SIG_sq) / sqrt(2 * pi)
 
   # If necessary, add the integration widths
-  if(useSpacing) {
+  if (useSpacing) {
     G <- length(ygrid)
     dyVect <- rep(NA, length(ygrid))
     indCent <- 2:(G - 1)

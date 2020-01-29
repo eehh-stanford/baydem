@@ -14,18 +14,18 @@
 #'
 #' @return The vector of calibration curve fraction modern values
 #' @export
-bd_calc_calib_curve_frac_modern <- function(calibDf,y=NA,isBP=FALSE) {
-    phi_curve  <- exp(-calibDf$uncalYearBP/8033)
-    if(is.na(y)) {
-        return(phi_curve)
-    }
+bd_calc_calib_curve_frac_modern <- function(calibDf, y = NA, isBP = FALSE) {
+  phi_curve <- exp(-calibDf$uncalYearBP / 8033)
+  if (is.na(y)) {
+    return(phi_curve)
+  }
 
-    y_curve <- 1950 - calibDf$yearBP
-    if(isBP) {
-        y <- 1950 - y # Convert to AD
-    }
+  y_curve <- 1950 - calibDf$yearBP
+  if (isBP) {
+    y <- 1950 - y # Convert to AD
+  }
 
-    phi  <- approx(y_curve,phi_curve,y)
-    phi  <- mu_k$ycalibDf$yearBP
-    return(phi)
+  phi <- approx(y_curve, phi_curve, y)
+  phi <- mu_k$ycalibDf$yearBP
+  return(phi)
 }
