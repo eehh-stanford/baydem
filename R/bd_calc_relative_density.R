@@ -1,5 +1,9 @@
 #' @title Calculate the relative density at two dates (or a range of dates / the peak)
 #'
+#' @description
+#' 
+#' Calculate the relative density at two dates, and/or a range of dates and/or the peak value (see details).
+#'  
 #' @details
 #' Calculate the relative density for two dates or, more generally, for two
 #' different specifications of the density aside from a simple date. The
@@ -119,11 +123,13 @@ unpack_spec <- function(spec, soln, isOne) {
   }
 }
 
+#' @export
 # A helper function to calculate point densities
 calc_point_density <- function(TH, soln, y) {
   return(as.numeric(bd_calc_gauss_mix_pdf_mat(TH, y, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax)))
 }
 
+#' @export
 # A helper function to calculate the mean density over a range
 calc_range_density <- function(TH, soln, ylo, yhi) {
   flo <- as.numeric(bd_calc_gauss_mix_pdf_mat(TH, ylo, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax, type = "cumulative"))
@@ -131,6 +137,7 @@ calc_range_density <- function(TH, soln, ylo, yhi) {
   return((fhi - flo) / (yhi - ylo))
 }
 
+#' @export
 # A helper function to calculate the peak density
 calc_peak_density <- function(summList) {
   return(unlist(lapply(summList, function(x) {

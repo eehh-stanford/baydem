@@ -19,10 +19,24 @@ bd_calc_relative_density(soln, spec1, spec2, ind = NA, anal = NA)
 \item{ind}{(Optional) Indices at which to do the calculation. By default,
 all the samples in anal are used.}
 
+\item{anal}{The result of a call to bd_analyze_soln}
+
+\item{propChange}{(Default 0.5) The proportional}
+
 \item{anal}{(Optional) The result of a call to bd_analyze_soln. This is only
 needed if either spec1 or spec2 is 'peak'}
 
-\item{propChange}{(Default 0.5) The proportional}
+\item{soln}{The result of a call to bd_do_inference}
+
+\item{anal}{The result of a call to bd_analyze_soln}
+
+\item{spec2}{The specification for the second density (see details)}
+
+\item{ind}{(Optional) Indices at which to do the calculation. By default,
+all the samples in anal are used.}
+
+\item{anal}{(Optional) The result of a call to bd_analyze_soln. This is only
+needed if either spec1 or spec2 is 'peak'}
 }
 \value{
 A vector of relative densities (f_spec1 / f_spec2)
@@ -30,9 +44,7 @@ A vector of relative densities (f_spec1 / f_spec2)
 A vector of relative densities (f_spec1 / f_spec2)
 }
 \description{
-For each sample, calculate the time it takes for the density to decrease by half from the peak
-
-Calculate the relative density at two dates (or a range of dates / the peak)
+Calculate the relative density at two dates, and/or a range of dates and/or the peak value (see details).
 }
 \details{
 Calculate the relative density for two dates or, more generally, for two

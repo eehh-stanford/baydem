@@ -17,11 +17,8 @@ following control parameters for the Bayesian inference (default in parentheses)
 numChains     -- (4)    Number of chains
 sampsPerChain -- (2000) Number of samples per chain
 initList      --        The initializations for each chain. The default is
-to sample from prior using hyperparameters
-adaptDelta    -- (.99)  The value of the adapt_delta parameter, an input to
-stan. The stan default is 0.8, but a higher value
-is sensible for a mixture model with more than a
-few parameters, hence use 0.99 by default}
+to set this using a mixture fit to the summed
+density}
 \usage{
 bd_do_inference(prob, calibDf, saveFile = NA)
 }
@@ -53,9 +50,6 @@ following control parameters for the Bayesian inference (default in parentheses)
 numChains     -- (4)    Number of chains
 sampsPerChain -- (2000) Number of samples per chain
 initList      --        The initializations for each chain. The default is
-to sample from prior using hyperparameters
-adaptDelta    -- (.99)  The value of the adapt_delta parameter, an input to
-stan. The stan default is 0.8, but a higher value
-is sensible for a mixture model with more than a
-few parameters, hence use 0.99 by default
+to set this using a mixture fit to the summed
+density
 }
