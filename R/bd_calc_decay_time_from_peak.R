@@ -15,56 +15,56 @@
 #' @return A vector of relative densities (f_spec1 / f_spec2)
 #'
 #' @export
-bd_calc_relative_density <- 
-  function(soln, 
-           spec1, 
-           spec2, 
-           ind = NA, 
+bd_calc_relative_density <-
+  function(soln,
+           spec1,
+           spec2,
+           ind = NA,
            anal = NA) {
-  TH <- bd_extract_param(soln$fit)
-  N <- nrow(TH)
-  if (all(is.na(ind))) {
-    ind <- 1:N
-  }
-
-
-  # Interpret and do error checking on inputs by calling helper function below
-  spec1 <- unpack_spec(spec1, soln, T)
-  spec2 <- unpack_spec(spec2, soln, F)
-
-  if (spec1$type == "peak" || spec2$type == "peak") {
-    if (all(is.na(anal))) {
-      anal <- bd_analyze_soln(soln) # If ind is not NA, this may involve unused computation
+    TH <- bd_extract_param(soln$fit)
+    N <- nrow(TH)
+    if (all(is.na(ind))) {
+      ind <- 1:N
     }
-    summList <- anal$summList[ind]
-  }
 
-  # Calculate the density for spec1
-  if (spec1$type == "point") {
-    f1 <- calc_point_density(TH[ind, ], soln, spec1$value)
-  } else if (spec1$type == "range") {
-    f1 <- calc_range_density(TH[ind, ], soln, spec1$lower, spec1$upper)
-  } else if (spec1$type == "peak") {
-    f1 <- calc_peak_density(summList)
-  } else {
-    # This should not happen, but throw an error regardless
-    stop("Unsupported spec type")
-  }
 
-  # Calculate the density for spec2
-  if (spec2$type == "point") {
-    f2 <- calc_point_density(TH[ind, ], soln, spec2$value)
-  } else if (spec2$type == "range") {
-    f2 <- calc_range_density(TH[ind, ], soln, spec2$lower, spec2$upper)
-  } else if (spec2$type == "peak") {
-    f2 <- calc_peak_density(summList)
-  } else {
-    # This should not happen, but throw an error regardless
-    stop("Unsupported spec type")
-  }
+    # Interpret and do error checking on inputs by calling helper function below
+    spec1 <- unpack_spec(spec1, soln, T)
+    spec2 <- unpack_spec(spec2, soln, F)
 
-  return(f1 / f2)
-}
+    if (spec1$type == "peak" || spec2$type == "peak") {
+      if (all(is.na(anal))) {
+        anal <- bd_analyze_soln(soln) # If ind is not NA, this may involve unused computation
+      }
+      summList <- anal$summList[ind]
+    }
+
+    # Calculate the density for spec1
+    if (spec1$type == "point") {
+      f1 <- calc_point_density(TH[ind, ], soln, spec1$value)
+    } else if (spec1$type == "range") {
+      f1 <- calc_range_density(TH[ind, ], soln, spec1$lower, spec1$upper)
+    } else if (spec1$type == "peak") {
+      f1 <- calc_peak_density(summList)
+    } else {
+      # This should not happen, but throw an error regardless
+      stop("Unsupported spec type")
+    }
+
+    # Calculate the density for spec2
+    if (spec2$type == "point") {
+      f2 <- calc_point_density(TH[ind, ], soln, spec2$value)
+    } else if (spec2$type == "range") {
+      f2 <- calc_range_density(TH[ind, ], soln, spec2$lower, spec2$upper)
+    } else if (spec2$type == "peak") {
+      f2 <- calc_peak_density(summList)
+    } else {
+      # This should not happen, but throw an error regardless
+      stop("Unsupported spec type")
+    }
+
+    return(f1 / f2)
+  }
 
 # A helper function to unpack and do error checking on inputs spec1 / spec2
 unpack_spec <- function(spec, soln, isOne) {
@@ -113,13 +113,24 @@ unpack_spec <- function(spec, soln, isOne) {
 
 # A helper function to calculate point densities
 calc_point_density <- function(TH, soln, y) {
-  return(as.numeric(bd_calc_gauss_mix_pdf_mat(TH, y, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax)))
+  return(as.numeric(bd_calc_gauss_mix_pdf_mat(TH = TH, 
+                                              y = y, 
+                                              ymin = soln$prob$hp$ymin, 
+                                              ymax = soln$prob$hp$ymax)))
 }
 
 # A helper function to calculate the mean density over a range
 calc_range_density <- function(TH, soln, ylo, yhi) {
-  flo <- as.numeric(bd_calc_gauss_mix_pdf_mat(TH, ylo, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax, type = "cumulative"))
-  fhi <- as.numeric(bd_calc_gauss_mix_pdf_mat(TH, yhi, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax, type = "cumulative"))
+  flo <- as.numeric(bd_calc_gauss_mix_pdf_mat(TH = TH, 
+                                              y = ylo, 
+                                              ymin = soln$prob$hp$ymin, 
+                                              ymax = soln$prob$hp$ymax, 
+                                              type = "cumulative"))
+  fhi <- as.numeric(bd_calc_gauss_mix_pdf_mat(TH = TH, 
+                                              y = yhi, 
+                                              ymin = soln$prob$hp$ymin, 
+                                              ymax = soln$prob$hp$ymax, 
+                                              type = "cumulative"))
   return((fhi - flo) / (yhi - ylo))
 }
 

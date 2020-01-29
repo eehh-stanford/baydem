@@ -2,6 +2,7 @@
 
 S3method(plot,bd_analysis)
 S3method(plot,bd_soln)
+export("%>%")
 export(bd_analyze_soln)
 export(bd_assess_calib_curve_equif)
 export(bd_calc_calib_curve_equif_dates)
