@@ -15,7 +15,12 @@
 #' @return A vector of relative densities (f_spec1 / f_spec2)
 #'
 #' @export
-bd_calc_relative_density <- function(soln, spec1, spec2, ind = NA, anal = NA) {
+bd_calc_relative_density <- 
+  function(soln, 
+           spec1, 
+           spec2, 
+           ind = NA, 
+           anal = NA) {
   TH <- bd_extract_param(soln$fit)
   N <- nrow(TH)
   if (all(is.na(ind))) {
