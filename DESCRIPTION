@@ -31,7 +31,8 @@ Suggests:
     pkgdown,
     covr,
     knitr,
-    usethis
+    usethis,
+    testthat
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
