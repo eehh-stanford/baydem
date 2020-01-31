@@ -4,14 +4,14 @@
 \alias{bd_analyze_soln}
 \title{Analyze the result of a call to \code{bd_do_inference}}
 \usage{
-bd_analyze_soln(soln, y = NA, th_sim = NA, lev = 0.025,
+bd_analyze_soln(soln, tau = NA, th_sim = NA, lev = 0.025,
   rateProp = NA, doSummary = T)
 }
 \arguments{
 \item{soln}{The solution, a list-like object of class bd_soln (see \code{bd_do_inference})}
 
-\item{y}{(optional) The calendar dates at which to evaluate densities.
-If y is not input, y is built from the hyperparameters.}
+\item{tau}{(optional) The calendar dates at which to evaluate densities.
+If tau is not input, tau is built from the hyperparameters.}
 
 \item{th_sim}{(optional) The known parameters used to create simulation data}
 

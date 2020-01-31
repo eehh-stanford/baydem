@@ -4,7 +4,7 @@ data {
   int K; // Number of mixtures
   matrix[G,N] Mt; // Measurement matrix (transposed)
   vector[G] tau; // Calendar grid points for the measurement matrix calculation
-  real<lower=0> dirichParam; // Parameter for the mixture distribution
+  real<lower=0> alpha_d; // Concentration parameter for pi prior
   real taumin; // Lower calendar date. Same as min(tau)
   real taumax; // Upper calendar date. Same as max(tau)
   real<lower=0> alpha_s; // shape parameter of gamma distribution for sigma
@@ -37,7 +37,7 @@ model {
   // there is no need to multiply by dtau on the following line.
   f = f / sum(f);
 
-  pi ~ dirichlet(rep_vector(dirichParam,K));
+  pi ~ dirichlet(rep_vector(alpha_d,K));
   sig ~ gamma(alpha_s,alpha_r);
   mu ~ uniform(taumin,taumax);
   L = f * Mt;

@@ -34,8 +34,8 @@
 #' bd_summarize_sample. This is not done of doSummary is FALSE
 #'
 #' @param soln The solution, a list-like object of class bd_soln (see \code{bd_do_inference})
-#' @param y (optional) The calendar dates at which to evaluate densities.
-#' If y is not input, y is built from the hyperparameters.
+#' @param tau (optional) The calendar dates at which to evaluate densities.
+#' If tau is not input, tau is built from the hyperparameters.
 #' @param th_sim (optional) The known parameters used to create simulation data
 #' @param lev (default: 0.025) The level to use for the quantile bands
 #' @param rateProp (optional) The cumulative density needed to define rate growth bands
@@ -44,17 +44,17 @@
 #' @return A list with information on the quantiles of the density function and growth rate (and sample summaries)
 #'
 #' @export
-bd_analyze_soln <- function(soln, y = NA, th_sim = NA, lev = 0.025, rateProp = NA, doSummary = T) {
-  if (all(is.na(y))) {
-    y <- seq(soln$prob$hp$ymin, soln$prob$hp$ymax, by = soln$prob$hp$dy)
+bd_analyze_soln <- function(soln, tau = NA, th_sim = NA, lev = 0.025, rateProp = NA, doSummary = T) {
+  if (all(is.na(tau))) {
+    tau <- seq(soln$prob$hp$taumin, soln$prob$hp$taumax, by = soln$prob$hp$dtau)
   }
 
   probs <- c(lev, 0.5, 1 - lev) # The probabilities to use for quantiles
 
-  # Determine y spacing, dy, and ensure that y is evenly spaced
-  dy <- unique(diff(y))
-  if (length(dy) > 1) {
-    stop("y should by uniformily spaced")
+  # Determine tau spacing, dtau, and ensure that tau is evenly spaced
+  dtau <- unique(diff(tau))
+  if (length(dtau) > 1) {
+    stop("tau should by uniformily spaced")
   }
 
   # Extract the samples of theta in the variable TH. TH is matrix like object,
@@ -63,30 +63,29 @@ bd_analyze_soln <- function(soln, y = NA, th_sim = NA, lev = 0.025, rateProp = N
   # the number of parameters (length of th).
   TH <- bd_extract_param(soln$fit)
 
-  numMix <- ncol(TH) / 3
+  numMix <- ncol(TH) / 3 # This assumes a gassian mixture fit. Future updates may generalize this
   numSamp <- nrow(TH)
-  numGrid <- length(y)
+  numGrid <- length(tau)
 
   # Calculate the pdf matrix, which is the density of the parametric model for
   # theta for each sample and each grid point. fMat has dimensions
-  # N x G, where N is the number of samples in TH and G is the length of the vector y.
-  # Because bd_calc_gauss_mix_pdf_mat is called with ymin and ymax, the density
-  # is normalized to integrate to 1 on the interval ymin to ymax.
-  fMat <- bd_calc_gauss_mix_pdf_mat(TH, y, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax)
+  # N x G, where N is the number of samples in TH and G is the length of the vector tau.
+  # Because bd_calc_gauss_mix_pdf_mat is called with taumin and taumax, the density
+  # is normalized to integrate to 1 on the interval taumin to taumax.
+  fMat <- bd_calc_gauss_mix_pdf_mat(TH, tau, ymin = soln$prob$hp$taumin, ymax = soln$prob$hp$taumax)
 
   # Calculate the rate for each sample and grid point (f' / f, where f is density)
-  rateMat <- bd_calc_gauss_mix_pdf_mat(TH, y, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax, type = "rate")
+  rateMat <- bd_calc_gauss_mix_pdf_mat(TH, tau, ymin = soln$prob$hp$taumin, ymax = soln$prob$hp$taumax, type = "rate")
 
   # Calculate the quantiles of the normalized density matrix
   Qdens <- bd_calc_quantiles(fMat, probs)
 
   # Normalized 50% densities (not normalized to integrate to 1)
   f50 <- Qdens[2, ] # The second row gives the 50% quantiles
-  # f50 <- f50 / sum(f50) / dy
 
   # Restrict to indices with enough probability mass (if necessary)
   if (!is.na(rateProp)) {
-    rateInd <- which(cumsum(f50 * dy) > rateProp & rev(cumsum(rev(f50) * dy)) > rateProp)
+    rateInd <- which(cumsum(f50 * dtau) > rateProp & rev(cumsum(rev(f50) * dtau)) > rateProp)
   } else {
     rateInd <- 1:length(f50)
   }
@@ -97,19 +96,19 @@ bd_analyze_soln <- function(soln, y = NA, th_sim = NA, lev = 0.025, rateProp = N
   growthState0 <- rep("zero", length(rateInd)) # growthState0 indices in rateInd
   growthState0[Qrate[2, ] > 0 & Qrate[1, ] > 0] <- "positive"
   growthState0[Qrate[2, ] < 0 & Qrate[3, ] < 0] <- "negative"
-  growthState <- rep("missing", length(y))
+  growthState <- rep("missing", length(tau))
   growthState[rateInd] <- growthState0 # growthState for all indices
 
 
   # Calculate the measurement matrix
-  M <- bd_calc_meas_matrix(y, soln$prob$phi_m, soln$prob$sig_m, soln$prob$calibDf)
+  M <- bd_calc_meas_matrix(tau, soln$prob$phi_m, soln$prob$sig_m, soln$prob$calibDf)
 
   # Calculate and normalize the summed probability density vector
   f_spdf <- colSums(M)
-  f_spdf <- f_spdf / sum(f_spdf) / dy
+  f_spdf <- f_spdf / sum(f_spdf) / dtau
 
   out <- list(
-    y = y,
+    tau = tau,
     f_spdf = f_spdf,
     Qdens = Qdens,
     Qrate = Qrate,
@@ -117,7 +116,7 @@ bd_analyze_soln <- function(soln, y = NA, th_sim = NA, lev = 0.025, rateProp = N
     rateProp = rateProp,
     rateInd = rateInd,
     growthState = growthState,
-    dy = dy
+    dtau = dtau
   )
   class(out) <- "bd_analysis"
 
@@ -125,15 +124,15 @@ bd_analyze_soln <- function(soln, y = NA, th_sim = NA, lev = 0.025, rateProp = N
     summList <- list()
     for (n in 1:numSamp) {
       th <- TH[n, ]
-      summList[[n]] <- bd_summarize_trunc_gauss_mix_sample(th, soln$prob$hp$ymin, soln$prob$hp$ymax)
+      summList[[n]] <- bd_summarize_trunc_gauss_mix_sample(th, soln$prob$hp$taumin, soln$prob$hp$taumax)
     }
     out$summList <- summList
   }
 
   haveSim <- !all(is.na(th_sim))
   if (haveSim) {
-    f_sim <- bd_calc_gauss_mix_pdf(th_sim, y, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax)
-    rate_sim <- bd_calc_gauss_mix_pdf(th_sim, y, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax, type = "rate")
+    f_sim <- bd_calc_gauss_mix_pdf(th_sim, tau, ymin = soln$prob$hp$taumin, ymax = soln$prob$hp$taumax)
+    rate_sim <- bd_calc_gauss_mix_pdf(th_sim, tau, ymin = soln$prob$hp$taumin, ymax = soln$prob$hp$taumax, type = "rate")
     out$f_sim <- f_sim
     out$rate_sim <- rate_sim
   }

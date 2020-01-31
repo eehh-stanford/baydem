@@ -47,7 +47,7 @@ hp <-
     # Class of fit (Gaussian mixture)
     fitType = "gaussmix",
     # Parameter for the dirichlet draw of the mixture probabilities
-    alpha_s = 1,
+    alpha_d = 1,
     # The gamma distribution shape parameter for sigma
     alpha_s = 3,
     # The gamma distribution rate parameter for sigma, yielding a mode of 300
@@ -81,6 +81,7 @@ prob <- list(
 )
 
 soln <- bd_do_inference(prob, calibDf)
+anal <- bd_analyze_soln(soln)
 
 }
 
