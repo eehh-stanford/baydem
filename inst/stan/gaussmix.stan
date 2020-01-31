@@ -3,12 +3,12 @@ data {
   int G; // Number of grid pints
   int K; // Number of mixtures
   matrix[G,N] Mt; // Measurement matrix (transposed)
-  vector[G] ygrid; // Grid points for the measurement matrix
+  vector[G] tau; // Calendar grid points for the measurement matrix calculation
   real<lower=0> dirichParam; // Parameter for the mixture distribution
-  real ymin;
-  real ymax;
-  real<lower=0> sigAlpha;
-  real<lower=0> sigBeta;
+  real tau_min; // Lower calendar date. Same as min(tau)
+  real tau_max; // Upper calendar date. Same as max(tau)
+  real<lower=0> alpha_s; // shape parameter of gamma distribution for sigma
+  real<lower=0> alpha_r; // rate parameter of gamma distribution for sigma
 }
 
 parameters {
@@ -27,19 +27,19 @@ model {
   for (g in 1:G) {
     vector[K] lse = logpi;
     for (k in 1:K) {
-      lse[k] += normal_lpdf(ygrid[g]|mu[k],sig[k]);
+      lse[k] += normal_lpdf(tau[g]|mu[k],sig[k]);
     }
     logf[g] = log_sum_exp(lse);
   }
   f = exp(logf);
 
-  
-  // TODO: Use the trapezoid rule to determine the normalization rather than dividing by sum(f)
+  // Since the target only needs to be proportional to the likelihood,
+  // there is no need to multiply by dtau on the following line.
   f = f / sum(f);
 
   pi ~ dirichlet(rep_vector(dirichParam,K));
-  sig ~ gamma(sigAlpha,sigBeta);
-  mu ~ uniform(ymin,ymax);
+  sig ~ gamma(alpha_s,alpha_r);
+  mu ~ uniform(tau_min,tau_max);
   L = f * Mt;
   target += sum(log(L));
 }
