@@ -1,4 +1,6 @@
 # Run a simulation to ensure nothing major is broken in the core code
+# Also, use the outputs of the simulation to do unit testing on other
+# functions.
 
 # Do this in standalone function so that expect_error can be used
 run_simulation <- function() {
@@ -83,11 +85,42 @@ prob <- list(
 soln <- bd_do_inference(prob, calibDf)
 anal <- bd_analyze_soln(soln)
 
+return(list(prob=prob,soln=soln,anal=anal))
+
 }
 
 # Calling run_simulation should not raise an error. If it does, the test fails.
 expect_error(
-  run_simulation()
+  simOutput <- run_simulation()
 ,NA
 )
 
+# Check that calling plot.bd_analysis does not raise an error
+expect_error(
+  plot(simOutput$anal)
+,NA
+)
+
+expect_error(
+  plot(simOutput$anal,plotType='rate')
+,NA
+)
+
+# Check that building plot from individual functions does not raise an error
+# bd_make_blank_density_plot
+# bd_plot_50_percent_quantile
+# bd_add_shaded_quantiles
+expect_error(
+  bd_make_blank_density_plot(simOutput$anal)
+,NA
+)
+
+expect_error(
+  bd_plot_50_percent_quantile(simOutput$anal, add = T)
+,NA
+)
+
+expect_error(
+  bd_add_shaded_quantiles(simOutput$anal)
+,NA
+)

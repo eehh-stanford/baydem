@@ -24,10 +24,12 @@ bd_make_blank_density_plot <- function(an,xlim=NA,ylim=NA,xlab=NA,ylab=NA,...) {
   }
 
   if(all(is.na(xlim))) {
-    xlim <- range(an$y)
+    xlim <- range(an$tau)
   }
 
   if(all(is.na(ylim))) {
+    # The following command works even if, e.g., f_sim is not in the list an
+    # because an$f_sim results in NULL
     ylim <- c(0,max(c(max(an$Qdens),an$f_spdf,an$f_sim)))
   }
 

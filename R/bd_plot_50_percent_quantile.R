@@ -17,8 +17,8 @@ bd_plot_50_percent_quantile <- function(an,add=F,...) {
   # The index of the 50 percent quantile
   ind50 <- which(an$probs == 0.5) # The index in probs / Qdens of the 50 percent quantile
   if(add) {
-    lines(an$y,an$Qdens[ind50,],...)
+    lines(an$tau,an$Qdens[ind50,],...)
   } else {
-    plot(an$y,an$Qdens[ind50,],type='l',...)
+    plot(an$tau,an$Qdens[ind50,],type='l',...)
   }
 }

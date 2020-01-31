@@ -18,5 +18,5 @@ bd_add_shaded_quantiles <- function(an,col=adjustcolor("grey",alpha.f=0.5),...) 
   # The indidces of the minimum and maximum quantiles
   indMin <- which.min(an$probs)
   indMax <- which.max(an$probs)
-  polygon(c(an$t,rev(an$t)),c(an$Qdens[indMin,],rev(an$Qdens[indMax,])),border=NA,xlab=NULL,col=col)
+  polygon(c(an$tau,rev(an$tau)),c(an$Qdens[indMin,],rev(an$Qdens[indMax,])),border=NA,xlab=NULL,col=col)
 }

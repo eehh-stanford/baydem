@@ -4,14 +4,14 @@
 \alias{plot.bd_analysis}
 \title{Plot the result of a call to bayDem_analyzeSoln}
 \usage{
-\method{plot}{bd_analysis}(x, plotType = "density", showSPDF = F,
+\method{plot}{bd_analysis}(an, plotType = "density", showSPDF = F,
   showSim = F, ...)
 }
 \arguments{
-\item{x}{A list-like object of class \code{baydem::bd_analysis} with information on the quantiles of the density function and growth rate}
+\item{an}{A list-like object of class \code{baydem::bd_analysis} with information on the quantiles of the density function and growth rate}
 
 \item{plotType}{(default: 'density') The type of plot to make.
-Options are: 'density', 'rate', and 'shadeddensity'.}
+Options are: 'density' and 'rate'.}
 
 \item{showSPDF}{(default: FALSE) Whether to plot the summed probability.
 Ignored unless plotType is 'density'.}
@@ -44,9 +44,5 @@ Optionally, the rate for the known target distribution from a simulation can be 
 Shaded rectangles are added to the plot using an$growthState with the coloring positive / green,
 zero / grey, negative / red, and missing / white.
 
-plotType 'shadeddensity' yields a plot of the density with shaded rectangles
-indicating the growth state. As with the plotType 'rate',
-this is done using the vector an$growthState with the coloring
-positive / green, zero / grey, negative / red, and missing / white.
 Optionally, the known target distribution from a simulation can be added.
 }
