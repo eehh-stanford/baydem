@@ -95,17 +95,6 @@ expect_error(
 ,NA
 )
 
-# Check that calling plot.bd_analysis does not raise an error
-expect_error(
-  plot(simOutput$anal)
-,NA
-)
-
-expect_error(
-  plot(simOutput$anal,plotType='rate')
-,NA
-)
-
 # Check that building plot from individual functions does not raise an error
 # bd_make_blank_density_plot
 # bd_plot_50_percent_quantile
