@@ -5,8 +5,8 @@ data {
   matrix[G,N] Mt; // Measurement matrix (transposed)
   vector[G] tau; // Calendar grid points for the measurement matrix calculation
   real<lower=0> dirichParam; // Parameter for the mixture distribution
-  real tau_min; // Lower calendar date. Same as min(tau)
-  real tau_max; // Upper calendar date. Same as max(tau)
+  real taumin; // Lower calendar date. Same as min(tau)
+  real taumax; // Upper calendar date. Same as max(tau)
   real<lower=0> alpha_s; // shape parameter of gamma distribution for sigma
   real<lower=0> alpha_r; // rate parameter of gamma distribution for sigma
 }
@@ -39,7 +39,7 @@ model {
 
   pi ~ dirichlet(rep_vector(dirichParam,K));
   sig ~ gamma(alpha_s,alpha_r);
-  mu ~ uniform(tau_min,tau_max);
+  mu ~ uniform(taumin,taumax);
   L = f * Mt;
   target += sum(log(L));
 }

@@ -71,18 +71,17 @@ bd_do_inference <- function(prob, calibDf, saveFile = NA) {
     numChains = numChains,
     sampsPerChain = sampsPerChain,
     warmup = warmup,
-    initList = initList,
     stanControl = stanControl
   )
 
   if (prob$hp$fitType == "gaussmix") {
     # Stan needs all the inputs and hyperparameters as variables in R's workspace
-    ymin <- prob$hp$ymin
-    ymax <- prob$hp$ymax
+    taumin <- prob$hp$taumin
+    taumax <- prob$hp$taumax
     mumin <- prob$hp$mumin
     mumax <- prob$hp$mumax
-    ygrid <- seq(ymin, ymax, by = prob$hp$dy)
-    M <- bd_calc_meas_matrix(ygrid, prob$phi_m, prob$sig_m, calibDf)
+    tau <- seq(taumin, taumax, by = prob$hp$dtau)
+    M <- bd_calc_meas_matrix(tau, prob$phi_m, prob$sig_m, calibDf)
 
     if (haveInitList) {
       initList <- prob$control$initList
@@ -95,8 +94,8 @@ bd_do_inference <- function(prob, calibDf, saveFile = NA) {
       indSort <- order(gaussMix$mu)
       init0 <- list()
       init0$pi <- gaussMix$lambda[indSort]
-      init0$mu <- ymin + (ymax-ymin)*(gaussMix$mu[indSort]-1)/length(ygrid-1)
-      init0$sig <- gaussMix$sig[indSort]*prob$hp$dy
+      init0$mu <- taumin + (taumax-taumin)*(gaussMix$mu[indSort]-1)/length(tau-1)
+      init0$sig <- gaussMix$sig[indSort]*prob$hp$dtau
 
       # Each chain needs an initialization for stan
       initList <- list()
@@ -109,9 +108,9 @@ bd_do_inference <- function(prob, calibDf, saveFile = NA) {
     Mt <- t(M)
     N <- dim(M)[1]
     G <- dim(M)[2]
-    sigAlpha <- prob$hp$sigAlpha
-    sigBeta <- prob$hp$sigBeta
-    dirichParam <- prob$hp$dirichParam
+    alpha_s <- prob$hp$alpha_s
+    alpha_r <- prob$hp$alpha_r
+    alpha_d <- prob$hp$alpha_d
     K <- prob$hp$K
     filePath <- system.file("stan/gaussmix.stan",
       package = "baydem"
