@@ -4,13 +4,15 @@
 #' for a possibly truncated Gaussian mixture. The density, f', and rate, f'/f,
 #' can also be calculated by specifying the input \code{type}, which is
 #' 'density' by default, but can also be 'cumulative', 'derivative', or 'rate'.
-#' The parameter vector th has the ordering [pik, muk, sigk], where
+#' The parameter vector th has the ordering (pik, muk, sigk), where
 #' pik, muk, and sigk are the weight, mean, and standard deviation of the k-th
 #' mixture. There are K total mixtures. The truncation boundaries taumin and
 #' taumax are optional.
 #'
-#' @param tau Vector of locations at which to calculate the density
 #' @param th A vector-like object that parameterizes the distribution
+#' @param tau Vector of locations at which to calculate the density
+#' @param taumin Minimum truncation bound
+#' @param taumax Maximum truncation bound
 #' @param type (default density) An optional input specifying whether to
 #'        calculate the density, cumulative distribution, derivative of the
 #'        density, or rate
@@ -18,7 +20,11 @@
 #' @return The output vector with length G
 #'
 #' @export
-bd_calc_gauss_mix_pdf <- function(th, tau, taumin = NA, taumax = NA, type = "density") {
+bd_calc_gauss_mix_pdf <- function(th, 
+                                  tau, 
+                                  taumin = NA, 
+                                  taumax = NA, 
+                                  type = "density") {
   # First, determine whether taumin and taumax are input
   doNorm <- !is.na(taumin)
 

@@ -4,8 +4,7 @@
 \alias{bd_calc_meas_matrix}
 \title{Calculate the measurement matrix given N observations and G grid points}
 \usage{
-bd_calc_meas_matrix(tau, phi_m, sig_m, calibDf, addCalibUnc = T,
-  useTrapez = F)
+bd_calc_meas_matrix(tau, phi_m, sig_m, calibDf, addCalibUnc = T, useTrapez = F)
 }
 \arguments{
 \item{tau}{A vector of calendar dates indexed by g}

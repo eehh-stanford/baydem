@@ -7,3 +7,5 @@
 ^CODE_OF_CONDUCT\.md$
 ^\.travis\.yml$
 ^codecov\.yml$
+^data-raw$
+^LICENSE\.md$

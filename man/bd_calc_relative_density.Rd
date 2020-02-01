@@ -16,8 +16,6 @@ bd_calc_relative_density(soln, spec1, spec2, ind = NA, anal = NA)
 \item{ind}{(Optional) Indices at which to do the calculation. By default,
 all the samples in anal are used.}
 
-\item{anal}{The result of a call to bd_analyze_soln}
-
 \item{anal}{(Optional) The result of a call to bd_analyze_soln. This is only
 needed if either spec1 or spec2 is 'peak'}
 }

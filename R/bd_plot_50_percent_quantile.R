@@ -8,17 +8,17 @@
 #' if add = TRUE the curve is added to the active plot.
 #'
 #' @param an A list-like object of class \code{baydem::bd_analysis} with information on the quantiles of the density function and growth rate
-#' @param add [default FALSE] Whether to make a new plot or add to the active plot
+#' @param add (default: `FALSE`) Whether to make a new plot or add to the active plot
 #' @param ... Additional parameters to pass to plot / lines
 #'
 #' @export
-bd_plot_50_percent_quantile <- function(an,add=F,...) {
+bd_plot_50_percent_quantile <- function(an, add = F, ...) {
 
   # The index of the 50 percent quantile
   ind50 <- which(an$probs == 0.5) # The index in probs / Qdens of the 50 percent quantile
-  if(add) {
-    lines(an$tau,an$Qdens[ind50,],...)
+  if (add) {
+    graphics::lines(an$tau, an$Qdens[ind50, ], ...)
   } else {
-    plot(an$tau,an$Qdens[ind50,],type='l',...)
+    graphics::plot(an$tau, an$Qdens[ind50, ], type = "l", ...)
   }
 }

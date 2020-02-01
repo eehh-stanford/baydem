@@ -16,7 +16,7 @@ expect_error(
 
 expect_equal(
   names(equifResult),
-  c('invSpanList','canInvert')
+  c("invSpanList", "canInvert")
 )
 
 # Check that calling bd_assess_calib_curve_equif does not raise an error and
@@ -27,13 +27,13 @@ expect_error(
 )
 
 expect_error(
-  equifResult2 <- bd_assess_calib_curve_equif(calibDf,equifDates),
+  equifResult2 <- bd_assess_calib_curve_equif(calibDf, equifDates),
   NA
 )
 
 expect_equal(
   names(equifResult2),
-  c('invSpanList','canInvert')
+  c("invSpanList", "canInvert")
 )
 
 # Check that calling bd_calc_calib_curve_frac_modern does not raise an error.
@@ -51,9 +51,9 @@ expect_equal(
 # Check that calling bd_calc_calib_curve_frac_modern does not raise an error
 # when tau is input. Also check that the output length is at least the same
 # length as the input
-tau2 <- c(600,602,805.89)
+tau2 <- c(600, 602, 805.89)
 expect_error(
-  phi2 <- bd_calc_calib_curve_frac_modern(calibDf,tau2),
+  phi2 <- bd_calc_calib_curve_frac_modern(calibDf, tau2),
   NA
 )
 
@@ -64,20 +64,20 @@ expect_equal(
 
 # Check that calling bd_vis_calib_curve does not raise an error
 expect_error(
-  bd_vis_calib_curve(600,700,calibDf),
+  bd_vis_calib_curve(600, 700, calibDf),
   NA
 )
 
 # Check the functioning of bd_calc_trapez_weights
 expect_equal(
-  bd_calc_trapez_weights(c(-1.5,2,3,4,7)),
-  c(1.75,2.25,1,2,1.5)
+  bd_calc_trapez_weights(c(-1.5, 2, 3, 4, 7)),
+  c(1.75, 2.25, 1, 2, 1.5)
 )
 
 # Check that bd_sample_trunc_exp does not throw an error. Check both positive
 # and negative growth rates. Also check the lengths of the outputs.
 expect_error(
-  expSamp1 <- bd_sample_trunc_exp(50,0.01,600,1300),
+  expSamp1 <- bd_sample_trunc_exp(50, 0.01, 600, 1300),
   NA
 )
 
@@ -87,7 +87,7 @@ expect_equal(
 )
 
 expect_error(
-  expSamp2 <- bd_sample_trunc_exp(50,-0.01,600,1300),
+  expSamp2 <- bd_sample_trunc_exp(50, -0.01, 600, 1300),
   NA
 )
 

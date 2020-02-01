@@ -26,7 +26,7 @@ Find calendar date from fraction modern value given known bounding indices
 \details{
 tau_curve and phi_curve give the calendar date and fraction modern of the
 radiocarbon calibration curve. It is known that the calendar date lies
-lies between tau_curve\link{ii_lo} and tau_curve\link{ii_hi}. Interpolate to find the
+lies between \code{tau_curve[ii_lo]} and \code{tau_curve[ii_hi]}. Interpolate to find the
 calendar date corresponding to the input phi_known. This function is called
 by bd_assess_calib_curve_equif.
 }

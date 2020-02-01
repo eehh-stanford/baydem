@@ -11,9 +11,9 @@ bd_summarize_trunc_gauss_mix_sample(th, taumin, taumax, N = 1000)
 
 \item{taumin}{The lower truncation value}
 
-\item{N}{(Default 1000) The number of points use for identifying slope changes}
+\item{taumax}{The upper truncation value}
 
-\item{taumin}{The upper truncation value}
+\item{N}{(Default 1000) The number of points use for identifying slope changes}
 }
 \value{
 A list consisting of tlo / thi (specifying the time periods), indPeak, tpeak, fpeak, and pattern (see Description)

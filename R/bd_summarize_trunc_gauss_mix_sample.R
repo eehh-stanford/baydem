@@ -31,7 +31,7 @@
 #'
 #' @param  th The Gaussian mixture parameterization
 #' @param  taumin The lower truncation value
-#' @param  taumin The upper truncation value
+#' @param  taumax The upper truncation value
 #' @param  N (Default 1000) The number of points use for identifying slope changes
 #'
 #' @return A list consisting of tlo / thi (specifying the time periods), indPeak, tpeak, fpeak, and pattern (see Description)
@@ -61,7 +61,7 @@ bd_summarize_trunc_gauss_mix_sample <- function(th, taumin, taumax, N = 1000) {
 
     # Iterate over crossings
     for (m in 1:M) {
-      root <- uniroot(rootFun, lower = t[ind[m]], upper = t[ind[m] + 1])
+      root <- stats::uniroot(rootFun, lower = t[ind[m]], upper = t[ind[m] + 1])
       tcross[m] <- root$root
       fcross[m] <- bd_calc_gauss_mix_pdf(th, tcross[m], taumin, taumax)
     }

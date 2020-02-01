@@ -28,6 +28,8 @@ bd_do_inference(prob, calibDf, saveFile = NA)
 In addition, the field control is optional (see above).}
 
 \item{calibDf}{A dataframe with radiocarbon calibration curve information}
+
+\item{saveFile}{A filename for the output (optional)}
 }
 \value{
 soln, a list with three fields: prob (the input),

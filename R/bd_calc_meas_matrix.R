@@ -33,8 +33,8 @@ bd_calc_meas_matrix <- function(tau, phi_m, sig_m, calibDf, addCalibUnc = T, use
   # First, check the consistency of the spacing in tau and the value of
   # useTrapez, which must be TRUE if tau is irregularly spaced.
   irreg <- length(unique(diff(tau))) != 1
-  if(irreg && !useTrapez) {
-    stop('tau is irregularly spaced but useTrapez is FALSE')
+  if (irreg && !useTrapez) {
+    stop("tau is irregularly spaced but useTrapez is FALSE")
   }
 
   # tau is in AD

@@ -5,94 +5,93 @@
 # Do this in standalone function so that expect_error can be used
 run_simulation <- function() {
 
-# Set the random number seed (seed from random.org)
-set.seed(466985)
+  # Set the random number seed (seed from random.org)
+  set.seed(466985)
 
-# The simulation parameters: a Gaussian mixture with ordering pi1, pi2, mu1,
-# mu2, sig1, sig2
-th_sim <- c(.2, .8, 775, 1000, 35, 45) 
+  # The simulation parameters: a Gaussian mixture with ordering pi1, pi2, mu1,
+  # mu2, sig1, sig2
+  th_sim <- c(.2, .8, 775, 1000, 35, 45)
 
-# Load the calibration data frame by calling bd_load_calib_curve
-calibDf <- baydem::bd_load_calib_curve("intcal13")
+  # Load the calibration data frame by calling bd_load_calib_curve
+  calibDf <- baydem::bd_load_calib_curve("intcal13")
 
-# For simulating radiocarbon measurements, a draw is made for the standard
-# deviation of the fraction modern from a uniform density on the interval 0.0021
-# to 0.0028. This is specified via the list errorSpec
-errorSpec <- list(min = .0021, max = .0028)
+  # For simulating radiocarbon measurements, a draw is made for the standard
+  # deviation of the fraction modern from a uniform density on the interval 0.0021
+  # to 0.0028. This is specified via the list errorSpec
+  errorSpec <- list(min = .0021, max = .0028)
 
-# taumin and taumax are the minimum and maximum calendar date used in the
-# Bayesian inference. Dates older than taumin and younger than taumax are
-# assumed to have zero probability, and the parameterized density p(t|theta) is
-#  normalized to integrate to 1 on the interval taumin to taumax.
-taumin <- 600 # AD
-taumax <- 1300 # AD
+  # taumin and taumax are the minimum and maximum calendar date used in the
+  # Bayesian inference. Dates older than taumin and younger than taumax are
+  # assumed to have zero probability, and the parameterized density p(t|theta) is
+  #  normalized to integrate to 1 on the interval taumin to taumax.
+  taumin <- 600 # AD
+  taumax <- 1300 # AD
 
-# Use 400 samples, of which 200 are warm-up (sometimes called burn-in)
-# More samples would be needed to test the functionality of the inference, but
-# this test just ensures nothing basic is broken in the code.
-mcSamp <- 400 # This includes warm-up
-mcWarmup <- 200 # Number of warm-up samples
+  # Use 400 samples, of which 200 are warm-up (sometimes called burn-in)
+  # More samples would be needed to test the functionality of the inference, but
+  # this test just ensures nothing basic is broken in the code.
+  mcSamp <- 400 # This includes warm-up
+  mcWarmup <- 200 # Number of warm-up samples
 
-N <- 20 # number of samples
-sampDates <- bd_sample_gauss_mix(N, th_sim, taumin, taumax)
-sampRcMeas <- bd_draw_rc_meas_using_date(sampDates, calibDf, errorSpec, isAD = T)
-simData <- list(calDates = sampDates, rcMeas = sampRcMeas)
+  N <- 20 # number of samples
+  sampDates <- bd_sample_gauss_mix(N, th_sim, taumin, taumax)
+  sampRcMeas <- bd_draw_rc_meas_using_date(sampDates, calibDf, errorSpec, isAD = T)
+  simData <- list(calDates = sampDates, rcMeas = sampRcMeas)
 
-# shape parameter for gamma distribution of standard deviation prior
-alpha_s <- 3
-# rate  parameter for gamma distribution of standard deviation prior
-alpha_r <- (alpha_s-1) / 300
+  # shape parameter for gamma distribution of standard deviation prior
+  alpha_s <- 3
+  # rate  parameter for gamma distribution of standard deviation prior
+  alpha_r <- (alpha_s - 1) / 300
 
-# hyperparameters for inference
-hp <-
-  list(
-    # Class of fit (Gaussian mixture)
-    fitType = "gaussmix",
-    # Parameter for the dirichlet draw of the mixture probabilities
-    alpha_d = 1,
-    # The gamma distribution shape parameter for sigma
-    alpha_s = 3,
-    # The gamma distribution rate parameter for sigma, yielding a mode of 300
-    alpha_r = (3 - 1) / 300,
-    # Minimum calendar date (years BC/AD)
-    taumin = taumin,
-    # Maximum calendar date (years BC/AD)
-    taumax = taumax,
-    # Spacing for the measurement matrix (years)
-    dtau = 5,
-    # Number of mixtures
-    K = 2
+  # hyperparameters for inference
+  hp <-
+    list(
+      # Class of fit (Gaussian mixture)
+      fitType = "gaussmix",
+      # Parameter for the dirichlet draw of the mixture probabilities
+      alpha_d = 1,
+      # The gamma distribution shape parameter for sigma
+      alpha_s = 3,
+      # The gamma distribution rate parameter for sigma, yielding a mode of 300
+      alpha_r = (3 - 1) / 300,
+      # Minimum calendar date (years BC/AD)
+      taumin = taumin,
+      # Maximum calendar date (years BC/AD)
+      taumax = taumax,
+      # Spacing for the measurement matrix (years)
+      dtau = 5,
+      # Number of mixtures
+      K = 2
+    )
+
+  # The control settings to use for inference in the call to bd_do_inference.
+  # Set the total number of samples (including warmup) and warmup samples to the
+  # values specified above
+  controlList <- list(
+    sampsPerChain = mcSamp,
+    warmup = mcWarmup,
+    stanControl = list(adapt_delta = .99)
   )
 
-# The control settings to use for inference in the call to bd_do_inference.
-# Set the total number of samples (including warmup) and warmup samples to the
-# values specified above
-controlList <- list(
-  sampsPerChain = mcSamp,
-  warmup = mcWarmup,
-  stanControl = list(adapt_delta = .99)
-)
+  # Define a problem object to be input for the inference
+  prob <- list(
+    phi_m = simData$rcMeas$phi_m,
+    sig_m = simData$rcMeas$sig_m,
+    hp = hp,
+    calibDf = calibDf,
+    control = controlList
+  )
 
-# Define a problem object to be input for the inference
-prob <- list(
-  phi_m = simData$rcMeas$phi_m,
-  sig_m = simData$rcMeas$sig_m,
-  hp = hp,
-  calibDf = calibDf,
-  control = controlList
-)
+  soln <- bd_do_inference(prob, calibDf)
+  anal <- bd_analyze_soln(soln)
 
-soln <- bd_do_inference(prob, calibDf)
-anal <- bd_analyze_soln(soln)
-
-return(list(prob=prob,soln=soln,anal=anal,calibDf=calibDf,errorSpec=errorSpec))
-
+  return(list(prob = prob, soln = soln, anal = anal, calibDf = calibDf, errorSpec = errorSpec))
 }
 
 # Calling run_simulation should not raise an error. If it does, the test fails.
 expect_error(
-  simOutput <- run_simulation()
-,NA
+  simOutput <- run_simulation(),
+  NA
 )
 
 # Check that building a density plot from individual functions does not raise
@@ -118,10 +117,10 @@ expect_error(
 
 # Check that calling bd_draw_rc_meas_using_date does not raise an error,
 # whether isAD is True or False
-t_e_AD    <- c(700,705)
+t_e_AD <- c(700, 705)
 t_e_calBP <- 1950 - t_e_AD
 expect_error(
-  rcMeas1 <- bd_draw_rc_meas_using_date(t_e_AD, simOutput$calibDf, simOutput$errorSpec,isAD=T),
+  rcMeas1 <- bd_draw_rc_meas_using_date(t_e_AD, simOutput$calibDf, simOutput$errorSpec, isAD = T),
   NA
 )
 
@@ -137,7 +136,7 @@ expect_error(
 )
 
 expect_error(
-  halfLife2 <- bd_calc_half_life_from_peak(simOutput$soln,propChange=.25),
+  halfLife2 <- bd_calc_half_life_from_peak(simOutput$soln, propChange = .25),
   NA
 )
 
@@ -149,12 +148,12 @@ expect_error(
 # bd_calc_range_density
 # bd_calc_peak_density
 expect_error(
-  relDens1 <- bd_calc_relative_density(soln, 'peak',1100),
+  relDens1 <- bd_calc_relative_density(soln, "peak", 1100),
   NA
 )
 
 expect_error(
-  relDens2 <- bd_calc_relative_density(soln, 900,c(700,750)),
+  relDens2 <- bd_calc_relative_density(soln, 900, c(700, 750)),
   NA
 )
 
@@ -164,13 +163,13 @@ expect_error(
   NA
 )
 
-# Check that calling bd_calc_gauss_mix_pdf does not raise an error for all the 
+# Check that calling bd_calc_gauss_mix_pdf does not raise an error for all the
 # valid calculation types. Also check the dimensions of the output. Use the
 # 100-th sample of TH, which has dimensions 800 x 6. tau, which is created to do
 # the test, has length 141.
-tau <- seq(simOutput$prob$hp$taumin,simOutput$prob$hp$taumax,by=simOutput$prob$hp$dtau)
+tau <- seq(simOutput$prob$hp$taumin, simOutput$prob$hp$taumax, by = simOutput$prob$hp$dtau)
 expect_error(
-  pdfVect1 <- bd_calc_gauss_mix_pdf(TH[100,], tau), # density is the default type
+  pdfVect1 <- bd_calc_gauss_mix_pdf(TH[100, ], tau), # density is the default type
   NA
 )
 
@@ -180,7 +179,7 @@ expect_equal(
 )
 
 expect_error(
-  pdfVect2 <- bd_calc_gauss_mix_pdf(TH[100,], tau, type = 'cumulative'),
+  pdfVect2 <- bd_calc_gauss_mix_pdf(TH[100, ], tau, type = "cumulative"),
   NA
 )
 
@@ -190,7 +189,7 @@ expect_equal(
 )
 
 expect_error(
-  pdfVect3 <- bd_calc_gauss_mix_pdf(TH[100,], tau, type = 'derivative'),
+  pdfVect3 <- bd_calc_gauss_mix_pdf(TH[100, ], tau, type = "derivative"),
   NA
 )
 
@@ -200,7 +199,7 @@ expect_equal(
 )
 
 expect_error(
-  pdfVect4 <- bd_calc_gauss_mix_pdf(TH[100,], tau, type = 'rate'),
+  pdfVect4 <- bd_calc_gauss_mix_pdf(TH[100, ], tau, type = "rate"),
   NA
 )
 
@@ -212,49 +211,49 @@ expect_equal(
 # Check that calling bd_summarize_trunc_gauss_mix_sample does not raise an
 # error. Use the 100-th sample from TH.
 expect_error(
-  summ <- bd_summarize_trunc_gauss_mix_sample(TH[100,],simOutput$prob$hp$taumin,simOutput$prob$hp$taumax),
+  summ <- bd_summarize_trunc_gauss_mix_sample(TH[100, ], simOutput$prob$hp$taumin, simOutput$prob$hp$taumax),
   NA
 )
 
-# Check that calling bd_calc_gauss_mix_pdf_mat does not raise an error for all the 
-# valid calculation types. Also check the dimensions of the output. 
+# Check that calling bd_calc_gauss_mix_pdf_mat does not raise an error for all the
+# valid calculation types. Also check the dimensions of the output.
 expect_error(
   pdfMat1 <- bd_calc_gauss_mix_pdf_mat(TH, tau), # density is the default type
   NA
 )
 
 expect_equal(
-  c(nrow(TH),length(tau)),
+  c(nrow(TH), length(tau)),
   dim(pdfMat1)
 )
 
 expect_error(
-  pdfMat2 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = 'cumulative'),
-                  NA
+  pdfMat2 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = "cumulative"),
+  NA
 )
 
 expect_equal(
-  c(nrow(TH),length(tau)),
+  c(nrow(TH), length(tau)),
   dim(pdfMat2)
 )
 
 expect_error(
-  pdfMat3 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = 'derivative'),
+  pdfMat3 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = "derivative"),
   NA
 )
 
 expect_equal(
-  c(nrow(TH),length(tau)),
+  c(nrow(TH), length(tau)),
   dim(pdfMat3)
 )
 
 expect_error(
-  pdfMat4 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = 'rate'),
+  pdfMat4 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = "rate"),
   NA
 )
 
 expect_equal(
-  c(nrow(TH),length(tau)),
+  c(nrow(TH), length(tau)),
   dim(pdfMat4)
 )
 
@@ -265,22 +264,22 @@ expect_equal(
 #     uncertainty. Also check the dimensions of the output
 
 expect_error(
-  measMat1a <- bd_calc_meas_matrix(tau,simOutput$prob$phi_m,simOutput$prob$sig_m,simOutput$calibDf,addCalibUnc=T),
+  measMat1a <- bd_calc_meas_matrix(tau, simOutput$prob$phi_m, simOutput$prob$sig_m, simOutput$calibDf, addCalibUnc = T),
   NA
 )
 
 expect_equal(
-  c(length(simOutput$prob$phi_m),length(tau)),
+  c(length(simOutput$prob$phi_m), length(tau)),
   dim(measMat1a)
 )
 
 expect_error(
-  measMat1b <- bd_calc_meas_matrix(tau,simOutput$prob$phi_m,simOutput$prob$sig_m,simOutput$calibDf,addCalibUnc=F),
+  measMat1b <- bd_calc_meas_matrix(tau, simOutput$prob$phi_m, simOutput$prob$sig_m, simOutput$calibDf, addCalibUnc = F),
   NA
 )
 
 expect_equal(
-  c(length(simOutput$prob$phi_m),length(tau)),
+  c(length(simOutput$prob$phi_m), length(tau)),
   dim(measMat1b)
 )
 
@@ -288,30 +287,30 @@ expect_equal(
 #     is irregularly spaced. Do this for both using and not using calibration
 #     uncertainty. Also check the dimensions of the output
 
-tau_irreg <- c(800,805,810,825)
+tau_irreg <- c(800, 805, 810, 825)
 # an error is expected if useTrapez is not set to TRUE
 expect_error(
-  measMat2a <- bd_calc_meas_matrix(tau_irreg,simOutput$prob$phi_m,simOutput$prob$sig_m,simOutput$calibDf)
- ,'tau is irregularly spaced but useTrapez is FALSE'
+  measMat2a <- bd_calc_meas_matrix(tau_irreg, simOutput$prob$phi_m, simOutput$prob$sig_m, simOutput$calibDf),
+  "tau is irregularly spaced but useTrapez is FALSE"
 )
 
 expect_error(
-  measMat2a <- bd_calc_meas_matrix(tau_irreg,simOutput$prob$phi_m,simOutput$prob$sig_m,simOutput$calibDf,addCalibUnc=T,useTrapez=T),
+  measMat2a <- bd_calc_meas_matrix(tau_irreg, simOutput$prob$phi_m, simOutput$prob$sig_m, simOutput$calibDf, addCalibUnc = T, useTrapez = T),
   NA
 )
 
 expect_equal(
-  c(length(simOutput$prob$phi_m),length(tau_irreg)),
+  c(length(simOutput$prob$phi_m), length(tau_irreg)),
   dim(measMat2a)
 )
 
 expect_error(
-  measMat2b <- bd_calc_meas_matrix(tau_irreg,simOutput$prob$phi_m,simOutput$prob$sig_m,simOutput$calibDf,addCalibUnc=F,useTrapez=T),
+  measMat2b <- bd_calc_meas_matrix(tau_irreg, simOutput$prob$phi_m, simOutput$prob$sig_m, simOutput$calibDf, addCalibUnc = F, useTrapez = T),
   NA
 )
 
 expect_equal(
-  c(length(simOutput$prob$phi_m),length(tau_irreg)),
+  c(length(simOutput$prob$phi_m), length(tau_irreg)),
   dim(measMat2b)
 )
 
@@ -327,14 +326,14 @@ expect_error(
 
 expect_equal(
   dim(Qdens1),
-  c(3,ncol(fMat))
+  c(3, ncol(fMat))
 )
 
 expect_error(
-  Qdens2 <- bd_calc_quantiles(fMat, c(.025,.05,.5,.90,.975)),
+  Qdens2 <- bd_calc_quantiles(fMat, c(.025, .05, .5, .90, .975)),
   NA
 )
 expect_equal(
   dim(Qdens2),
-  c(5,ncol(fMat))
+  c(5, ncol(fMat))
 )

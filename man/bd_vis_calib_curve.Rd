@@ -4,8 +4,15 @@
 \alias{bd_vis_calib_curve}
 \title{Visualize the calibration curve with equifinal and non-equifinal time spans}
 \usage{
-bd_vis_calib_curve(taumin, taumax, calibDf, invertCol = "gray90",
-  pointCol = "black", pointPch = 19, ...)
+bd_vis_calib_curve(
+  taumin,
+  taumax,
+  calibDf,
+  invertCol = "gray90",
+  pointCol = "black",
+  pointPch = 19,
+  ...
+)
 }
 \arguments{
 \item{taumin}{The minimum calendar date for plotting (AD)}
@@ -14,9 +21,11 @@ bd_vis_calib_curve(taumin, taumax, calibDf, invertCol = "gray90",
 
 \item{calibDf}{The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError}
 
-\item{invertCol}{\link{Default gray90} The color for shading invertible regions}
+\item{invertCol}{(default: \code{gray90}) The color for shading invertible regions}
 
-\item{pointCol}{\link{Default black} The color for calibration curve points}
+\item{pointCol}{(default: \code{black}) The color for calibration curve points}
+
+\item{pointPch}{(default: \code{19}) The symbol for calibration curve points}
 
 \item{...}{Additional inputs to plots}
 }

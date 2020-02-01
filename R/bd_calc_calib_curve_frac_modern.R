@@ -14,7 +14,10 @@
 #'
 #' @return The vector of calibration curve fraction modern values
 #' @export
-bd_calc_calib_curve_frac_modern <- function(calibDf, tau = NA, isBP = FALSE) {
+bd_calc_calib_curve_frac_modern <- 
+  function(calibDf, 
+           tau = NA, 
+           isBP = FALSE) {
   phi_curve <- exp(-calibDf$uncalYearBP / 8033)
   if (all(is.na(tau))) {
     return(phi_curve)
@@ -25,7 +28,7 @@ bd_calc_calib_curve_frac_modern <- function(calibDf, tau = NA, isBP = FALSE) {
     tau <- 1950 - tau # Convert to AD
   }
 
-  phi <- approx(tau_curve, phi_curve, tau)
+  phi <- stats::approx(tau_curve, phi_curve, tau)
   phi <- phi$y
   return(phi)
 }

@@ -39,12 +39,18 @@
 #' @param th_sim (optional) The known parameters used to create simulation data
 #' @param lev (default: 0.025) The level to use for the quantile bands
 #' @param rateProp (optional) The cumulative density needed to define rate growth bands
-#' @param doSummary [Default TRUE] Whether to summarize each sample by calling bd_summarize_sample
+#' @param doSummary (default: `TRUE`) Whether to summarize each sample by calling bd_summarize_sample
 #'
 #' @return A list with information on the quantiles of the density function and growth rate (and sample summaries)
 #'
 #' @export
-bd_analyze_soln <- function(soln, tau = NA, th_sim = NA, lev = 0.025, rateProp = NA, doSummary = T) {
+bd_analyze_soln <- 
+  function(soln, 
+           tau = NA, 
+           th_sim = NA, 
+           lev = 0.025, 
+           rateProp = NA, 
+           doSummary = T) {
   if (all(is.na(tau))) {
     tau <- seq(soln$prob$hp$taumin, soln$prob$hp$taumax, by = soln$prob$hp$dtau)
   }

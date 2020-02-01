@@ -10,14 +10,18 @@
 #' the half life is set to NA.
 #'
 #' @param soln The result of a call to bd_do_inference
-#' @param anal (Optional) The result of a call to bd_analyze_soln. If not provided, it is calculated
 #' @param propChange (Default 0.5) The relative decrease in density to use for the duration calculation
-#' @param (default taumin to taumax) peakRange can be given so that the peak density used is on the range peakRange
+#' @param anal (Optional) The result of a call to bd_analyze_soln. If not provided, it is calculated
+#' @param peakRange (default: `c(taumin, taumax)`) peakRange can be given so that the peak density used is on the range peakRange
 #'
 #' @return A vector of "half-lives" (proportional change set by propChange)
 #'
 #' @export
-bd_calc_half_life_from_peak <- function(soln, propChange = 0.5, anal = NA, peakRange = NA) {
+bd_calc_half_life_from_peak <- 
+  function(soln, 
+           propChange = 0.5, 
+           anal = NA, 
+           peakRange = NA) {
   TH <- bd_extract_param(soln$fit)
   N <- nrow(TH)
   taumin <- soln$prob$hp$taumin
@@ -55,10 +59,17 @@ bd_calc_half_life_from_peak <- function(soln, propChange = 0.5, anal = NA, peakR
 
       # Find root. Catch any errors in case the half life does not exist on the
       # interval tpeak to taumax
-      result <- tryCatch({
-        root <- uniroot(rootFun, lower = tpeak, upper = peakRange[2])
-        halfLife[n] <- min(root$root - tpeak)
-      },error=function(e){NA})
+      result <- tryCatch(
+        {
+          root <- stats::uniroot(rootFun, 
+                                 lower = tpeak, 
+                                 upper = peakRange[2])
+          halfLife[n] <- min(root$root - tpeak)
+        },
+        error = function(e) {
+          NA
+        }
+      )
     }
   }
   return(halfLife)

@@ -1,9 +1,9 @@
 #' @title Calculate the relative density at two dates (or a range of dates / the peak)
 #'
 #' @description
-#' 
+#'
 #' Calculate the relative density at two dates, and/or a range of dates and/or the peak value (see details).
-#'  
+#'
 #' @details
 #' Calculate the relative density for two dates or, more generally, for two
 #' different specifications of the density aside from a simple date. The

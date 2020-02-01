@@ -9,14 +9,24 @@
 #' bd_analyze_soln.
 #'
 #' @param an A list-like object of class \code{baydem::bd_analysis} with information on the quantiles of the density function and growth rate
-#' @param add [default FALSE] Whether to make a new plot or add to the active plot
-#' @param ... Additional parameters to pass to polygon
+#' @param col The color of the shaded region
+#' @param ... Additional parameters to pass to \code{graphics::polygon}
 #'
 #' @export
-bd_add_shaded_quantiles <- function(an,col=adjustcolor("grey",alpha.f=0.5),...) {
+bd_add_shaded_quantiles <-
+  function(an,
+           col = grDevices::adjustcolor("grey",
+             alpha.f = 0.5
+           ),
+           ...) {
 
-  # The indidces of the minimum and maximum quantiles
-  indMin <- which.min(an$probs)
-  indMax <- which.max(an$probs)
-  polygon(c(an$tau,rev(an$tau)),c(an$Qdens[indMin,],rev(an$Qdens[indMax,])),border=NA,xlab=NULL,col=col)
-}
+    # The indidces of the minimum and maximum quantiles
+    indMin <- which.min(an$probs)
+    indMax <- which.max(an$probs)
+    graphics::polygon(c(an$tau, rev(an$tau)), 
+            c(an$Qdens[indMin, ], 
+              rev(an$Qdens[indMax, ])), 
+            border = NA, 
+            xlab = NULL, 
+            col = col)
+  }

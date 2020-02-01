@@ -20,6 +20,7 @@
 #' `sig_m` (vector of measurement errors for phi_m), and `hp` (list of hyperparameters).
 #' In addition, the field control is optional (see above).
 #' @param calibDf A dataframe with radiocarbon calibration curve information
+#' @param saveFile A filename for the output (optional)
 #'
 #' @export
 #'
@@ -89,22 +90,22 @@ bd_do_inference <- function(prob, calibDf, saveFile = NA) {
       # Set it using the summed density
       f_spdf <- colSums(M)
       # Sample 1000 times from the summed density to do a mixture fit
-      xmix <- sample.int(length(f_spdf),1000,replace=T,prob=f_spdf)
-      gaussMix <- mixtools::normalmixEM(xmix,k=prob$hp$K,maxit=20000)
+      xmix <- sample.int(length(f_spdf), 1000, replace = T, prob = f_spdf)
+      gaussMix <- mixtools::normalmixEM(xmix, k = prob$hp$K, maxit = 20000)
       indSort <- order(gaussMix$mu)
       init0 <- list()
       init0$pi <- gaussMix$lambda[indSort]
-      init0$mu <- taumin + (taumax-taumin)*(gaussMix$mu[indSort]-1)/length(tau-1)
-      init0$sig <- gaussMix$sig[indSort]*prob$hp$dtau
+      init0$mu <- taumin + (taumax - taumin) * (gaussMix$mu[indSort] - 1) / length(tau - 1)
+      init0$sig <- gaussMix$sig[indSort] * prob$hp$dtau
 
       # Each chain needs an initialization for stan
       initList <- list()
-      for(cc in 1:numChains) {
+      for (cc in 1:numChains) {
         initList[[cc]] <- init0
       }
     }
-    controlFinal$initList <- initList 
-   
+    controlFinal$initList <- initList
+
     Mt <- t(M)
     N <- dim(M)[1]
     G <- dim(M)[2]

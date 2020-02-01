@@ -8,12 +8,20 @@
 #' @param taumin The minimum calendar date for plotting (AD)
 #' @param taumax The maximum calendar date for plotting (AD)
 #' @param calibDf The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError
-#' @param invertCol [Default gray90] The color for shading invertible regions
-#' @param pointCol [Default black] The color for calibration curve points
+#' @param invertCol (default: `gray90`) The color for shading invertible regions
+#' @param pointCol (default: `black`) The color for calibration curve points
+#' @param pointPch (default: `19`) The symbol for calibration curve points
 #' @param ... Additional inputs to plots
 #'
 #' @export
-bd_vis_calib_curve <- function(taumin, taumax, calibDf, invertCol = "gray90", pointCol = "black", pointPch = 19, ...) {
+bd_vis_calib_curve <- 
+  function(taumin, 
+           taumax, 
+           calibDf, 
+           invertCol = "gray90", 
+           pointCol = "black", 
+           pointPch = 19, 
+           ...) {
   tau_curve <- 1950 - calibDf$yearBP
   phi_curve <- exp(-calibDf$uncalYearBP / 8033)
   ind <- (tau_curve >= taumin) & (tau_curve <= taumax)
@@ -23,7 +31,7 @@ bd_vis_calib_curve <- function(taumin, taumax, calibDf, invertCol = "gray90", po
   phiMax <- max(phiVect)
 
   # Create an empty plot
-  plot(1, type = "n", xlim = c(taumin, taumax), ylim = c(phiMin, phiMax), ...)
+  graphics::plot(1, type = "n", xlim = c(taumin, taumax), ylim = c(phiMin, phiMax), ...)
 
   equiInfo <- baydem::bd_assess_calib_curve_equif(calibDf)
   canInvert <- equiInfo$canInvert
@@ -31,10 +39,10 @@ bd_vis_calib_curve <- function(taumin, taumax, calibDf, invertCol = "gray90", po
   for (ii in 1:length(invSpanList)) {
     invSpan <- invSpanList[[ii]]
     if (dplyr::between(invSpan$tau_left, taumin, taumax) || dplyr::between(invSpan$tau_right, taumin, taumax)) {
-      rect(invSpan$tau_left, phiMin, invSpan$tau_right, phiMax, border = NA, col = invertCol)
+      graphics::rect(invSpan$tau_left, phiMin, invSpan$tau_right, phiMax, border = NA, col = invertCol)
     }
   }
 
   # Draw calibration curve points
-  points(tauVect, phiVect, col = pointCol, pch = pointPch)
+  graphics::points(tauVect, phiVect, col = pointCol, pch = pointPch)
 }

@@ -4,8 +4,7 @@
 \alias{bd_calc_gauss_mix_pdf_mat}
 \title{Calculate the density of a possibly truncated Gaussian mixture for a matrix of samples}
 \usage{
-bd_calc_gauss_mix_pdf_mat(TH, tau, taumin = NA, taumax = NA,
-  type = "density")
+bd_calc_gauss_mix_pdf_mat(TH, tau, taumin = NA, taumax = NA, type = "density")
 }
 \arguments{
 \item{TH}{A matrix of samples with dimensions S x P}

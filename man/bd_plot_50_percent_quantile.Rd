@@ -9,12 +9,12 @@ bd_plot_50_percent_quantile(an, add = F, ...)
 \arguments{
 \item{an}{A list-like object of class \code{baydem::bd_analysis} with information on the quantiles of the density function and growth rate}
 
-\item{add}{\link{default FALSE} Whether to make a new plot or add to the active plot}
+\item{add}{(default: \code{FALSE}) Whether to make a new plot or add to the active plot}
 
 \item{...}{Additional parameters to pass to plot / lines}
 }
 \description{
-Plot the 50% quantile curve
+Plot the 50\% quantile curve
 }
 \details{
 The input, an, is the result of a call to bd_analyze_soln. It is a

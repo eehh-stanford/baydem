@@ -25,7 +25,7 @@
 #                          ymax         -- maximum calendar date
 
 bd_sample_posterior <- function(fit, N) {
-  samps <- bd_extract_param(fit, asList = T)
+  samps <- bd_extract_param(fit)
   numSamp <- length(samps)
   ind <- sample.int(numSamp, size = N)
   return(samps[ind])

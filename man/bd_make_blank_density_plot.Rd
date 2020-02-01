@@ -4,11 +4,26 @@
 \alias{bd_make_blank_density_plot}
 \title{Prepare a blank plot for showing densities}
 \usage{
-bd_make_blank_density_plot(an, xlim = NA, ylim = NA, xlab = NA,
-  ylab = NA, ...)
+bd_make_blank_density_plot(
+  an,
+  xlim = NA,
+  ylim = NA,
+  xlab = "Calendar Date [AD]",
+  ylab = "Density",
+  ...
+)
 }
 \arguments{
-\item{an}{A list-like object of class \code{baydem::bd_analysis} with information on the quantiles of the density function and growth rate}
+\item{an}{A list-like object of class \code{baydem::bd_analysis} with
+information on the quantiles of the density function and growth rate}
+
+\item{xlim}{Numeric vector of length 2, giving the x coordinate range}
+
+\item{ylim}{Numeric vector of length 2, giving the y coordinate range}
+
+\item{xlab}{X axis label}
+
+\item{ylab}{Y axis label}
 
 \item{...}{Additional parameters to pass to plot}
 }

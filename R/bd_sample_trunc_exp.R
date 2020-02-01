@@ -20,7 +20,7 @@ bd_sample_trunc_exp <- function(N, r0, taumin, taumax) {
   if (r0 > 0) {
     return(taumax - RGeode::rexptr(N, r0, range = c(0, taumax - taumin)))
   } else if (r0 == 0) {
-    return(runif(N, taumin, taumax))
+    return(stats::runif(N, taumin, taumax))
   } else {
     return(RGeode::rexptr(N, -r0, range = c(taumin, taumax)))
   }
