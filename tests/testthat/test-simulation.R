@@ -209,6 +209,12 @@ expect_equal(
   length(pdfVect4)
 )
 
+# Check that calling bd_summarize_trunc_gauss_mix_sample does not raise an
+# error. Use the 100-th sample from TH.
+expect_error(
+  summ <- bd_summarize_trunc_gauss_mix_sample(TH[100,],simOutput$prob$hp$taumin,simOutput$prob$hp$taumax),
+  NA
+)
 
 # Check that calling bd_calc_gauss_mix_pdf_mat does not raise an error for all the 
 # valid calculation types. Also check the dimensions of the output. 
