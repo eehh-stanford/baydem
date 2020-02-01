@@ -92,18 +92,18 @@ unpack_spec <- function(spec, soln, isOne) {
   if (is.numeric(spec)) {
     if (length(spec) == 1) { # Numeric / length 1
       point <- spec
-      if (point < soln$prob$hp$ymin || soln$prob$hp$ymax < point) {
-        stop(paste(s, "is a single date, but not in the range ymin to ymax"))
+      if (point < soln$prob$hp$taumin || soln$prob$hp$taumax < point) {
+        stop(paste(s, "is a single date, but not in the range taumin to taumax"))
       }
       return(list(type = "point", value = point))
     } else if (length(spec) == 2) { # Numeric / length 2
       lower <- spec[1]
-      if (lower < soln$prob$hp$ymin || soln$prob$hp$ymax < lower) {
-        stop(paste(s, "is a date range, but lower value is not in the range ymin to ymax"))
+      if (lower < soln$prob$hp$taumin || soln$prob$hp$taumax < lower) {
+        stop(paste(s, "is a date range, but lower value is not in the range taumin to taumax"))
       }
       upper <- spec[2]
-      if (upper < soln$prob$hp$ymin || soln$prob$hp$ymax < upper) {
-        stop(paste(s, "is a date range, but upper value is not in the range ymin to ymax"))
+      if (upper < soln$prob$hp$taumin || soln$prob$hp$taumax < upper) {
+        stop(paste(s, "is a date range, but upper value is not in the range taumin to taumax"))
       }
       if (lower > upper) {
         stop(paste(s, "is a date range, but lower value is greater than upper value"))
@@ -125,16 +125,16 @@ unpack_spec <- function(spec, soln, isOne) {
 
 #' @export
 # A helper function to calculate point densities
-bd_calc_point_density <- function(TH, soln, y) {
-  return(as.numeric(bd_calc_gauss_mix_pdf_mat(TH, y, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax)))
+bd_calc_point_density <- function(TH, soln, t) {
+  return(as.numeric(bd_calc_gauss_mix_pdf_mat(TH, t, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax)))
 }
 
 #' @export
 # A helper function to calculate the mean density over a range
-bd_calc_range_density <- function(TH, soln, ylo, yhi) {
-  flo <- as.numeric(bd_calc_gauss_mix_pdf_mat(TH, ylo, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax, type = "cumulative"))
-  fhi <- as.numeric(bd_calc_gauss_mix_pdf_mat(TH, yhi, ymin = soln$prob$hp$ymin, ymax = soln$prob$hp$ymax, type = "cumulative"))
-  return((fhi - flo) / (yhi - ylo))
+bd_calc_range_density <- function(TH, soln, tlo, thi) {
+  flo <- as.numeric(bd_calc_gauss_mix_pdf_mat(TH, tlo, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax, type = "cumulative"))
+  fhi <- as.numeric(bd_calc_gauss_mix_pdf_mat(TH, thi, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax, type = "cumulative"))
+  return((fhi - flo) / (thi - tlo))
 }
 
 #' @export
