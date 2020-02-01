@@ -85,7 +85,7 @@ prob <- list(
 soln <- bd_do_inference(prob, calibDf)
 anal <- bd_analyze_soln(soln)
 
-return(list(prob=prob,soln=soln,anal=anal,calibDf=calibDf))
+return(list(prob=prob,soln=soln,anal=anal,calibDf=calibDf,errorSpec=errorSpec))
 
 }
 
@@ -113,5 +113,19 @@ expect_error(
 
 expect_error(
   bd_add_shaded_quantiles(simOutput$anal)
+,NA
+)
+
+# Check that calling bd_draw_rc_meas_using_date does not raise an error,
+# whether isAD is True or False
+t_e_AD    <- c(600,605)
+t_e_calBP <- 1950 - t_e_AD
+expect_error(
+  rcMeas1 <- bd_draw_rc_meas_using_date(t_e_AD, simOutput$calibDf, simOutput$errorSpec,isAD=T)
+,NA
+)
+
+expect_error(
+  rcMeas2 <- bd_draw_rc_meas_using_date(t_e_calBP, simOutput$calibDf, simOutput$errorSpec)
 ,NA
 )

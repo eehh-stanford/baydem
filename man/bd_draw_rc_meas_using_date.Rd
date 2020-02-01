@@ -2,13 +2,24 @@
 % Please edit documentation in R/bd_draw_rc_meas_using_date.R
 \name{bd_draw_rc_meas_using_date}
 \alias{bd_draw_rc_meas_using_date}
-\title{Simulate a radiocabron measurement from input calendar dates}
+\title{Simulate radiocarbon measurements from input calendar dates}
 \usage{
-bd_draw_rc_meas_using_date(y_e, calibDf, errorSpec, isAD = F)
+bd_draw_rc_meas_using_date(t_e, calibDf, errorSpec, isAD = F)
+}
+\arguments{
+\item{t_e}{A vector of event dates (calBP by default)}
+
+\item{calibDf}{The calibration dataframe, with columns yearBP, uncalYearBP, and uncalYearBPError}
+
+\item{errorSpec}{A list with entries min and max specifying the interval for a uniform draw}
+
+\item{isAD}{(Optional; default F) Whether t_e is calBP or AD}
 }
 \description{
-Given an input calendar dates, simulate the radiocarbon
+Given input calendar dates t_e, simulate the radiocarbon
 measurement process to yield a fraction modern and uncertainty.
 errorSpec is a list with named components min and max. The
-uncertainty, sig_m, is drawn uniformily from this range.
+uncertainty, sig_m, is drawn uniformily from this range. By
+default, t_e is assumed to be calBP, but can be AD if isAD is
+True.
 }
