@@ -4,22 +4,22 @@
 \alias{bd_sample_trunc_exp}
 \title{Sample from a truncated exponential distribution}
 \usage{
-bd_sample_trunc_exp(N, r0, ymin, ymax)
+bd_sample_trunc_exp(N, r0, taumin, taumax)
 }
 \arguments{
 \item{N}{The number of samples to make}
 
 \item{r0}{The rate parameter}
 
-\item{ymin}{The lower limit for truncation}
+\item{taumin}{The lower limit for truncation}
 
-\item{ymax}{The upper limit for truncation}
+\item{taumax}{The upper limit for truncation}
 }
 \value{
-A vector of N samples between ymin and ymax
+A vector of N samples between taumin and taumax
 }
 \description{
-Make N samples from a truncated exponential distribution with the density function r0\emph{exp(r0}y). The rate r0 can be positive (growth) or negative (decay). The density function is normalized to integrate to 1 on the interval ymin to ymax.
+Make N samples from a truncated exponential distribution with the density function r0\emph{exp(r0}t). The rate r0 can be positive (growth) or negative (decay). The density function is normalized to integrate to 1 on the interval taumin to taumax.
 }
 \author{
 Michael Holton Price \href{mailto:MichaelHoltonPrice@gmail.com}{MichaelHoltonPrice@gmail.com}

@@ -73,3 +73,25 @@ expect_equal(
   bd_calc_trapez_weights(c(-1.5,2,3,4,7)),
   c(1.75,2.25,1,2,1.5)
 )
+
+# Check that bd_sample_trunc_exp does not throw an error. Check both positive
+# and negative growth rates. Also check the lengths of the outputs.
+expect_error(
+  expSamp1 <- bd_sample_trunc_exp(50,0.01,600,1300),
+  NA
+)
+
+expect_equal(
+  length(expSamp1),
+  50
+)
+
+expect_error(
+  expSamp2 <- bd_sample_trunc_exp(50,-0.01,600,1300),
+  NA
+)
+
+expect_equal(
+  length(expSamp2),
+  50
+)
