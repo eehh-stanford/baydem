@@ -7,7 +7,9 @@ expect_error(
 ,NA
 )
 # Check that calling bd_assess_calib_curve_equif does not raise an error and
-# also make sure that the return is a list with invSpanList and canIvert.
+# also make sure that the return is a list with invSpanList and canIvert. This
+# also checks the helper function bd_phi2tau called by
+# bd_assess_calib_curve_equif.
 expect_error(
   equifResult <- bd_assess_calib_curve_equif(calibDf)
 ,NA

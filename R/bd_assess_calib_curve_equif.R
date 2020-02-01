@@ -65,7 +65,7 @@ bd_assess_calib_curve_equif <- function(calibDf, equiList = NA) {
       ii_prev <- 1
     } else {
       ii_prev <- which.min(abs(phi_curve[1:(lo - 1)] - phi_curve[lo]))
-      tau_left <- baydem::bd_phi2y(tau_curve, phi_curve, phi_curve[ii_prev], lo - 1, lo)
+      tau_left <- baydem::bd_phi2tau(tau_curve, phi_curve, phi_curve[ii_prev], lo - 1, lo)
       phi_left <- phi_curve[ii_prev]
     }
 
@@ -76,7 +76,7 @@ bd_assess_calib_curve_equif <- function(calibDf, equiList = NA) {
       ii_next <- length(tau_curve)
     } else {
       ii_next <- hi + which.min(abs(phi_curve[(hi + 1):length(phi_curve)] - phi_curve[hi]))
-      tau_right <- baydem::bd_phi2y(tau_curve, phi_curve, phi_curve[ii_next], hi, hi + 1)
+      tau_right <- baydem::bd_phi2tau(tau_curve, phi_curve, phi_curve[ii_next], hi, hi + 1)
       phi_right <- phi_curve[ii_next]
     }
     invSpan <- list(ind = lo:hi, tau_left = tau_left, phi_left = phi_left, tau_right = tau_right, phi_right = phi_right, ii_prev = ii_prev, ii_next = ii_next)
