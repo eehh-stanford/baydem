@@ -26,7 +26,7 @@ decimal year. A list of length nrow(calibDf) is returned with, for each
 point in the calibration curve, the following information:
 
 indBase -- The row index in calibDf of the point
-yBase   -- The calendar date (AD) of the point
+tauBase -- The calendar date (AD) of the point
 indEqui -- The row index/indices in calibDf of the equifinal points
-yEqui   -- The calendar date(s) (AD) of the equifinal points
+tauEqui -- The calendar date(s) (AD) of the equifinal points
 }

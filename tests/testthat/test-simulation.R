@@ -85,7 +85,7 @@ prob <- list(
 soln <- bd_do_inference(prob, calibDf)
 anal <- bd_analyze_soln(soln)
 
-return(list(prob=prob,soln=soln,anal=anal))
+return(list(prob=prob,soln=soln,anal=anal,calibDf=calibDf))
 
 }
 
@@ -95,7 +95,9 @@ expect_error(
 ,NA
 )
 
-# Check that building plot from individual functions does not raise an error
+# Check that building a density plot from individual functions does not raise
+# an error. This checks:
+#
 # bd_make_blank_density_plot
 # bd_plot_50_percent_quantile
 # bd_add_shaded_quantiles

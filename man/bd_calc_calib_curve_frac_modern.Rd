@@ -2,14 +2,14 @@
 % Please edit documentation in R/bd_calc_calib_curve_frac_modern.R
 \name{bd_calc_calib_curve_frac_modern}
 \alias{bd_calc_calib_curve_frac_modern}
-\title{Calculation the calibration curve fraction modern for input calendar dates}
+\title{Calculation the calibration curve fraction taumodern for input calendar dates}
 \usage{
-bd_calc_calib_curve_frac_modern(calibDf, y = NA, isBP = FALSE)
+bd_calc_calib_curve_frac_modern(calibDf, tau = NA, isBP = FALSE)
 }
 \arguments{
 \item{calibDf}{The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError}
 
-\item{y}{The calendar dates y (if not input, calibDf$uncalYearBP is used)}
+\item{tau}{The calendar dates tau (if not input, calibDf$uncalYearBP is used)}
 
 \item{isBP}{(default FALSE) Whether the input dates are before present (BP), as opposed to AD}
 }
@@ -17,13 +17,13 @@ bd_calc_calib_curve_frac_modern(calibDf, y = NA, isBP = FALSE)
 The vector of calibration curve fraction modern values
 }
 \description{
-Calculation the calibration curve fraction modern for input calendar dates
+Calculation the calibration curve fraction taumodern for input calendar dates
 }
 \details{
 The input calibration data frame has three columns: yearBP, uncalYearBP, and
-uncalYearBPError. For each input calendar date, y, use the calibration curve
+uncalYearBPError. For each input calendar date, tau, use the calibration curve
 information to estimate the fraction modern of the calibration curve. If
-y is not specified, calibDf$uncalYearBP is used as the dates for the
+tau is not specified, calibDf$uncalYearBP is used as the dates for the
 calculation. By default, dates are assumed to be AD, but this can be changed
 using the optional input isBP, which is FALSE by default.
 }

@@ -40,11 +40,11 @@ equifinal) time spans. It contains the following named variables:
 
 ind       -- Indices (rows) of calibDf following within the invertible time
 span
-y_left    -- Calendar date (AD) of the left (earlier) boundary of the
+tau_left  -- Calendar date (AD) of the left (earlier) boundary of the
 invertible time span
 phi_left  -- Fraction modern value of the left (earlier) boundary of the
 invertible time span
-y_right   -- Calendar date (AD) of the right (later) boundary of the
+tau_right -- Calendar date (AD) of the right (later) boundary of the
 invertible time span
 phi_right -- Fraction modern value of the right (later) boundary of the
 invertible time span

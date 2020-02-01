@@ -4,13 +4,13 @@
 \alias{bd_vis_calib_curve}
 \title{Visualize the calibration curve with equifinal and non-equifinal time spans}
 \usage{
-bd_vis_calib_curve(ymin, ymax, calibDf, invertCol = "gray90",
+bd_vis_calib_curve(taumin, taumax, calibDf, invertCol = "gray90",
   pointCol = "black", pointPch = 19, ...)
 }
 \arguments{
-\item{ymin}{The minimum calendar date for plotting (AD)}
+\item{taumin}{The minimum calendar date for plotting (AD)}
 
-\item{ymax}{The maximum calendar date for plotting (AD)}
+\item{taumax}{The maximum calendar date for plotting (AD)}
 
 \item{calibDf}{The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError}
 
@@ -24,7 +24,7 @@ bd_vis_calib_curve(ymin, ymax, calibDf, invertCol = "gray90",
 Visualize the calibration curve with equifinal and non-equifinal time spans
 }
 \details{
-Vizualize the input calibration curve, calibDf, on the interval ymin to
-ymax. This involves plotting the curve itself and shading invertible
+Vizualize the input calibration curve, calibDf, on the interval taumin to
+taumax. This involves plotting the curve itself and shading invertible
 (non-equifinal) and non-invertible (equifinal) regions.
 }

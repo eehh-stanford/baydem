@@ -23,11 +23,11 @@
 #'
 #' ind       -- Indices (rows) of calibDf following within the invertible time
 #'              span
-#' y_left    -- Calendar date (AD) of the left (earlier) boundary of the
+#' tau_left  -- Calendar date (AD) of the left (earlier) boundary of the
 #'              invertible time span
 #' phi_left  -- Fraction modern value of the left (earlier) boundary of the
 #'              invertible time span
-#' y_right   -- Calendar date (AD) of the right (later) boundary of the
+#' tau_right -- Calendar date (AD) of the right (later) boundary of the
 #'              invertible time span
 #' phi_right -- Fraction modern value of the right (later) boundary of the
 #'              invertible time span
@@ -47,7 +47,7 @@ bd_assess_calib_curve_equif <- function(calibDf, equiList = NA) {
   }
 
   canInvert <- rep(T, length(calibDf$yearBP))
-  y_curve <- 1950 - calibDf$yearBP
+  tau_curve <- 1950 - calibDf$yearBP
   phi_curve <- baydem::bd_calc_calib_curve_frac_modern(calibDf)
   for (equiEntry in equiList) {
     canInvert[equiEntry$indBase] <- F
@@ -60,26 +60,26 @@ bd_assess_calib_curve_equif <- function(calibDf, equiList = NA) {
     hi <- as.numeric(names(clust)[length(clust)])
     # Find left boundary
     if (lo == 1) {
-      y_left <- y_curve[1]
+      tau_left <- tau_curve[1]
       phi_left <- phi_curve[1]
       ii_prev <- 1
     } else {
       ii_prev <- which.min(abs(phi_curve[1:(lo - 1)] - phi_curve[lo]))
-      y_left <- baydem::bd_phi2y(y_curve, phi_curve, phi_curve[ii_prev], lo - 1, lo)
+      tau_left <- baydem::bd_phi2y(tau_curve, phi_curve, phi_curve[ii_prev], lo - 1, lo)
       phi_left <- phi_curve[ii_prev]
     }
 
     # Find right boundary
-    if (hi == length(y_curve)) {
-      y_right <- y_curve[length(y_curve)]
-      phi_right <- phi_curve[length(y_curve)]
-      ii_next <- length(y_curve)
+    if (hi == length(tau_curve)) {
+      tau_right <- tau_curve[length(tau_curve)]
+      phi_right <- phi_curve[length(tau_curve)]
+      ii_next <- length(tau_curve)
     } else {
       ii_next <- hi + which.min(abs(phi_curve[(hi + 1):length(phi_curve)] - phi_curve[hi]))
-      y_right <- baydem::bd_phi2y(y_curve, phi_curve, phi_curve[ii_next], hi, hi + 1)
+      tau_right <- baydem::bd_phi2y(tau_curve, phi_curve, phi_curve[ii_next], hi, hi + 1)
       phi_right <- phi_curve[ii_next]
     }
-    invSpan <- list(ind = lo:hi, y_left = y_left, phi_left = phi_left, y_right = y_right, phi_right = phi_right, ii_prev = ii_prev, ii_next = ii_next)
+    invSpan <- list(ind = lo:hi, tau_left = tau_left, phi_left = phi_left, tau_right = tau_right, phi_right = phi_right, ii_prev = ii_prev, ii_next = ii_next)
     invSpanList[[cc]] <- invSpan
   }
   return(list(invSpanList = invSpanList, canInvert = canInvert))
