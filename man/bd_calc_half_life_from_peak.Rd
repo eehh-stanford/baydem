@@ -14,10 +14,10 @@ bd_calc_half_life_from_peak(soln, propChange = 0.5, anal = NA,
 
 \item{anal}{(Optional) The result of a call to bd_analyze_soln. If not provided, it is calculated}
 
-\item{(default}{ymin to ymax) peakRange can be given so that the peak density used is on the range peakRange}
+\item{(default}{taumin to taumax) peakRange can be given so that the peak density used is on the range peakRange}
 }
 \value{
-A vector of half-lives
+A vector of "half-lives" (proportional change set by propChange)
 }
 \description{
 For each sample, calculate the time it takes for the density to decrease by half from the peak
@@ -28,6 +28,6 @@ half from the peak. Optionally, a different proportion can be used than the
 default propChange = 0.5. For example, with propChange = 0.1 the time it
 takes for the density to decrease by 10% is used. If the relative density is
 not reached, the half life for the sample is set to NA. If there is no
-interior peak in the range peakRange, which is ymin to ymax by default, the
-half life is set to NA.
+interior peak in the range peakRange, which is taumin to taumax by default,
+the half life is set to NA.
 }

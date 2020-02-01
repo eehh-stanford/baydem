@@ -4,12 +4,13 @@
 \alias{bd_calc_gauss_mix_pdf}
 \title{Caculate the density of a possibly truncated Gaussian mixture}
 \usage{
-bd_calc_gauss_mix_pdf(th, y, ymin = NA, ymax = NA, type = "density")
+bd_calc_gauss_mix_pdf(th, tau, taumin = NA, taumax = NA,
+  type = "density")
 }
 \arguments{
 \item{th}{A vector-like object that parameterizes the distribution}
 
-\item{y}{Vector of locations at which to calculate the density}
+\item{tau}{Vector of locations at which to calculate the density}
 
 \item{type}{(default density) An optional input specifying whether to
 calculate the density, cumulative distribution, derivative of the
@@ -23,8 +24,8 @@ The output vector with length G
 for a possibly truncated Gaussian mixture. The density, f', and rate, f'/f,
 can also be calculated by specifying the input \code{type}, which is
 'density' by default, but can also be 'cumulative', 'derivative', or 'rate'.
-The parameter vector th has the ordering \link{wk, muk, sigk}, where
-wk, muk, and sigk are the weight, mean, and standard deviation of the k-th
-mixture. There are K total mixtures. The truncation boundaries ymin and ymax
-are optional.
+The parameter vector th has the ordering \link{pik, muk, sigk}, where
+pik, muk, and sigk are the weight, mean, and standard deviation of the k-th
+mixture. There are K total mixtures. The truncation boundaries taumin and
+taumax are optional.
 }

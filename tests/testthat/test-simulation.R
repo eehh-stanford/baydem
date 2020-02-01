@@ -118,7 +118,7 @@ expect_error(
 
 # Check that calling bd_draw_rc_meas_using_date does not raise an error,
 # whether isAD is True or False
-t_e_AD    <- c(600,605)
+t_e_AD    <- c(700,705)
 t_e_calBP <- 1950 - t_e_AD
 expect_error(
   rcMeas1 <- bd_draw_rc_meas_using_date(t_e_AD, simOutput$calibDf, simOutput$errorSpec,isAD=T)
@@ -128,4 +128,118 @@ expect_error(
 expect_error(
   rcMeas2 <- bd_draw_rc_meas_using_date(t_e_calBP, simOutput$calibDf, simOutput$errorSpec)
 ,NA
+)
+
+# Check that calling bd_calc_half_life_from_peak does not raise an error
+expect_error(
+  halfLife <- bd_calc_half_life_from_peak(simOutput$soln)
+,NA
+)
+
+expect_error(
+  halfLife2 <- bd_calc_half_life_from_peak(simOutput$soln,propChange=.25)
+,NA
+)
+
+# Check that calling bd_calc_relative_density does not raise an error. Do two
+# tests using all three ways of specifying the relative density to also check
+# the three helper functions,
+#
+# bd_calc_point_density
+# bd_calc_range_density
+# bd_calc_peak_density
+expect_error(
+  relDens1 <- bd_calc_relative_density(soln, 'peak',1100)
+,NA
+)
+
+expect_error(
+  relDens2 <- bd_calc_relative_density(soln, 900,c(700,750))
+,NA
+)
+
+# Check that calling bd_extract_param does not raise an error
+expect_error(
+  TH <- bd_extract_param(simOutput$soln$fit)
+,NA
+)
+
+# Check that calling bd_calc_gauss_mix_pdf does not raise an error for all the 
+# valid calculation types. Also check the dimensions of the output. Use the
+# 100-th sample of TH, which has dimensions 800 x 6. tau, which is created to do
+# the test, has length 141.
+tau <- seq(simOutput$prob$hp$taumin,simOutput$prob$hp$taumax,by=simOutput$prob$hp$dtau)
+expect_error(
+  pdfVect1 <- bd_calc_gauss_mix_pdf(TH[100,], tau) # density is the default type
+,NA
+)
+
+expect_equal(
+  length(tau), length(pdfVect1)
+)
+
+expect_error(
+  pdfVect2 <- bd_calc_gauss_mix_pdf(TH[100,], tau, type = 'cumulative')
+,NA
+)
+
+expect_equal(
+  length(tau), length(pdfVect2)
+)
+
+expect_error(
+  pdfVect3 <- bd_calc_gauss_mix_pdf(TH[100,], tau, type = 'derivative')
+,NA
+)
+
+expect_equal(
+  length(tau), length(pdfVect3)
+)
+
+expect_error(
+  pdfVect4 <- bd_calc_gauss_mix_pdf(TH[100,], tau, type = 'rate')
+,NA
+)
+
+expect_equal(
+  length(tau), length(pdfVect4)
+)
+
+
+# Check that calling bd_calc_gauss_mix_pdf_mat does not raise an error for all the 
+# valid calculation types. Also check the dimensions of the output. 
+expect_error(
+  pdfMat1 <- bd_calc_gauss_mix_pdf_mat(TH, tau) # density is the default type
+,NA
+)
+
+expect_equal(
+  c(nrow(TH),length(tau)), dim(pdfMat1)
+)
+
+expect_error(
+  pdfMat2 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = 'cumulative')
+,NA
+)
+
+expect_equal(
+  c(nrow(TH),length(tau)), dim(pdfMat2)
+)
+
+expect_error(
+  pdfMat3 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = 'derivative')
+,NA
+)
+
+expect_equal(
+  c(nrow(TH),length(tau)), dim(pdfMat3)
+)
+
+expect_error(
+  pdfMat4 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = 'rate')
+,NA
+)
+
+expect_equal(
+  c(nrow(TH),length(tau)), dim(pdfMat4)
 )

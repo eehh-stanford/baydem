@@ -2,19 +2,19 @@
 % Please edit documentation in R/bd_calc_gauss_mix_pdf_mat.R
 \name{bd_calc_gauss_mix_pdf_mat}
 \alias{bd_calc_gauss_mix_pdf_mat}
-\title{Calculate the dnesity of a possibly truncated Gaussian mixture for a matrix of samples}
+\title{Calculate the density of a possibly truncated Gaussian mixture for a matrix of samples}
 \usage{
-bd_calc_gauss_mix_pdf_mat(TH, y, ymin = NA, ymax = NA,
+bd_calc_gauss_mix_pdf_mat(TH, tau, taumin = NA, taumax = NA,
   type = "density")
 }
 \arguments{
 \item{TH}{A matrix of samples with dimensions S x P}
 
-\item{y}{A vector of points for the density calculation with length G}
+\item{tau}{A vector of points for the density calculation with length G}
 
-\item{ymin}{(optional) The mininum y-value for truncation}
+\item{taumin}{(optional) The mininum time-value for truncation}
 
-\item{ymax}{(optional) The maximum y-value for truncation}
+\item{taumax}{(optional) The maximum time-value for truncation}
 
 \item{type}{(optional) The type of calculation: density (default), cumulative, derivative, or rate}
 }
@@ -26,10 +26,10 @@ TH is a matrix of samples of a possibly truncated Gaussian
 mixture with dimensions S x P, where S is the number of samples
 and P is the number of parameters. Repeatedly call
 \code{bd_calc_gauss_mix_pdf} to calculate the density function
-for each sample at the points in the vector y, which has length
+for each sample at the points in the vector tau, which has length
 G. The output density matrix, fMat, has dimensions S x G.
 \code{bd_calc_gauss_mix_pdf_mat} supports the same optional
-as \code{bd_calc_gauss_mix_pdf}: ymin / ymax to specify the
+as \code{bd_calc_gauss_mix_pdf}: taumin / taumax to specify the
 boundaries of truncation and type to set whether the density,
 cumuluative distribution, derivative, or rate is calculated.
 }
