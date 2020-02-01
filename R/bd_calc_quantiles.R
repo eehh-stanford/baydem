@@ -4,7 +4,7 @@
 #'              of samples and G the number of grid points at which X was
 #'              evaluated. Calculate quantiles for each grid point, g = 1,2,..G.
 #'
-#' @param X The matrix for which quantiles are calculated, with dimensions S x G
+#' @param X The matrix for which quantiles are calculated, with dimension S x G
 #' @param probs The probability values at which to calculate the quantiles (default: `c(0.025, 0.5, 0.975)`)
 #'
 #' @return The quantiles, a matrix with dimension length(probs) x G
