@@ -4,40 +4,40 @@
 \alias{bd_calc_meas_matrix}
 \title{Calculate the measurement matrix given N observations and G grid points}
 \usage{
-bd_calc_meas_matrix(ygrid, phi_m, sig_m, calibDf, useSpacing = T,
-  addCalibUnc = T)
+bd_calc_meas_matrix(tau, phi_m, sig_m, calibDf, addCalibUnc = T,
+  useTrapez = F)
 }
 \arguments{
-\item{ygrid}{A vector of calendar dates indexed by g}
+\item{tau}{A vector of calendar dates indexed by g}
 
-\item{phi_m}{A vector of fraction moderns indexed by n}
+\item{phi_m}{A vector of fraction moderns indexed by i}
 
-\item{sig_m}{A vector of standard deviations for phi_m by n}
+\item{sig_m}{A vector of standard deviations for phi_m by i}
 
 \item{calibDf}{Calibration curve (see bd_load_calib_curve)}
 
-\item{useSpacing}{(default TRUE) Whether to account for the spacing of ygrid (see description)}
-
 \item{addCalibUnc}{(default TRUE) Whether to add calibration uncertainty}
+
+\item{useTrapez}{(default FALSE) Whether to use the trapezoidal rule for integration}
 }
 \description{
-ygrid is a vector of calendar dates indexed from g = 1,2,...,G.
+tau is a vector of calendar dates indexed from g = 1,2,...,G.
 phi_m is a vector of n = 1,2,...,N radiocarbon determinations
 (fraction modern) with associated uncertainties sig_m.
 Calculate the measurement matrix M, which  has dimensions N x G
-and for which each element is M_ng = p(phi_m,n|y_g). The total
+and for which each element is M_ig = p(phi_m,i|tau_g). The total
 uncertainty of the measurement comes from measurement error
 (SIG_M, calculated using the measurement error for each
-measurement) and the calibration curve error (SIK_k, calculated
+measurement) and the calibration curve error (SIG_c, calculated
 using the uncertainty for the calibration curve at each grid
 point). These uncertainties (and the associated measurements)
-should already be "projected" to 1950 equivalents (e.g., in
-bd_convert_date_samp_to_c14_samp). By default, the grid spacing
-of ygrid is accounted for in each element of the measurement
-matrix, M_ng, so that the matrix multiplication M * f is an
-approximation to the integral over p(y|th) * p(phi|y); the
-trapezoidal rule is assumed for this, so that the spacing to
-use for the the integration width is
-dy_g = (y_(g+1) - y_(g-1)) / 2, where the conventions y_0 = y_1
-and y_(G+1) = y_G are used: M_ng -> M_ng * dy_g
+should already be "projected" to 1950 equivalents. By default
+the measurement matrix, M, is multiplied by dtau so that M * f
+is an approximation to the integral over p(t|th) * p(phi|t)
+using a Riemann sum with the density calculated at the points
+tau and the width for each point being dtau. Alternatively,
+the trapezoidal rule can be used (for details see
+bd_calc_trapez_weights). If the spacing of tau is irregular,
+the trapezoidal rule must be used. An error is thrown if tau is
+irregularly spaced and the the trapezoidal rule is not used
 }

@@ -102,18 +102,18 @@ expect_error(
 # bd_plot_50_percent_quantile
 # bd_add_shaded_quantiles
 expect_error(
-  bd_make_blank_density_plot(simOutput$anal)
-,NA
+  bd_make_blank_density_plot(simOutput$anal),
+  NA
 )
 
 expect_error(
-  bd_plot_50_percent_quantile(simOutput$anal, add = T)
-,NA
+  bd_plot_50_percent_quantile(simOutput$anal, add = T),
+  NA
 )
 
 expect_error(
-  bd_add_shaded_quantiles(simOutput$anal)
-,NA
+  bd_add_shaded_quantiles(simOutput$anal),
+  NA
 )
 
 # Check that calling bd_draw_rc_meas_using_date does not raise an error,
@@ -121,24 +121,24 @@ expect_error(
 t_e_AD    <- c(700,705)
 t_e_calBP <- 1950 - t_e_AD
 expect_error(
-  rcMeas1 <- bd_draw_rc_meas_using_date(t_e_AD, simOutput$calibDf, simOutput$errorSpec,isAD=T)
-,NA
+  rcMeas1 <- bd_draw_rc_meas_using_date(t_e_AD, simOutput$calibDf, simOutput$errorSpec,isAD=T),
+  NA
 )
 
 expect_error(
-  rcMeas2 <- bd_draw_rc_meas_using_date(t_e_calBP, simOutput$calibDf, simOutput$errorSpec)
-,NA
+  rcMeas2 <- bd_draw_rc_meas_using_date(t_e_calBP, simOutput$calibDf, simOutput$errorSpec),
+  NA
 )
 
 # Check that calling bd_calc_half_life_from_peak does not raise an error
 expect_error(
-  halfLife <- bd_calc_half_life_from_peak(simOutput$soln)
-,NA
+  halfLife <- bd_calc_half_life_from_peak(simOutput$soln),
+  NA
 )
 
 expect_error(
-  halfLife2 <- bd_calc_half_life_from_peak(simOutput$soln,propChange=.25)
-,NA
+  halfLife2 <- bd_calc_half_life_from_peak(simOutput$soln,propChange=.25),
+  NA
 )
 
 # Check that calling bd_calc_relative_density does not raise an error. Do two
@@ -149,19 +149,19 @@ expect_error(
 # bd_calc_range_density
 # bd_calc_peak_density
 expect_error(
-  relDens1 <- bd_calc_relative_density(soln, 'peak',1100)
-,NA
+  relDens1 <- bd_calc_relative_density(soln, 'peak',1100),
+  NA
 )
 
 expect_error(
-  relDens2 <- bd_calc_relative_density(soln, 900,c(700,750))
-,NA
+  relDens2 <- bd_calc_relative_density(soln, 900,c(700,750)),
+  NA
 )
 
 # Check that calling bd_extract_param does not raise an error
 expect_error(
-  TH <- bd_extract_param(simOutput$soln$fit)
-,NA
+  TH <- bd_extract_param(simOutput$soln$fit),
+  NA
 )
 
 # Check that calling bd_calc_gauss_mix_pdf does not raise an error for all the 
@@ -170,76 +170,138 @@ expect_error(
 # the test, has length 141.
 tau <- seq(simOutput$prob$hp$taumin,simOutput$prob$hp$taumax,by=simOutput$prob$hp$dtau)
 expect_error(
-  pdfVect1 <- bd_calc_gauss_mix_pdf(TH[100,], tau) # density is the default type
-,NA
+  pdfVect1 <- bd_calc_gauss_mix_pdf(TH[100,], tau), # density is the default type
+  NA
 )
 
 expect_equal(
-  length(tau), length(pdfVect1)
+  length(tau),
+  length(pdfVect1)
 )
 
 expect_error(
-  pdfVect2 <- bd_calc_gauss_mix_pdf(TH[100,], tau, type = 'cumulative')
-,NA
+  pdfVect2 <- bd_calc_gauss_mix_pdf(TH[100,], tau, type = 'cumulative'),
+  NA
 )
 
 expect_equal(
-  length(tau), length(pdfVect2)
+  length(tau),
+  length(pdfVect2)
 )
 
 expect_error(
-  pdfVect3 <- bd_calc_gauss_mix_pdf(TH[100,], tau, type = 'derivative')
-,NA
+  pdfVect3 <- bd_calc_gauss_mix_pdf(TH[100,], tau, type = 'derivative'),
+  NA
 )
 
 expect_equal(
-  length(tau), length(pdfVect3)
+  length(tau),
+  length(pdfVect3)
 )
 
 expect_error(
-  pdfVect4 <- bd_calc_gauss_mix_pdf(TH[100,], tau, type = 'rate')
-,NA
+  pdfVect4 <- bd_calc_gauss_mix_pdf(TH[100,], tau, type = 'rate'),
+  NA
 )
 
 expect_equal(
-  length(tau), length(pdfVect4)
+  length(tau),
+  length(pdfVect4)
 )
 
 
 # Check that calling bd_calc_gauss_mix_pdf_mat does not raise an error for all the 
 # valid calculation types. Also check the dimensions of the output. 
 expect_error(
-  pdfMat1 <- bd_calc_gauss_mix_pdf_mat(TH, tau) # density is the default type
-,NA
+  pdfMat1 <- bd_calc_gauss_mix_pdf_mat(TH, tau), # density is the default type
+  NA
 )
 
 expect_equal(
-  c(nrow(TH),length(tau)), dim(pdfMat1)
+  c(nrow(TH),length(tau)),
+  dim(pdfMat1)
 )
 
 expect_error(
-  pdfMat2 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = 'cumulative')
-,NA
+  pdfMat2 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = 'cumulative'),
+                  NA
 )
 
 expect_equal(
-  c(nrow(TH),length(tau)), dim(pdfMat2)
+  c(nrow(TH),length(tau)),
+  dim(pdfMat2)
 )
 
 expect_error(
-  pdfMat3 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = 'derivative')
-,NA
+  pdfMat3 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = 'derivative'),
+  NA
 )
 
 expect_equal(
-  c(nrow(TH),length(tau)), dim(pdfMat3)
+  c(nrow(TH),length(tau)),
+  dim(pdfMat3)
 )
 
 expect_error(
-  pdfMat4 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = 'rate')
-,NA
+  pdfMat4 <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = 'rate'),
+  NA
 )
 
 expect_equal(
-  c(nrow(TH),length(tau)), dim(pdfMat4)
+  c(nrow(TH),length(tau)),
+  dim(pdfMat4)
 )
+
+# Check the functioning of bd_calc_meas_matrix.
+
+# (1) Calculate the measurement matrix using tau, already defined above, which
+#     is regularly spaced. Do this for both using and not using calibration
+#     uncertainty. Also check the dimensions of the output
+
+expect_error(
+  measMat1a <- bd_calc_meas_matrix(tau,simOutput$prob$phi_m,simOutput$prob$sig_m,simOutput$calibDf,addCalibUnc=T),
+  NA
+)
+
+expect_equal(
+  c(length(simOutput$prob$phi_m),length(tau)),
+  dim(measMat1a)
+)
+
+expect_error(
+  measMat1b <- bd_calc_meas_matrix(tau,simOutput$prob$phi_m,simOutput$prob$sig_m,simOutput$calibDf,addCalibUnc=F),
+  NA
+)
+
+expect_equal(
+  c(length(simOutput$prob$phi_m),length(tau)),
+  dim(measMat1b)
+)
+
+tau_irreg <- c(800,805,810,825)
+# an error is expected if useTrapez is not set to TRUE
+expect_error(
+  measMat2a <- bd_calc_meas_matrix(tau_irreg,simOutput$prob$phi_m,simOutput$prob$sig_m,simOutput$calibDf)
+ ,'tau is irregularly spaced but useTrapez is FALSE'
+)
+
+expect_error(
+  measMat2a <- bd_calc_meas_matrix(tau_irreg,simOutput$prob$phi_m,simOutput$prob$sig_m,simOutput$calibDf,addCalibUnc=T,useTrapez=T),
+  NA
+)
+
+expect_equal(
+  c(length(simOutput$prob$phi_m),length(tau_irreg)),
+  dim(measMat2a)
+)
+
+expect_error(
+  measMat2b <- bd_calc_meas_matrix(tau_irreg,simOutput$prob$phi_m,simOutput$prob$sig_m,simOutput$calibDf,addCalibUnc=F,useTrapez=T),
+  NA
+)
+
+expect_equal(
+  c(length(simOutput$prob$phi_m),length(tau_irreg)),
+  dim(measMat2b)
+)
+
