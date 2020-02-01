@@ -2,23 +2,7 @@
 % Please edit documentation in R/bd_do_inference.R
 \name{bd_do_inference}
 \alias{bd_do_inference}
-\title{Do Demographic Bayesian Inference
-
-This is the core function that implements the Bayesian inference.
-
-The input is a problem statement object (a list),
-prob, that consists of the input data (the vectors phi_m and sig_m)
-and the hyperparameters (hp).
-stan is called via the rstan package to sample from the posterior.
-The output is the variable soln of class bayDem_soln,
-which is a list with the fields prob (the input) and fit (the result of the stan fit).
-prob can also have an optional field control that specifies the
-following control parameters for the Bayesian inference (default in parentheses):
-numChains     -- (4)    Number of chains
-sampsPerChain -- (2000) Number of samples per chain
-initList      --        The initializations for each chain. The default is
-to set this using a mixture fit to the summed
-density}
+\title{Do Demographic Bayesian Inference}
 \usage{
 bd_do_inference(prob, calibDf, saveFile = NA)
 }
@@ -37,15 +21,14 @@ fit (the result of the call to stan),
 and control (the control parameters used)
 }
 \description{
-Do Demographic Bayesian Inference
-
 This is the core function that implements the Bayesian inference.
-
+}
+\details{
 The input is a problem statement object (a list),
 prob, that consists of the input data (the vectors phi_m and sig_m)
 and the hyperparameters (hp).
 stan is called via the rstan package to sample from the posterior.
-The output is the variable soln of class bayDem_soln,
+The output is the variable soln of class bd_soln,
 which is a list with the fields prob (the input) and fit (the result of the stan fit).
 prob can also have an optional field control that specifies the
 following control parameters for the Bayesian inference (default in parentheses):

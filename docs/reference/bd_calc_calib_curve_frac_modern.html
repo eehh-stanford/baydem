@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculation the calibration curve fraction modern for input calendar dates — bd_calc_calib_curve_frac_modern • baydem</title>
+<title>Calculation the calibration curve fraction taumodern for input calendar dates — bd_calc_calib_curve_frac_modern • baydem</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Calculation the calibration curve fraction modern for input calendar dates — bd_calc_calib_curve_frac_modern" />
-<meta property="og:description" content="Calculation the calibration curve fraction modern for input calendar dates" />
+<meta property="og:title" content="Calculation the calibration curve fraction taumodern for input calendar dates — bd_calc_calib_curve_frac_modern" />
+<meta property="og:description" content="Calculation the calibration curve fraction taumodern for input calendar dates" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,16 +100,16 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculation the calibration curve fraction modern for input calendar dates</h1>
+    <h1>Calculation the calibration curve fraction taumodern for input calendar dates</h1>
     
     <div class="hidden name"><code>bd_calc_calib_curve_frac_modern.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculation the calibration curve fraction modern for input calendar dates</p>
+    <p>Calculation the calibration curve fraction taumodern for input calendar dates</p>
     </div>
 
-    <pre class="usage"><span class='fu'>bd_calc_calib_curve_frac_modern</span>(<span class='no'>calibDf</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>isBP</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>bd_calc_calib_curve_frac_modern</span>(<span class='no'>calibDf</span>, <span class='kw'>tau</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>isBP</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -119,8 +119,8 @@
       <td><p>The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError</p></td>
     </tr>
     <tr>
-      <th>y</th>
-      <td><p>The calendar dates y (if not input, calibDf$uncalYearBP is used)</p></td>
+      <th>tau</th>
+      <td><p>The calendar dates tau (if not input, calibDf$uncalYearBP is used)</p></td>
     </tr>
     <tr>
       <th>isBP</th>
@@ -134,9 +134,9 @@
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The input calibration data frame has three columns: yearBP, uncalYearBP, and
-uncalYearBPError. For each input calendar date, y, use the calibration curve
+uncalYearBPError. For each input calendar date, tau, use the calibration curve
 information to estimate the fraction modern of the calibration curve. If
-y is not specified, calibDf$uncalYearBP is used as the dates for the
+tau is not specified, calibDf$uncalYearBP is used as the dates for the
 calculation. By default, dates are assumed to be AD, but this can be changed
 using the optional input isBP, which is FALSE by default.</p>
 

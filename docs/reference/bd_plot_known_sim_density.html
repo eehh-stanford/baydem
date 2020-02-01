@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Visualize the calibration curve with equifinal and non-equifinal time spans — bd_vis_calib_curve • baydem</title>
+<title>Plot the known simulation density — bd_plot_known_sim_density • baydem</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Visualize the calibration curve with equifinal and non-equifinal time spans — bd_vis_calib_curve" />
-<meta property="og:description" content="Visualize the calibration curve with equifinal and non-equifinal time spans" />
+<meta property="og:title" content="Plot the known simulation density — bd_plot_known_sim_density" />
+<meta property="og:description" content="Plot the known simulation density" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,63 +100,40 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Visualize the calibration curve with equifinal and non-equifinal time spans</h1>
+    <h1>Plot the known simulation density</h1>
     
-    <div class="hidden name"><code>bd_vis_calib_curve.Rd</code></div>
+    <div class="hidden name"><code>bd_plot_known_sim_density.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Visualize the calibration curve with equifinal and non-equifinal time spans</p>
+    <p>Plot the known simulation density</p>
     </div>
 
-    <pre class="usage"><span class='fu'>bd_vis_calib_curve</span>(
-  <span class='no'>taumin</span>,
-  <span class='no'>taumax</span>,
-  <span class='no'>calibDf</span>,
-  <span class='kw'>invertCol</span> <span class='kw'>=</span> <span class='st'>"gray90"</span>,
-  <span class='kw'>pointCol</span> <span class='kw'>=</span> <span class='st'>"black"</span>,
-  <span class='kw'>pointPch</span> <span class='kw'>=</span> <span class='fl'>19</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>bd_plot_known_sim_density</span>(<span class='no'>an</span>, <span class='kw'>add</span> <span class='kw'>=</span> <span class='no'>F</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>taumin</th>
-      <td><p>The minimum calendar date for plotting (AD)</p></td>
+      <th>an</th>
+      <td><p>A list-like object of class <code>baydem::bd_analysis</code> with information on the quantiles of the density function and growth rate</p></td>
     </tr>
     <tr>
-      <th>taumax</th>
-      <td><p>The maximum calendar date for plotting (AD)</p></td>
-    </tr>
-    <tr>
-      <th>calibDf</th>
-      <td><p>The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError</p></td>
-    </tr>
-    <tr>
-      <th>invertCol</th>
-      <td><p>(default: <code>gray90</code>) The color for shading invertible regions</p></td>
-    </tr>
-    <tr>
-      <th>pointCol</th>
-      <td><p>(default: <code>black</code>) The color for calibration curve points</p></td>
-    </tr>
-    <tr>
-      <th>pointPch</th>
-      <td><p>(default: <code>19</code>) The symbol for calibration curve points</p></td>
+      <th>add</th>
+      <td><p>(default: <code>FALSE</code>) Whether to make a new plot or add to the active plot</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional inputs to plots</p></td>
+      <td><p>Additional parameters to pass to plot / lines</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Vizualize the input calibration curve, calibDf, on the interval taumin to
-taumax. This involves plotting the curve itself and shading invertible
-(non-equifinal) and non-invertible (equifinal) regions.</p>
+    <p>The input, an, is the result of a call to bd_analyze_soln. It is a
+list-like object of class bayDem_analysis with information on the quantiles
+of the density function and growth rate. By default, a new plot is made, but
+if add = TRUE the curve is added to the active plot.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

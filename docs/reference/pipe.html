@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Visualize the calibration curve with equifinal and non-equifinal time spans — bd_vis_calib_curve • baydem</title>
+<title>Pipe operator — %&gt;% • baydem</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Visualize the calibration curve with equifinal and non-equifinal time spans — bd_vis_calib_curve" />
-<meta property="og:description" content="Visualize the calibration curve with equifinal and non-equifinal time spans" />
+<meta property="og:title" content="Pipe operator — %&gt;%" />
+<meta property="og:description" content="See magrittr::%&amp;gt;% for details." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,70 +100,23 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Visualize the calibration curve with equifinal and non-equifinal time spans</h1>
+    <h1>Pipe operator</h1>
     
-    <div class="hidden name"><code>bd_vis_calib_curve.Rd</code></div>
+    <div class="hidden name"><code>pipe.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Visualize the calibration curve with equifinal and non-equifinal time spans</p>
+    <p>See <code>magrittr::%&gt;%</code> for details.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>bd_vis_calib_curve</span>(
-  <span class='no'>taumin</span>,
-  <span class='no'>taumax</span>,
-  <span class='no'>calibDf</span>,
-  <span class='kw'>invertCol</span> <span class='kw'>=</span> <span class='st'>"gray90"</span>,
-  <span class='kw'>pointCol</span> <span class='kw'>=</span> <span class='st'>"black"</span>,
-  <span class='kw'>pointPch</span> <span class='kw'>=</span> <span class='fl'>19</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='no'>lhs</span> <span class='kw'>%&gt;%</span> <span class='no'>rhs</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>taumin</th>
-      <td><p>The minimum calendar date for plotting (AD)</p></td>
-    </tr>
-    <tr>
-      <th>taumax</th>
-      <td><p>The maximum calendar date for plotting (AD)</p></td>
-    </tr>
-    <tr>
-      <th>calibDf</th>
-      <td><p>The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError</p></td>
-    </tr>
-    <tr>
-      <th>invertCol</th>
-      <td><p>(default: <code>gray90</code>) The color for shading invertible regions</p></td>
-    </tr>
-    <tr>
-      <th>pointCol</th>
-      <td><p>(default: <code>black</code>) The color for calibration curve points</p></td>
-    </tr>
-    <tr>
-      <th>pointPch</th>
-      <td><p>(default: <code>19</code>) The symbol for calibration curve points</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Additional inputs to plots</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Vizualize the input calibration curve, calibDf, on the interval taumin to
-taumax. This involves plotting the curve itself and shading invertible
-(non-equifinal) and non-invertible (equifinal) regions.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#details">Details</a></li>
     </ul>
 
   </div>

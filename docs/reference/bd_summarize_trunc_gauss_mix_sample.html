@@ -36,24 +36,24 @@
 
 
 <meta property="og:title" content="Identify growth periods and the peak value for a truncated Gaussian mixture — bd_summarize_trunc_gauss_mix_sample" />
-<meta property="og:description" content="The input vector th parameterizes a Gaussian mixture, and ymin / ymax give
-the limits of truncation. Summarize the sample by identifying growth / decay
-periods and the peak value using the following procedure.
-(1) Calculate the derivative, f'(y), at the points y = seq(ymin,ymax,len=N),
+<meta property="og:description" content="The input vector th parameterizes a Gaussian mixture, and taumin / taumax
+give the limits of truncation. Summarize the sample by identifying growth /
+decay periods and the peak value using the following procedure.
+(1) Calculate the derivative, f'(t), at the points t = seq(taumin,taumax,len=N),
 where N is 1000 by default.
-(2) Identify points where f'(y) changes sign, then numerically estimate the
-crossing point between the two y values where there was a sign change.
-(3) Create a vector of critical points, ycrit, which includes ymin / ymax
+(2) Identify points where f'(t) changes sign, then numerically estimate the
+crossing point between the two t values where there was a sign change.
+(3) Create a vector of critical points, tcrit, which includes taumin / taumax
 as well as the crossing points found in the preceding step.
 (4) Calculate the density at the critical points to identify the peak value,
-fpeak, and corresponding calendar date, ypeak, as well as the index of
-of the peak in ycrit, indPeak.
-(5) For each time period (the length(ypeak)-1 durations defined by ypeak)
-determine the sign of the density function, f(y), and create a character
-vector, slope, that has the value 'pos' if f(y) is positive and 'neg' if
-f(y) is negative.
+fpeak, and corresponding calendar date, tpeak, as well as the index of
+of the peak in tcrit, indPeak.
+(5) For each time period (the length(tpeak)-1 durations defined by ypeak)
+determine the sign of the density function, f(t), and create a character
+vector, slope, that has the value 'pos' if f(t) is positive and 'neg' if
+f(t) is negative.
 (6) Finally, create a character vector, pattern, that appends the index of
-the peak in ycrit (converted to a character) to the character vector
+the peak in tcrit (converted to a character) to the character vector
 slope. This defines a unique pattern of the sample that takes into
 account periods of growth / decline and the relative location of the
 peak." />
@@ -126,30 +126,30 @@ peak." />
     </div>
 
     <div class="ref-description">
-    <p>The input vector th parameterizes a Gaussian mixture, and ymin / ymax give
-the limits of truncation. Summarize the sample by identifying growth / decay
-periods and the peak value using the following procedure.</p>
-<p>(1) Calculate the derivative, f'(y), at the points y = seq(ymin,ymax,len=N),
+    <p>The input vector th parameterizes a Gaussian mixture, and taumin / taumax
+give the limits of truncation. Summarize the sample by identifying growth /
+decay periods and the peak value using the following procedure.</p>
+<p>(1) Calculate the derivative, f'(t), at the points t = seq(taumin,taumax,len=N),
 where N is 1000 by default.</p>
-<p>(2) Identify points where f'(y) changes sign, then numerically estimate the
-crossing point between the two y values where there was a sign change.</p>
-<p>(3) Create a vector of critical points, ycrit, which includes ymin / ymax
+<p>(2) Identify points where f'(t) changes sign, then numerically estimate the
+crossing point between the two t values where there was a sign change.</p>
+<p>(3) Create a vector of critical points, tcrit, which includes taumin / taumax
 as well as the crossing points found in the preceding step.</p>
 <p>(4) Calculate the density at the critical points to identify the peak value,
-fpeak, and corresponding calendar date, ypeak, as well as the index of
-of the peak in ycrit, indPeak.</p>
-<p>(5) For each time period (the length(ypeak)-1 durations defined by ypeak)
-determine the sign of the density function, f(y), and create a character
-vector, slope, that has the value 'pos' if f(y) is positive and 'neg' if
-f(y) is negative.</p>
+fpeak, and corresponding calendar date, tpeak, as well as the index of
+of the peak in tcrit, indPeak.</p>
+<p>(5) For each time period (the length(tpeak)-1 durations defined by ypeak)
+determine the sign of the density function, f(t), and create a character
+vector, slope, that has the value 'pos' if f(t) is positive and 'neg' if
+f(t) is negative.</p>
 <p>(6) Finally, create a character vector, pattern, that appends the index of
-the peak in ycrit (converted to a character) to the character vector
+the peak in tcrit (converted to a character) to the character vector
 slope. This defines a unique pattern of the sample that takes into
 account periods of growth / decline and the relative location of the
 peak.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>bd_summarize_trunc_gauss_mix_sample</span>(<span class='no'>th</span>, <span class='no'>ymin</span>, <span class='no'>ymax</span>, <span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</pre>
+    <pre class="usage"><span class='fu'>bd_summarize_trunc_gauss_mix_sample</span>(<span class='no'>th</span>, <span class='no'>taumin</span>, <span class='no'>taumax</span>, <span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -159,7 +159,11 @@ peak.</p>
       <td><p>The Gaussian mixture parameterization</p></td>
     </tr>
     <tr>
-      <th>ymin</th>
+      <th>taumin</th>
+      <td><p>The lower truncation value</p></td>
+    </tr>
+    <tr>
+      <th>taumax</th>
       <td><p>The upper truncation value</p></td>
     </tr>
     <tr>
@@ -170,7 +174,7 @@ peak.</p>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list consisting of ylo / yhi (specifying the time periods), indPeak, ypeak, fpeak, and pattern (see Description)</p>
+    <p>A list consisting of tlo / thi (specifying the time periods), indPeak, tpeak, fpeak, and pattern (see Description)</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

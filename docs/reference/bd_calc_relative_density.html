@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>For each sample, calculate the time it takes for the density to decrease by half from the peak — bd_calc_relative_density • baydem</title>
+<title>Calculate the relative density at two dates (or a range of dates / the peak) — bd_calc_relative_density • baydem</title>
 
 
 <!-- jquery -->
@@ -35,9 +35,8 @@
 
 
 
-<meta property="og:title" content="For each sample, calculate the time it takes for the density to decrease by half from the peak — bd_calc_relative_density" />
-<meta property="og:description" content="For each sample, calculate the time it takes for the density to decrease by half from the peak
-Calculate the relative density at two dates (or a range of dates / the peak)" />
+<meta property="og:title" content="Calculate the relative density at two dates (or a range of dates / the peak) — bd_calc_relative_density" />
+<meta property="og:description" content="Calculate the relative density at two dates, and/or a range of dates and/or the peak value (see details)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -101,19 +100,16 @@ Calculate the relative density at two dates (or a range of dates / the peak)" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>For each sample, calculate the time it takes for the density to decrease by half from the peak</h1>
+    <h1>Calculate the relative density at two dates (or a range of dates / the peak)</h1>
     
     <div class="hidden name"><code>bd_calc_relative_density.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>For each sample, calculate the time it takes for the density to decrease by half from the peak</p>
-<p>Calculate the relative density at two dates (or a range of dates / the peak)</p>
+    <p>Calculate the relative density at two dates, and/or a range of dates and/or the peak value (see details).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>bd_calc_relative_density</span>(<span class='no'>soln</span>, <span class='no'>spec1</span>, <span class='no'>spec2</span>, <span class='kw'>ind</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>anal</span> <span class='kw'>=</span> <span class='fl'>NA</span>)
-
-<span class='fu'>bd_calc_relative_density</span>(<span class='no'>soln</span>, <span class='no'>spec1</span>, <span class='no'>spec2</span>, <span class='kw'>ind</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>anal</span> <span class='kw'>=</span> <span class='fl'>NA</span>)</pre>
+    <pre class="usage"><span class='fu'>bd_calc_relative_density</span>(<span class='no'>soln</span>, <span class='no'>spec1</span>, <span class='no'>spec2</span>, <span class='kw'>ind</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>anal</span> <span class='kw'>=</span> <span class='fl'>NA</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,20 +136,14 @@ all the samples in anal are used.</p></td>
       <td><p>(Optional) The result of a call to bd_analyze_soln. This is only
 needed if either spec1 or spec2 is 'peak'</p></td>
     </tr>
-    <tr>
-      <th>propChange</th>
-      <td><p>(Default 0.5) The proportional</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A vector of relative densities (f_spec1 / f_spec2)</p>
-<p>A vector of relative densities (f_spec1 / f_spec2)</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Calculate the relative density for two dates or, more generally, for two</p>
-<p>Calculate the relative density for two dates or, more generally, for two
+    <p>Calculate the relative density for two dates or, more generally, for two
 different specifications of the density aside from a simple date. The
 additional specifications that are supported are the peak value and the mean
 density on an interval. For a simple date, spec1/spec2 should be scalar

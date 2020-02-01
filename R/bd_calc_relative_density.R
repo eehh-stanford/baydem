@@ -123,13 +123,13 @@ unpack_spec <- function(spec, soln, isOne) {
   }
 }
 
-#' @export
+
 # A helper function to calculate point densities
 bd_calc_point_density <- function(TH, soln, t) {
   return(as.numeric(bd_calc_gauss_mix_pdf_mat(TH, t, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax)))
 }
 
-#' @export
+
 # A helper function to calculate the mean density over a range
 bd_calc_range_density <- function(TH, soln, tlo, thi) {
   flo <- as.numeric(bd_calc_gauss_mix_pdf_mat(TH, tlo, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax, type = "cumulative"))
@@ -137,7 +137,7 @@ bd_calc_range_density <- function(TH, soln, tlo, thi) {
   return((fhi - flo) / (thi - tlo))
 }
 
-#' @export
+
 # A helper function to calculate the peak density
 bd_calc_peak_density <- function(summList) {
   return(unlist(lapply(summList, function(x) {

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Simulate a radiocabron measurement from input calendar dates — bd_draw_rc_meas_using_date • baydem</title>
+<title>Simulate radiocarbon measurements from input calendar dates — bd_draw_rc_meas_using_date • baydem</title>
 
 
 <!-- jquery -->
@@ -35,11 +35,13 @@
 
 
 
-<meta property="og:title" content="Simulate a radiocabron measurement from input calendar dates — bd_draw_rc_meas_using_date" />
-<meta property="og:description" content="Given an input calendar dates, simulate the radiocarbon
+<meta property="og:title" content="Simulate radiocarbon measurements from input calendar dates — bd_draw_rc_meas_using_date" />
+<meta property="og:description" content="Given input calendar dates t_e, simulate the radiocarbon
 measurement process to yield a fraction modern and uncertainty.
 errorSpec is a list with named components min and max. The
-uncertainty, sig_m, is drawn uniformily from this range." />
+uncertainty, sig_m, is drawn uniformily from this range. By
+default, t_e is assumed to be calBP, but can be AD if isAD is
+True." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -103,26 +105,49 @@ uncertainty, sig_m, is drawn uniformily from this range." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Simulate a radiocabron measurement from input calendar dates</h1>
+    <h1>Simulate radiocarbon measurements from input calendar dates</h1>
     
     <div class="hidden name"><code>bd_draw_rc_meas_using_date.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Given an input calendar dates, simulate the radiocarbon
+    <p>Given input calendar dates t_e, simulate the radiocarbon
 measurement process to yield a fraction modern and uncertainty.
 errorSpec is a list with named components min and max. The
-uncertainty, sig_m, is drawn uniformily from this range.</p>
+uncertainty, sig_m, is drawn uniformily from this range. By
+default, t_e is assumed to be calBP, but can be AD if isAD is
+True.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>bd_draw_rc_meas_using_date</span>(<span class='no'>y_e</span>, <span class='no'>calibDf</span>, <span class='no'>errorSpec</span>, <span class='kw'>isAD</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
+    <pre class="usage"><span class='fu'>bd_draw_rc_meas_using_date</span>(<span class='no'>t_e</span>, <span class='no'>calibDf</span>, <span class='no'>errorSpec</span>, <span class='kw'>isAD</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>t_e</th>
+      <td><p>A vector of event dates (calBP by default)</p></td>
+    </tr>
+    <tr>
+      <th>calibDf</th>
+      <td><p>The calibration dataframe, with columns yearBP, uncalYearBP, and uncalYearBPError</p></td>
+    </tr>
+    <tr>
+      <th>errorSpec</th>
+      <td><p>A list with entries min and max specifying the interval for a uniform draw</p></td>
+    </tr>
+    <tr>
+      <th>isAD</th>
+      <td><p>(Optional; default F) Whether t_e is calBP or AD</p></td>
+    </tr>
+    </table>
 
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
     </ul>
 
   </div>

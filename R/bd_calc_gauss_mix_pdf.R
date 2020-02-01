@@ -20,10 +20,10 @@
 #' @return The output vector with length G
 #'
 #' @export
-bd_calc_gauss_mix_pdf <- function(th, 
-                                  tau, 
-                                  taumin = NA, 
-                                  taumax = NA, 
+bd_calc_gauss_mix_pdf <- function(th,
+                                  tau,
+                                  taumin = NA,
+                                  taumax = NA,
                                   type = "density") {
   # First, determine whether taumin and taumax are input
   doNorm <- !is.na(taumin)

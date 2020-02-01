@@ -6,26 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Do Demographic Bayesian Inference
-
-This is the core function that implements the Bayesian inference.
-
-The input is a problem statement object (a list),
-prob, that consists of the input data (the vectors phi_m and sig_m)
-and the hyperparameters (hp).
-stan is called via the rstan package to sample from the posterior.
-The output is the variable soln of class bayDem_soln,
-which is a list with the fields prob (the input) and fit (the result of the stan fit).
-prob can also have an optional field control that specifies the
-following control parameters for the Bayesian inference (default in parentheses):
-numChains     -- (4)    Number of chains
-sampsPerChain -- (2000) Number of samples per chain
-initList      --        The initializations for each chain. The default is
-to sample from prior using hyperparameters
-adaptDelta    -- (.99)  The value of the adapt_delta parameter, an input to
-stan. The stan default is 0.8, but a higher value
-is sensible for a mixture model with more than a
-few parameters, hence use 0.99 by default — bd_do_inference • baydem</title>
+<title>Do Demographic Bayesian Inference — bd_do_inference • baydem</title>
 
 
 <!-- jquery -->
@@ -54,44 +35,8 @@ few parameters, hence use 0.99 by default — bd_do_inference • baydem</title>
 
 
 
-<meta property="og:title" content="Do Demographic Bayesian Inference
-
-This is the core function that implements the Bayesian inference.
-
-The input is a problem statement object (a list),
-prob, that consists of the input data (the vectors phi_m and sig_m)
-and the hyperparameters (hp).
-stan is called via the rstan package to sample from the posterior.
-The output is the variable soln of class bayDem_soln,
-which is a list with the fields prob (the input) and fit (the result of the stan fit).
-prob can also have an optional field control that specifies the
-following control parameters for the Bayesian inference (default in parentheses):
-numChains     -- (4)    Number of chains
-sampsPerChain -- (2000) Number of samples per chain
-initList      --        The initializations for each chain. The default is
-to sample from prior using hyperparameters
-adaptDelta    -- (.99)  The value of the adapt_delta parameter, an input to
-stan. The stan default is 0.8, but a higher value
-is sensible for a mixture model with more than a
-few parameters, hence use 0.99 by default — bd_do_inference" />
-<meta property="og:description" content="Do Demographic Bayesian Inference
-This is the core function that implements the Bayesian inference.
-The input is a problem statement object (a list),
-prob, that consists of the input data (the vectors phi_m and sig_m)
-and the hyperparameters (hp).
-stan is called via the rstan package to sample from the posterior.
-The output is the variable soln of class bayDem_soln,
-which is a list with the fields prob (the input) and fit (the result of the stan fit).
-prob can also have an optional field control that specifies the
-following control parameters for the Bayesian inference (default in parentheses):
-numChains     -- (4)    Number of chains
-sampsPerChain -- (2000) Number of samples per chain
-initList      --        The initializations for each chain. The default is
-to sample from prior using hyperparameters
-adaptDelta    -- (.99)  The value of the adapt_delta parameter, an input to
-stan. The stan default is 0.8, but a higher value
-is sensible for a mixture model with more than a
-few parameters, hence use 0.99 by default" />
+<meta property="og:title" content="Do Demographic Bayesian Inference — bd_do_inference" />
+<meta property="og:description" content="This is the core function that implements the Bayesian inference." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -155,49 +100,13 @@ few parameters, hence use 0.99 by default" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Do Demographic Bayesian Inference
-
-This is the core function that implements the Bayesian inference.
-
-The input is a problem statement object (a list),
-prob, that consists of the input data (the vectors phi_m and sig_m)
-and the hyperparameters (hp).
-stan is called via the rstan package to sample from the posterior.
-The output is the variable soln of class bayDem_soln,
-which is a list with the fields prob (the input) and fit (the result of the stan fit).
-prob can also have an optional field control that specifies the
-following control parameters for the Bayesian inference (default in parentheses):
-numChains     -- (4)    Number of chains
-sampsPerChain -- (2000) Number of samples per chain
-initList      --        The initializations for each chain. The default is
-to sample from prior using hyperparameters
-adaptDelta    -- (.99)  The value of the adapt_delta parameter, an input to
-stan. The stan default is 0.8, but a higher value
-is sensible for a mixture model with more than a
-few parameters, hence use 0.99 by default</h1>
+    <h1>Do Demographic Bayesian Inference</h1>
     
     <div class="hidden name"><code>bd_do_inference.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Do Demographic Bayesian Inference</p>
-<p>This is the core function that implements the Bayesian inference.</p>
-<p>The input is a problem statement object (a list),
-prob, that consists of the input data (the vectors phi_m and sig_m)
-and the hyperparameters (hp).
-stan is called via the rstan package to sample from the posterior.
-The output is the variable soln of class bayDem_soln,
-which is a list with the fields prob (the input) and fit (the result of the stan fit).
-prob can also have an optional field control that specifies the
-following control parameters for the Bayesian inference (default in parentheses):
-numChains     -- (4)    Number of chains
-sampsPerChain -- (2000) Number of samples per chain
-initList      --        The initializations for each chain. The default is
-to sample from prior using hyperparameters
-adaptDelta    -- (.99)  The value of the adapt_delta parameter, an input to
-stan. The stan default is 0.8, but a higher value
-is sensible for a mixture model with more than a
-few parameters, hence use 0.99 by default</p>
+    <p>This is the core function that implements the Bayesian inference.</p>
     </div>
 
     <pre class="usage"><span class='fu'>bd_do_inference</span>(<span class='no'>prob</span>, <span class='no'>calibDf</span>, <span class='kw'>saveFile</span> <span class='kw'>=</span> <span class='fl'>NA</span>)</pre>
@@ -215,6 +124,10 @@ In addition, the field control is optional (see above).</p></td>
       <th>calibDf</th>
       <td><p>A dataframe with radiocarbon calibration curve information</p></td>
     </tr>
+    <tr>
+      <th>saveFile</th>
+      <td><p>A filename for the output (optional)</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -222,6 +135,21 @@ In addition, the field control is optional (see above).</p></td>
     <p>soln, a list with three fields: prob (the input),
 fit (the result of the call to stan),
 and control (the control parameters used)</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The input is a problem statement object (a list),
+prob, that consists of the input data (the vectors phi_m and sig_m)
+and the hyperparameters (hp).
+stan is called via the rstan package to sample from the posterior.
+The output is the variable soln of class bd_soln,
+which is a list with the fields prob (the input) and fit (the result of the stan fit).
+prob can also have an optional field control that specifies the
+following control parameters for the Bayesian inference (default in parentheses):
+numChains     -- (4)    Number of chains
+sampsPerChain -- (2000) Number of samples per chain
+initList      --        The initializations for each chain. The default is
+to set this using a mixture fit to the summed
+density</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -229,6 +157,7 @@ and control (the control parameters used)</p>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
+      <li><a href="#details">Details</a></li>
     </ul>
 
   </div>

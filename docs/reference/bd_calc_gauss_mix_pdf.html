@@ -40,10 +40,10 @@
 for a possibly truncated Gaussian mixture. The density, f', and rate, f'/f,
 can also be calculated by specifying the input type, which is
 'density' by default, but can also be 'cumulative', 'derivative', or 'rate'.
-The parameter vector th has the ordering wk, muk, sigk, where
-wk, muk, and sigk are the weight, mean, and standard deviation of the k-th
-mixture. There are K total mixtures. The truncation boundaries ymin and ymax
-are optional." />
+The parameter vector th has the ordering (pik, muk, sigk), where
+pik, muk, and sigk are the weight, mean, and standard deviation of the k-th
+mixture. There are K total mixtures. The truncation boundaries taumin and
+taumax are optional." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -117,13 +117,13 @@ are optional." />
 for a possibly truncated Gaussian mixture. The density, f', and rate, f'/f,
 can also be calculated by specifying the input <code>type</code>, which is
 'density' by default, but can also be 'cumulative', 'derivative', or 'rate'.
-The parameter vector th has the ordering wk, muk, sigk, where
-wk, muk, and sigk are the weight, mean, and standard deviation of the k-th
-mixture. There are K total mixtures. The truncation boundaries ymin and ymax
-are optional.</p>
+The parameter vector th has the ordering (pik, muk, sigk), where
+pik, muk, and sigk are the weight, mean, and standard deviation of the k-th
+mixture. There are K total mixtures. The truncation boundaries taumin and
+taumax are optional.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>bd_calc_gauss_mix_pdf</span>(<span class='no'>th</span>, <span class='no'>y</span>, <span class='kw'>ymin</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>ymax</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"density"</span>)</pre>
+    <pre class="usage"><span class='fu'>bd_calc_gauss_mix_pdf</span>(<span class='no'>th</span>, <span class='no'>tau</span>, <span class='kw'>taumin</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>taumax</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"density"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -133,8 +133,16 @@ are optional.</p>
       <td><p>A vector-like object that parameterizes the distribution</p></td>
     </tr>
     <tr>
-      <th>y</th>
+      <th>tau</th>
       <td><p>Vector of locations at which to calculate the density</p></td>
+    </tr>
+    <tr>
+      <th>taumin</th>
+      <td><p>Minimum truncation bound</p></td>
+    </tr>
+    <tr>
+      <th>taumax</th>
+      <td><p>Maximum truncation bound</p></td>
     </tr>
     <tr>
       <th>type</th>

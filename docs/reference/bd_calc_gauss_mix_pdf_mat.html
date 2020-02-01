@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate the dnesity of a possibly truncated Gaussian mixture for a matrix of samples — bd_calc_gauss_mix_pdf_mat • baydem</title>
+<title>Calculate the density of a possibly truncated Gaussian mixture for a matrix of samples — bd_calc_gauss_mix_pdf_mat • baydem</title>
 
 
 <!-- jquery -->
@@ -35,15 +35,15 @@
 
 
 
-<meta property="og:title" content="Calculate the dnesity of a possibly truncated Gaussian mixture for a matrix of samples — bd_calc_gauss_mix_pdf_mat" />
+<meta property="og:title" content="Calculate the density of a possibly truncated Gaussian mixture for a matrix of samples — bd_calc_gauss_mix_pdf_mat" />
 <meta property="og:description" content="TH is a matrix of samples of a possibly truncated Gaussian
 mixture with dimensions S x P, where S is the number of samples
 and P is the number of parameters. Repeatedly call
 bd_calc_gauss_mix_pdf to calculate the density function
-for each sample at the points in the vector y, which has length
+for each sample at the points in the vector tau, which has length
 G. The output density matrix, fMat, has dimensions S x G.
 bd_calc_gauss_mix_pdf_mat supports the same optional
-as bd_calc_gauss_mix_pdf: ymin / ymax to specify the
+as bd_calc_gauss_mix_pdf: taumin / taumax to specify the
 boundaries of truncation and type to set whether the density,
 cumuluative distribution, derivative, or rate is calculated." />
 <meta name="twitter:card" content="summary" />
@@ -109,7 +109,7 @@ cumuluative distribution, derivative, or rate is calculated." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate the dnesity of a possibly truncated Gaussian mixture for a matrix of samples</h1>
+    <h1>Calculate the density of a possibly truncated Gaussian mixture for a matrix of samples</h1>
     
     <div class="hidden name"><code>bd_calc_gauss_mix_pdf_mat.Rd</code></div>
     </div>
@@ -119,15 +119,15 @@ cumuluative distribution, derivative, or rate is calculated." />
 mixture with dimensions S x P, where S is the number of samples
 and P is the number of parameters. Repeatedly call
 <code>bd_calc_gauss_mix_pdf</code> to calculate the density function
-for each sample at the points in the vector y, which has length
+for each sample at the points in the vector tau, which has length
 G. The output density matrix, fMat, has dimensions S x G.
 <code>bd_calc_gauss_mix_pdf_mat</code> supports the same optional
-as <code>bd_calc_gauss_mix_pdf</code>: ymin / ymax to specify the
+as <code>bd_calc_gauss_mix_pdf</code>: taumin / taumax to specify the
 boundaries of truncation and type to set whether the density,
 cumuluative distribution, derivative, or rate is calculated.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>bd_calc_gauss_mix_pdf_mat</span>(<span class='no'>TH</span>, <span class='no'>y</span>, <span class='kw'>ymin</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>ymax</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"density"</span>)</pre>
+    <pre class="usage"><span class='fu'>bd_calc_gauss_mix_pdf_mat</span>(<span class='no'>TH</span>, <span class='no'>tau</span>, <span class='kw'>taumin</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>taumax</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"density"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -137,16 +137,16 @@ cumuluative distribution, derivative, or rate is calculated.</p>
       <td><p>A matrix of samples with dimensions S x P</p></td>
     </tr>
     <tr>
-      <th>y</th>
+      <th>tau</th>
       <td><p>A vector of points for the density calculation with length G</p></td>
     </tr>
     <tr>
-      <th>ymin</th>
-      <td><p>(optional) The mininum y-value for truncation</p></td>
+      <th>taumin</th>
+      <td><p>(optional) The mininum time-value for truncation</p></td>
     </tr>
     <tr>
-      <th>ymax</th>
-      <td><p>(optional) The maximum y-value for truncation</p></td>
+      <th>taumax</th>
+      <td><p>(optional) The maximum time-value for truncation</p></td>
     </tr>
     <tr>
       <th>type</th>

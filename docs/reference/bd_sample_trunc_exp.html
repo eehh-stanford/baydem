@@ -36,7 +36,7 @@
 
 
 <meta property="og:title" content="Sample from a truncated exponential distribution — bd_sample_trunc_exp" />
-<meta property="og:description" content="Make N samples from a truncated exponential distribution with the density function r0exp(r0y). The rate r0 can be positive (growth) or negative (decay). The density function is normalized to integrate to 1 on the interval ymin to ymax." />
+<meta property="og:description" content="Make N samples from a truncated exponential distribution with the density function r0exp(r0t). The rate r0 can be positive (growth) or negative (decay). The density function is normalized to integrate to 1 on the interval taumin to taumax." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -106,10 +106,10 @@
     </div>
 
     <div class="ref-description">
-    <p>Make N samples from a truncated exponential distribution with the density function r0<em>exp(r0</em>y). The rate r0 can be positive (growth) or negative (decay). The density function is normalized to integrate to 1 on the interval ymin to ymax.</p>
+    <p>Make N samples from a truncated exponential distribution with the density function r0<em>exp(r0</em>t). The rate r0 can be positive (growth) or negative (decay). The density function is normalized to integrate to 1 on the interval taumin to taumax.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>bd_sample_trunc_exp</span>(<span class='no'>N</span>, <span class='no'>r0</span>, <span class='no'>ymin</span>, <span class='no'>ymax</span>)</pre>
+    <pre class="usage"><span class='fu'>bd_sample_trunc_exp</span>(<span class='no'>N</span>, <span class='no'>r0</span>, <span class='no'>taumin</span>, <span class='no'>taumax</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -123,18 +123,18 @@
       <td><p>The rate parameter</p></td>
     </tr>
     <tr>
-      <th>ymin</th>
+      <th>taumin</th>
       <td><p>The lower limit for truncation</p></td>
     </tr>
     <tr>
-      <th>ymax</th>
+      <th>taumax</th>
       <td><p>The upper limit for truncation</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A vector of N samples between ymin and ymax</p>
+    <p>A vector of N samples between taumin and taumax</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

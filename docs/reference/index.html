@@ -119,6 +119,12 @@
       <tr>
         
         <td>
+          <p><code><a href="bd_add_shaded_quantiles.html">bd_add_shaded_quantiles()</a></code> </p>
+        </td>
+        <td><p>Add a shaded region showing the min/max quantiles</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="bd_analyze_soln.html">bd_analyze_soln()</a></code> </p>
         </td>
         <td><p>Analyze the result of a call to <code>bd_do_inference</code></p></td>
@@ -139,7 +145,7 @@
         <td>
           <p><code><a href="bd_calc_calib_curve_frac_modern.html">bd_calc_calib_curve_frac_modern()</a></code> </p>
         </td>
-        <td><p>Calculation the calibration curve fraction modern for input calendar dates</p></td>
+        <td><p>Calculation the calibration curve fraction taumodern for input calendar dates</p></td>
       </tr><tr>
         
         <td>
@@ -151,7 +157,7 @@
         <td>
           <p><code><a href="bd_calc_gauss_mix_pdf_mat.html">bd_calc_gauss_mix_pdf_mat()</a></code> </p>
         </td>
-        <td><p>Calculate the dnesity of a possibly truncated Gaussian mixture for a matrix of samples</p></td>
+        <td><p>Calculate the density of a possibly truncated Gaussian mixture for a matrix of samples</p></td>
       </tr><tr>
         
         <td>
@@ -173,52 +179,27 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_calc_relative_density.html">bd_calc_relative_density()</a></code> <code><a href="bd_calc_relative_density.html">bd_calc_relative_density()</a></code> </p>
+          <p><code><a href="bd_calc_relative_density.html">bd_calc_relative_density()</a></code> </p>
         </td>
-        <td><p>For each sample, calculate the time it takes for the density to decrease by half from the peak</p></td>
+        <td><p>Calculate the relative density at two dates (or a range of dates / the peak)</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_convert_gauss_mix_param_list_to_vect.html">bd_convert_gauss_mix_param_list_to_vect()</a></code> </p>
+          <p><code><a href="bd_calc_trapez_weights.html">bd_calc_trapez_weights()</a></code> </p>
         </td>
-        <td><p>Convert a Gaussian mixture parameterization from a list to a vector</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bd_convert_gauss_mix_param_vect_to_list.html">bd_convert_gauss_mix_param_vect_to_list()</a></code> </p>
-        </td>
-        <td><p>Convert a Gaussian mixture parameterization from a vector to a list</p></td>
+        <td><p>Calculate integration weights assuming the midpoint rule</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="bd_do_inference.html">bd_do_inference()</a></code> </p>
         </td>
-        <td><p>Do Demographic Bayesian Inference
-
-This is the core function that implements the Bayesian inference.
-
-The input is a problem statement object (a list),
-prob, that consists of the input data (the vectors phi_m and sig_m)
-and the hyperparameters (hp).
-stan is called via the rstan package to sample from the posterior.
-The output is the variable soln of class bayDem_soln,
-which is a list with the fields prob (the input) and fit (the result of the stan fit).
-prob can also have an optional field control that specifies the
-following control parameters for the Bayesian inference (default in parentheses):
-numChains     -- (4)    Number of chains
-sampsPerChain -- (2000) Number of samples per chain
-initList      --        The initializations for each chain. The default is
-to sample from prior using hyperparameters
-adaptDelta    -- (.99)  The value of the adapt_delta parameter, an input to
-stan. The stan default is 0.8, but a higher value
-is sensible for a mixture model with more than a
-few parameters, hence use 0.99 by default</p></td>
+        <td><p>Do Demographic Bayesian Inference</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="bd_draw_rc_meas_using_date.html">bd_draw_rc_meas_using_date()</a></code> </p>
         </td>
-        <td><p>Simulate a radiocabron measurement from input calendar dates</p></td>
+        <td><p>Simulate radiocarbon measurements from input calendar dates</p></td>
       </tr><tr>
         
         <td>
@@ -234,15 +215,33 @@ few parameters, hence use 0.99 by default</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_norm_pdf_mat.html">bd_norm_pdf_mat()</a></code> </p>
+          <p><code><a href="bd_make_blank_density_plot.html">bd_make_blank_density_plot()</a></code> </p>
         </td>
-        <td><p>Normalize the rows of an input density matrix</p></td>
+        <td><p>Prepare a blank plot for showing densities</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_phi2y.html">bd_phi2y()</a></code> </p>
+          <p><code><a href="bd_phi2tau.html">bd_phi2tau()</a></code> </p>
         </td>
         <td><p>Find calendar date from fraction modern value given known bounding indices</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="bd_plot_50_percent_quantile.html">bd_plot_50_percent_quantile()</a></code> </p>
+        </td>
+        <td><p>Plot the 50 percent quantile curve</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="bd_plot_known_sim_density.html">bd_plot_known_sim_density()</a></code> </p>
+        </td>
+        <td><p>Plot the known simulation density</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="bd_plot_summed_density.html">bd_plot_summed_density()</a></code> </p>
+        </td>
+        <td><p>Plot the summed probability density function (SPDF)</p></td>
       </tr><tr>
         
         <td>
@@ -285,12 +284,6 @@ few parameters, hence use 0.99 by default</p></td>
           <p><code><a href="marine13_raw.html">marine13_raw</a></code> </p>
         </td>
         <td><p>The raw data for constructing the Marine13 calibration curve</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plot.bd_analysis.html">plot(<i>&lt;bd_analysis&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Plot the result of a call to bayDem_analyzeSoln</p></td>
       </tr><tr>
         
         <td>

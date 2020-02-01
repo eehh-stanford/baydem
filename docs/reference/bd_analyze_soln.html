@@ -117,7 +117,7 @@ In particular, it calculates the quantiles of the density function and growth ra
 
     <pre class="usage"><span class='fu'>bd_analyze_soln</span>(
   <span class='no'>soln</span>,
-  <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
+  <span class='kw'>tau</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
   <span class='kw'>th_sim</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
   <span class='kw'>lev</span> <span class='kw'>=</span> <span class='fl'>0.025</span>,
   <span class='kw'>rateProp</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
@@ -132,9 +132,9 @@ In particular, it calculates the quantiles of the density function and growth ra
       <td><p>The solution, a list-like object of class bd_soln (see <code>bd_do_inference</code>)</p></td>
     </tr>
     <tr>
-      <th>y</th>
+      <th>tau</th>
       <td><p>(optional) The calendar dates at which to evaluate densities.
-If y is not input, y is built from the hyperparameters.</p></td>
+If tau is not input, tau is built from the hyperparameters.</p></td>
     </tr>
     <tr>
       <th>th_sim</th>
@@ -150,7 +150,7 @@ If y is not input, y is built from the hyperparameters.</p></td>
     </tr>
     <tr>
       <th>doSummary</th>
-      <td><p>Default TRUE Whether to summarize each sample by calling bd_summarize_sample</p></td>
+      <td><p>(default: <code>TRUE</code>) Whether to summarize each sample by calling bd_summarize_sample</p></td>
     </tr>
     </table>
 

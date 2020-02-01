@@ -12,7 +12,8 @@ Description: Bayesian tools for reconstructing past and present demography. This
     Bayesian probability distributions: Improving demographic reconstructions using 14C dates. 
     *Proceedings of the National Academy of Sciences*, in review.
 License: MIT + file LICENSE
-Depends:
+Depends: 
+    R (>= 3.1.0),
     magrittr
 Imports:
     rstan,
