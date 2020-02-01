@@ -278,6 +278,10 @@ expect_equal(
   dim(measMat1b)
 )
 
+# (2) Calculate the measurement matrix using tau_irreg, newly defined, which
+#     is irregularly spaced. Do this for both using and not using calibration
+#     uncertainty. Also check the dimensions of the output
+
 tau_irreg <- c(800,805,810,825)
 # an error is expected if useTrapez is not set to TRUE
 expect_error(
@@ -305,3 +309,26 @@ expect_equal(
   dim(measMat2b)
 )
 
+# Check the functioning of bd_calc_quantiles. Check the dimensions for a
+# a call in which probs is the default, c(.025, .5, .975), and for which it is
+# explicitly set.
+fMat <- bd_calc_gauss_mix_pdf_mat(TH, tau)
+
+expect_error(
+  Qdens1 <- bd_calc_quantiles(fMat),
+  NA
+)
+
+expect_equal(
+  dim(Qdens1),
+  c(3,ncol(fMat))
+)
+
+expect_error(
+  Qdens2 <- bd_calc_quantiles(fMat, c(.025,.05,.5,.90,.975)),
+  NA
+)
+expect_equal(
+  dim(Qdens2),
+  c(5,ncol(fMat))
+)
