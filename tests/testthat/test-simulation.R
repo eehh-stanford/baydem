@@ -360,3 +360,9 @@ expect_error(
   bd_plot_summed_density(simOutput$anal),
   NA
 )
+
+# Check that bd_plot_known_sim_density does not throw an error.
+expect_error(
+  bd_plot_known_sim_density(simOutput$anal),
+  NA
+)
