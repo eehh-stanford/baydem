@@ -20,7 +20,6 @@
 #' `sig_m` (vector of measurement errors for phi_m), and `hp` (list of hyperparameters).
 #' In addition, the field control is optional (see above).
 #' @param calibDf A dataframe with radiocarbon calibration curve information
-#' @param saveFile A filename for the output (optional)
 #'
 #' @export
 #'
@@ -28,7 +27,7 @@
 #' fit (the result of the call to stan),
 #' and control (the control parameters used)
 #'
-bd_do_inference <- function(prob, calibDf, saveFile = NA) {
+bd_do_inference <- function(prob, calibDf) {
   # Unpack and/or define the control parameters
   if (exists("control", where = prob) == T) {
     haveNumChains <- exists("numChains", where = prob$control) == T
@@ -131,8 +130,5 @@ bd_do_inference <- function(prob, calibDf, saveFile = NA) {
 
   # If a save file was input, save the result to file. This is especially
   # useful for parallel batch runs
-  if (!is.na(saveFile)) {
-    saveRDS(soln, saveFile)
-  }
   return(soln)
 }

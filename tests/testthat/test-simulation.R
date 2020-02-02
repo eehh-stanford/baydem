@@ -148,12 +148,12 @@ expect_error(
 # bd_calc_range_density
 # bd_calc_peak_density
 expect_error(
-  relDens1 <- bd_calc_relative_density(soln, "peak", 1100),
+  relDens1 <- bd_calc_relative_density(simOutput$soln, "peak", 1100),
   NA
 )
 
 expect_error(
-  relDens2 <- bd_calc_relative_density(soln, 900, c(700, 750)),
+  relDens2 <- bd_calc_relative_density(simOutput$soln, 900, c(700, 750)),
   NA
 )
 
