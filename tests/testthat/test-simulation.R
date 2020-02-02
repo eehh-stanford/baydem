@@ -82,7 +82,7 @@ run_simulation <- function() {
     control = controlList
   )
 
-  soln <- bd_do_inference(prob, calibDf)
+  soln <- bd_do_inference(prob)
   anal <- bd_analyze_soln(soln)
 
   return(list(prob = prob, soln = soln, anal = anal, calibDf = calibDf, errorSpec = errorSpec))
