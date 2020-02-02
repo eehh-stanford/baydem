@@ -354,3 +354,9 @@ expect_equal(
   length(gmSamp2),
   50
 )
+
+# Check that bd_plot_summed_density does not throw an error.
+expect_error(
+  bd_plot_summed_density(simOutput$anal),
+  NA
+)
