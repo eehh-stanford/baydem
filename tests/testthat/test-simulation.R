@@ -34,14 +34,9 @@ run_simulation <- function() {
   mcWarmup <- 200 # Number of warm-up samples
 
   N <- 20 # number of samples
-  sampDates <- bd_sample_gauss_mix(N, th_sim, taumin, taumax)
-  sampRcMeas <- bd_draw_rc_meas_using_date(sampDates, calibDf, errorSpec, isAD = T)
-  simData <- list(calDates = sampDates, rcMeas = sampRcMeas)
-
-  # shape parameter for gamma distribution of standard deviation prior
-  alpha_s <- 3
-  # rate  parameter for gamma distribution of standard deviation prior
-  alpha_r <- (alpha_s - 1) / 300
+  sampDatesAD <- bd_sample_gauss_mix(N, th_sim, taumin, taumax)
+  sampRcMeas <- bd_draw_rc_meas_using_date(sampDatesAD, calibDf, errorSpec, isAD = T)
+  simData <- list(datesAD = sampDatesAD, rcMeas = sampRcMeas)
 
   # hyperparameters for inference
   hp <-

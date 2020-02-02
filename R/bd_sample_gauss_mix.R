@@ -21,6 +21,7 @@
 #   Name    Type           Description
 #   samp    vector         The samples (length = N)
 
+# @export
 bd_sample_gauss_mix <- function(N, th, ymin = NA, ymax = NA) {
   K <- length(th) / 3 # Number of  mixtures
 
