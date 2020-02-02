@@ -81,7 +81,7 @@ bd_do_inference <- function(prob) {
     mumin <- prob$hp$mumin
     mumax <- prob$hp$mumax
     tau <- seq(taumin, taumax, by = prob$hp$dtau)
-    M <- bd_calc_meas_matrix(tau, prob$phi_m, prob$sig_m, calibDf)
+    M <- bd_calc_meas_matrix(tau, prob$phi_m, prob$sig_m, prob$calibDf)
 
     if (haveInitList) {
       initList <- prob$control$initList

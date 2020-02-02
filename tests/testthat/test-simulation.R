@@ -80,7 +80,7 @@ run_simulation <- function() {
   soln <- bd_do_inference(prob)
   anal <- bd_analyze_soln(soln)
 
-  return(list(prob = prob, soln = soln, anal = anal, calibDf = calibDf, errorSpec = errorSpec))
+  return(list(prob = prob, soln = soln, anal = anal, calibDf = calibDf, errorSpec = errorSpec, th_sim = th_sim))
 }
 
 # Calling run_simulation should not raise an error. If it does, the test fails.
@@ -331,4 +331,26 @@ expect_error(
 expect_equal(
   dim(Qdens2),
   c(5, ncol(fMat))
+)
+
+# Check that bd_sample_gauss_mix does not throw an error. Also check the lengths
+# of the outputs and that no errors are whether or not truncation is used.
+expect_error(
+  gmSamp1 <- bd_sample_gauss_mix(50,simOutput$th_sim),
+  NA
+)
+
+expect_equal(
+  length(gmSamp1),
+  50
+)
+
+expect_error(
+  gmSamp2 <- bd_sample_gauss_mix(50,simOutput$th_sim,simOutput$prob$hp$taumin,simOutput$prob$hp$taumax),
+  NA
+)
+
+expect_equal(
+  length(gmSamp2),
+  50
 )
