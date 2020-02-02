@@ -4,14 +4,8 @@
 \alias{bd_analyze_soln}
 \title{Analyze the result of a call to \code{bd_do_inference}}
 \usage{
-bd_analyze_soln(
-  soln,
-  tau = NA,
-  th_sim = NA,
-  lev = 0.025,
-  rateProp = NA,
-  doSummary = T
-)
+bd_analyze_soln(soln, tau = NA, th_sim = NA, lev = 0.025,
+  rateProp = NA, doSummary = T)
 }
 \arguments{
 \item{soln}{The solution, a list-like object of class bd_soln (see \code{bd_do_inference})}
@@ -46,7 +40,7 @@ for a calendar date y each sample yields a density and growth rate.
 The quantile is the value of the density or growth rate such that
 a given proportion of samples are smaller than that value.
 The probabilities used to calculate these quantiles are \code{probs = c(lev, 0.5, 1-lev)},
-where \code{lev} is the level (0.025 by default, so that 95\% of the observations
+where \code{lev} is the level (0.025 by default, so that 95% of the observations
 lie between the first and last quantile bands).
 
 In addition, \code{bd_analyze_soln} identifies calendar dates for which
@@ -58,7 +52,7 @@ the rate is not typically meaningful near the calendar date boundaries where it
 increases linearly as the calendar date goes to positive or negative infinity.
 The parameter \code{rateProp} provides control on how calendar dates are classified by
 growth rate near these boundaries. In particular, the calendar dates with a cumulative
-density (50\% quantile) below \code{rateProp} (for the lower boundary) or above \code{1 - rateProp}
+density (50% quantile) below \code{rateProp} (for the lower boundary) or above \code{1 - rateProp}
 (for the upper boundary) are classified as 'missing' in \code{growthState}.
 By default, \code{rateProp} is NA and no calendar dates are classified as missing.
 
