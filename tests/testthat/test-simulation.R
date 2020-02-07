@@ -80,7 +80,16 @@ run_simulation <- function() {
   soln <- bd_do_inference(prob)
   anal <- bd_analyze_soln(soln)
 
-  return(list(prob = prob, soln = soln, anal = anal, calibDf = calibDf, errorSpec = errorSpec, th_sim = th_sim))
+  return(
+    list(
+      prob = prob,
+      soln = soln,
+      anal = anal,
+      calibDf = calibDf,
+      errorSpec = errorSpec,
+      th_sim = th_sim
+    )
+  )
 }
 
 # Calling run_simulation should not raise an error. If it does, the test fails.
