@@ -1,43 +1,52 @@
 Type: Package
 Package: baydem
-Title: Bayesian Demography
+Title: Bayesian Tools for Reconstructing Past and Present
+    Demography
 Version: 0.1.0
-Authors@R: c(
-    person(given = c("Michael", "Holton"), family = "Price", role = c("aut", "cre"), email = "michaelholtonprice@sgmail.com"),
-    person(given = c("R.", "Kyle"), family = "Bocinsky", role = c("ctb"), email = "bocinsky@gmail.com")
-    )
-Description: Bayesian tools for reconstructing past and present demography. This is
-    the package described in used in Price et al. (2019): 
-    Price, M.H., J.M. Capriles, J. Hoggarth, R.K. Bocinsky, and J.H. Jones (2029). 
-    Bayesian probability distributions: Improving demographic reconstructions using 14C dates. 
-    *Proceedings of the National Academy of Sciences*, in review.
+Authors@R: 
+    c(person(given = c("Michael", "Holton"),
+             family = "Price",
+             role = c("aut", "cre"),
+             email = "michaelholtonprice@sgmail.com"),
+      person(given = c("R.", "Kyle"),
+             family = "Bocinsky",
+             role = "ctb",
+             email = "bocinsky@gmail.com"))
+Description: Bayesian tools for reconstructing past and present
+    demography. This is the package described in used in Price et al.
+    (2019): Price, M.H., J.M. Capriles, J. Hoggarth, R.K. Bocinsky, and
+    J.H. Jones (2029).  Bayesian probability distributions: Improving
+    demographic reconstructions using 14C dates.  *Proceedings of the
+    National Academy of Sciences*, in review.
 License: MIT + file LICENSE
+URL: https://github.com/eehh-stanford/baydem
+BugReports: https://github.com/eehh-stanford/baydem/issues
 Depends: 
-    R (>= 3.1.0),
-    magrittr
+    magrittr,
+    R (>= 3.1.0)
 Imports:
-    rstan,
-    evd,
-    stats,
-    miscTools,
-    tibble,
     base,
-    dplyr,
-    utils,
-    graphics,
     distr,
+    dplyr,
+    evd,
+    graphics,
     gtools,
+    miscTools,
+    mixtools,
     RGeode,
-    mixtools
+    rstan,
+    stats,
+    tibble,
+    utils
 Suggests:
-    pkgdown,
     covr,
     knitr,
-    usethis,
-    testthat
+    pkgdown,
+    testthat,
+    usethis
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.0.2
