@@ -89,10 +89,11 @@ run_simulation <- function() {
 }
 
 # Calling run_simulation should not raise an error. If it does, the test fails.
-expect_error(
-  simOutput <- run_simulation(),
-  NA
-)
+simOutput <- run_simulation()
+# expect_error(
+#   simOutput <- run_simulation(),
+#   NA
+# )
 
 # Check that building a density plot from individual functions does not raise
 # an error. This checks:
