@@ -4,8 +4,14 @@
 \alias{bd_make_blank_density_plot}
 \title{Prepare a blank plot for showing densities}
 \usage{
-bd_make_blank_density_plot(an, xlim = NA, ylim = NA,
-  xlab = "Calendar Date [AD]", ylab = "Density", ...)
+bd_make_blank_density_plot(
+  an,
+  xlim = NA,
+  ylim = NA,
+  xlab = "Calendar Date [AD]",
+  ylab = "Density",
+  ...
+)
 }
 \arguments{
 \item{an}{A list-like object of class \code{baydem::bd_analysis} with

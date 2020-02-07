@@ -4,8 +4,7 @@
 \alias{bd_calc_gauss_mix_pdf}
 \title{Caculate the density of a possibly truncated Gaussian mixture}
 \usage{
-bd_calc_gauss_mix_pdf(th, tau, taumin = NA, taumax = NA,
-  type = "density")
+bd_calc_gauss_mix_pdf(th, tau, taumin = NA, taumax = NA, type = "density")
 }
 \arguments{
 \item{th}{A vector-like object that parameterizes the distribution}

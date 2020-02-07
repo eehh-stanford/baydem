@@ -14,7 +14,7 @@ bd_plot_50_percent_quantile(an, add = F, ...)
 \item{...}{Additional parameters to pass to plot / lines}
 }
 \description{
-Plot the 50% quantile curve
+Plot the 50\% quantile curve
 }
 \details{
 The input, an, is the result of a call to bd_analyze_soln. It is a
