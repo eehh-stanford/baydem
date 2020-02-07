@@ -86,7 +86,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/eehh-stanford/baydem">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -101,7 +106,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Do Demographic Bayesian Inference</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/bd_do_inference.R'><code>R/bd_do_inference.R</code></a></small>
     <div class="hidden name"><code>bd_do_inference.Rd</code></div>
     </div>
 
@@ -109,7 +114,7 @@
     <p>This is the core function that implements the Bayesian inference.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>bd_do_inference</span>(<span class='no'>prob</span>, <span class='no'>calibDf</span>, <span class='kw'>saveFile</span> <span class='kw'>=</span> <span class='fl'>NA</span>)</pre>
+    <pre class="usage"><span class='fu'>bd_do_inference</span>(<span class='no'>prob</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -117,16 +122,9 @@
     <tr>
       <th>prob</th>
       <td><p>List with the fields <code>phi_m</code> (vector of radiocarbon measurements as fraction modern),
-<code>sig_m</code> (vector of measurement errors for phi_m), and <code>hp</code> (list of hyperparameters).
-In addition, the field control is optional (see above).</p></td>
-    </tr>
-    <tr>
-      <th>calibDf</th>
-      <td><p>A dataframe with radiocarbon calibration curve information</p></td>
-    </tr>
-    <tr>
-      <th>saveFile</th>
-      <td><p>A filename for the output (optional)</p></td>
+<code>sig_m</code> (vector of measurement errors for phi_m), <code>hp</code> (list of hyperparameters), and
+<code>calibDf</code>.
+In addition, the field control is optional in prob (see above).</p></td>
     </tr>
     </table>
 

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Assess the equifinality or time spans in the input radiocarbon calibration curve — bd_assess_calib_curve_equif • baydem</title>
+<title>Sample from a possibly truncated Gaussian mixture — bd_sample_gauss_mix • baydem</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Assess the equifinality or time spans in the input radiocarbon calibration curve — bd_assess_calib_curve_equif" />
-<meta property="og:description" content="Assess the equifinality or time spans in the input radiocarbon calibration curve" />
+<meta property="og:title" content="Sample from a possibly truncated Gaussian mixture — bd_sample_gauss_mix" />
+<meta property="og:description" content="Sample from a possibly truncated Gaussian mixture" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -105,63 +105,49 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Assess the equifinality or time spans in the input radiocarbon calibration curve</h1>
-    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/bd_assess_calib_curve_equif.R'><code>R/bd_assess_calib_curve_equif.R</code></a></small>
-    <div class="hidden name"><code>bd_assess_calib_curve_equif.Rd</code></div>
+    <h1>Sample from a possibly truncated Gaussian mixture</h1>
+    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/bd_sample_gauss_mix.R'><code>R/bd_sample_gauss_mix.R</code></a></small>
+    <div class="hidden name"><code>bd_sample_gauss_mix.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Assess the equifinality or time spans in the input radiocarbon calibration curve</p>
+    <p>Sample from a possibly truncated Gaussian mixture</p>
     </div>
 
-    <pre class="usage"><span class='fu'>bd_assess_calib_curve_equif</span>(<span class='no'>calibDf</span>, <span class='kw'>equiList</span> <span class='kw'>=</span> <span class='fl'>NA</span>)</pre>
+    <pre class="usage"><span class='fu'>bd_sample_gauss_mix</span>(<span class='no'>N</span>, <span class='no'>th</span>, <span class='kw'>taumin</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>taumax</span> <span class='kw'>=</span> <span class='fl'>NA</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>calibDf</th>
-      <td><p>The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError</p></td>
+      <th>N</th>
+      <td><p>Number of samples</p></td>
     </tr>
     <tr>
-      <th>equiList</th>
-      <td><p>(Optional) The result of a call to bd_calc_calib_curve_equif_dates</p></td>
+      <th>th</th>
+      <td><p>Parameterization vector for the Gaussian mixture</p></td>
+    </tr>
+    <tr>
+      <th>taumin</th>
+      <td><p>(Optional) Lower bound for samples</p></td>
+    </tr>
+    <tr>
+      <th>taumax</th>
+      <td><p>(Optional) Upper bound for samples</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list of with named variables canInvert and invSpanlist (see details)</p>
+    <p>N samples from the Gaussian mixture</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The input calibration data frame has three columns: yearBP, uncalYearBP, and
-uncalYearBPError. A time span is equifinal if, for each date in the span,
-there is at least one other date in the radiocarbon calibration curve with
-the same fraction modern value. Conversely, a time span is not equifinal if
-this is not true (all dates in the time span correspond to a unique fraction
-modern value). Thus, the calibration curve is divided into alternating
-equifinal and non-equifinal spans. This function identifies these regions
-for the input calibration data frame, calibDf.</p>
-<p>Although calibDf uses year BP, all calculations and returned data use AD.</p>
-<p>A list is returned with two named variables: canInvert and invSpanList (inv =
-invert, which is conceptually identical to non-equifinal).</p>
-<p>canInvert is a boolean that indicates whether each entry (row) in the
-calibration data frame, calibDf, is inside or outside an invertible region.</p>
-<p>invSpanList is a list summarizing information about all the invertible (non-
-equifinal) time spans. It contains the following named variables:</p>
-<p>ind       -- Indices (rows) of calibDf following within the invertible time
-span
-tau_left  -- Calendar date (AD) of the left (earlier) boundary of the
-invertible time span
-phi_left  -- Fraction modern value of the left (earlier) boundary of the
-invertible time span
-tau_right -- Calendar date (AD) of the right (later) boundary of the
-invertible time span
-phi_right -- Fraction modern value of the right (later) boundary of the
-invertible time span
-ii_prev   -- The index (row) of the calibDf earlier than the invertible
-region with closest fraction modern value
-ii_next   -- The index (row) of the calibDf later than the invertible</p>
+    <p><code>N</code> is the number of samples to draw and <code>th</code> specifies the Gaussian
+mixture with the ordering pi_1,...,pi_K,mu_1,...,mu_K,sig_1,...,sig_K,
+where <code>K</code> is the number of mixture components. Optionally, the samples are
+drawn on the truncated interval <code>taumin</code> to <code>taumax</code>. Because of limitations
+in the package <code>distr</code>, the maximum number of mixture components suppored is
+K=4.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
