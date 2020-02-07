@@ -6,7 +6,7 @@
 #' drawn on the truncated interval `taumin` to `taumax`. Because of limitations
 #' in the package `distr`, the maximum number of mixture components suppored is
 #' K=4.
-#' 
+#'
 #' @param N Number of samples
 #' @param th Parameterization vector for the Gaussian mixture
 #' @param taumin (Optional) Lower bound for samples

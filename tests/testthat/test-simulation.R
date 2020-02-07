@@ -337,7 +337,7 @@ expect_equal(
 # Check that bd_sample_gauss_mix does not throw an error. Also check the lengths
 # of the outputs and that no errors are whether or not truncation is used.
 expect_error(
-  gmSamp1 <- bd_sample_gauss_mix(50,simOutput$th_sim),
+  gmSamp1 <- bd_sample_gauss_mix(50, simOutput$th_sim),
   NA
 )
 
@@ -347,7 +347,7 @@ expect_equal(
 )
 
 expect_error(
-  gmSamp2 <- bd_sample_gauss_mix(50,simOutput$th_sim,simOutput$prob$hp$taumin,simOutput$prob$hp$taumax),
+  gmSamp2 <- bd_sample_gauss_mix(50, simOutput$th_sim, simOutput$prob$hp$taumin, simOutput$prob$hp$taumax),
   NA
 )
 
