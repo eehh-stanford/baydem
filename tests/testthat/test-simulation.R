@@ -34,14 +34,9 @@ run_simulation <- function() {
   mcWarmup <- 200 # Number of warm-up samples
 
   N <- 20 # number of samples
-  sampDates <- bd_sample_gauss_mix(N, th_sim, taumin, taumax)
-  sampRcMeas <- bd_draw_rc_meas_using_date(sampDates, calibDf, errorSpec, isAD = T)
-  simData <- list(calDates = sampDates, rcMeas = sampRcMeas)
-
-  # shape parameter for gamma distribution of standard deviation prior
-  alpha_s <- 3
-  # rate  parameter for gamma distribution of standard deviation prior
-  alpha_r <- (alpha_s - 1) / 300
+  sampDatesAD <- bd_sample_gauss_mix(N, th_sim, taumin, taumax)
+  sampRcMeas <- bd_draw_rc_meas_using_date(sampDatesAD, calibDf, errorSpec, isAD = T)
+  simData <- list(datesAD = sampDatesAD, rcMeas = sampRcMeas)
 
   # hyperparameters for inference
   hp <-
@@ -82,10 +77,10 @@ run_simulation <- function() {
     control = controlList
   )
 
-  soln <- bd_do_inference(prob, calibDf)
+  soln <- bd_do_inference(prob)
   anal <- bd_analyze_soln(soln)
 
-  return(list(prob = prob, soln = soln, anal = anal, calibDf = calibDf, errorSpec = errorSpec))
+  return(list(prob = prob, soln = soln, anal = anal, calibDf = calibDf, errorSpec = errorSpec, th_sim = th_sim))
 }
 
 # Calling run_simulation should not raise an error. If it does, the test fails.
@@ -149,12 +144,12 @@ expect_error(
 # bd_calc_range_density
 # bd_calc_peak_density
 expect_error(
-  relDens1 <- bd_calc_relative_density(soln, "peak", 1100),
+  relDens1 <- bd_calc_relative_density(simOutput$soln, "peak", 1100),
   NA
 )
 
 expect_error(
-  relDens2 <- bd_calc_relative_density(soln, 900, c(700, 750)),
+  relDens2 <- bd_calc_relative_density(simOutput$soln, 900, c(700, 750)),
   NA
 )
 
@@ -337,4 +332,38 @@ expect_error(
 expect_equal(
   dim(Qdens2),
   c(5, ncol(fMat))
+)
+
+# Check that bd_sample_gauss_mix does not throw an error. Also check the lengths
+# of the outputs and that no errors are whether or not truncation is used.
+expect_error(
+  gmSamp1 <- bd_sample_gauss_mix(50,simOutput$th_sim),
+  NA
+)
+
+expect_equal(
+  length(gmSamp1),
+  50
+)
+
+expect_error(
+  gmSamp2 <- bd_sample_gauss_mix(50,simOutput$th_sim,simOutput$prob$hp$taumin,simOutput$prob$hp$taumax),
+  NA
+)
+
+expect_equal(
+  length(gmSamp2),
+  50
+)
+
+# Check that bd_plot_summed_density does not throw an error.
+expect_error(
+  bd_plot_summed_density(simOutput$anal),
+  NA
+)
+
+# Check that bd_plot_known_sim_density does not throw an error.
+expect_error(
+  bd_plot_known_sim_density(simOutput$anal),
+  NA
 )

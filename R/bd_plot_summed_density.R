@@ -14,8 +14,8 @@
 #' @export
 bd_plot_summed_density <- function(an, add = F, ...) {
   if (add) {
-    graphics::lines(an$y, an$f_spdf, ...)
+    graphics::lines(an$tau, an$f_spdf, ...)
   } else {
-    graphics::plot(an$y, an$f_spdf, type = "l", ...)
+    graphics::plot(an$tau, an$f_spdf, type = "l", ...)
   }
 }

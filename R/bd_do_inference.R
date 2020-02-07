@@ -17,10 +17,9 @@
 #'                           density
 #'
 #' @param prob List with the fields `phi_m` (vector of radiocarbon measurements as fraction modern),
-#' `sig_m` (vector of measurement errors for phi_m), and `hp` (list of hyperparameters).
-#' In addition, the field control is optional (see above).
-#' @param calibDf A dataframe with radiocarbon calibration curve information
-#' @param saveFile A filename for the output (optional)
+#' `sig_m` (vector of measurement errors for phi_m), `hp` (list of hyperparameters), and
+#' `calibDf`.
+#' In addition, the field control is optional in prob (see above).
 #'
 #' @export
 #'
@@ -28,7 +27,7 @@
 #' fit (the result of the call to stan),
 #' and control (the control parameters used)
 #'
-bd_do_inference <- function(prob, calibDf, saveFile = NA) {
+bd_do_inference <- function(prob) {
   # Unpack and/or define the control parameters
   if (exists("control", where = prob) == T) {
     haveNumChains <- exists("numChains", where = prob$control) == T
@@ -82,7 +81,7 @@ bd_do_inference <- function(prob, calibDf, saveFile = NA) {
     mumin <- prob$hp$mumin
     mumax <- prob$hp$mumax
     tau <- seq(taumin, taumax, by = prob$hp$dtau)
-    M <- bd_calc_meas_matrix(tau, prob$phi_m, prob$sig_m, calibDf)
+    M <- bd_calc_meas_matrix(tau, prob$phi_m, prob$sig_m, prob$calibDf)
 
     if (haveInitList) {
       initList <- prob$control$initList
@@ -131,8 +130,5 @@ bd_do_inference <- function(prob, calibDf, saveFile = NA) {
 
   # If a save file was input, save the result to file. This is especially
   # useful for parallel batch runs
-  if (!is.na(saveFile)) {
-    saveRDS(soln, saveFile)
-  }
   return(soln)
 }

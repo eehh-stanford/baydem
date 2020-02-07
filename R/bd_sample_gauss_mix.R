@@ -1,27 +1,21 @@
-# @keywords
-# Description
-#   Sample from a Gaussian mixture. This provides calendar dates of radiocarbon
-#   samples from the demographic model specified by Gaussian mixture.
-#
-# Example calls(s)
-#
-#   samp <- bd_sample_gauss_mix(N,th)
-#
-# Input(s)
-#   Name    Type           Description
-#   N       integer        The number of samples
-#   th      vector-like    A vector-like object of length 3*K with the
-#                          following entries:
-#                          pik   -- [K entries] Weight of the k-th mixture
-#                          muk   -- [K entries] Mean of the k-th mixture
-#                          sigk  -- [K entries] Standard deviation of the k-th
-#                                               mixture
-#
-# Output(s)
-#   Name    Type           Description
-#   samp    vector         The samples (length = N)
-#' @export 
-bd_sample_gauss_mix <- function(N, th, ymin = NA, ymax = NA) {
+#' @title Sample from a possibly truncated Gaussian mixture
+#'
+#' @details `N` is the number of samples to draw and `th` specifies the Gaussian
+#' mixture with the ordering [pi_1,...,pi_K,mu_1,...,mu_K,sig_1,...,sig_K],
+#' where `K` is the number of mixture components. Optionally, the samples are
+#' drawn on the truncated interval `taumin` to `taumax`. Because of limitations
+#' in the package `distr`, the maximum number of mixture components suppored is
+#' K=4.
+#' 
+#' @param N Number of samples
+#' @param th Parameterization vector for the Gaussian mixture
+#' @param taumin (Optional) Lower bound for samples
+#' @param taumax (Optional) Upper bound for samples
+#'
+#' @return N samples from the Gaussian mixture
+#'
+#' @export
+bd_sample_gauss_mix <- function(N, th, taumin = NA, taumax = NA) {
   K <- length(th) / 3 # Number of  mixtures
 
   # (Somewhat awkwardly), define the mixing distribution directly for K = 1
@@ -55,8 +49,8 @@ bd_sample_gauss_mix <- function(N, th, ymin = NA, ymax = NA) {
   }
 
   # Use distr to sample from a two-component, truncated Gaussian mixture
-  if (!is.na(ymin) && !is.na(ymax)) {
-    normMixTrunc <- distr::Truncate(normMix, ymin, ymax)
+  if (!is.na(taumin) && !is.na(taumax)) {
+    normMixTrunc <- distr::Truncate(normMix, taumin, taumax)
     samp <- distr::r(normMixTrunc)(N)
   } else {
     samp <- distr::r(normMix)(N)

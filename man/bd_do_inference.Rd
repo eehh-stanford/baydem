@@ -4,16 +4,13 @@
 \alias{bd_do_inference}
 \title{Do Demographic Bayesian Inference}
 \usage{
-bd_do_inference(prob, calibDf, saveFile = NA)
+bd_do_inference(prob)
 }
 \arguments{
 \item{prob}{List with the fields \code{phi_m} (vector of radiocarbon measurements as fraction modern),
-\code{sig_m} (vector of measurement errors for phi_m), and \code{hp} (list of hyperparameters).
-In addition, the field control is optional (see above).}
-
-\item{calibDf}{A dataframe with radiocarbon calibration curve information}
-
-\item{saveFile}{A filename for the output (optional)}
+\code{sig_m} (vector of measurement errors for phi_m), \code{hp} (list of hyperparameters), and
+\code{calibDf}.
+In addition, the field control is optional in prob (see above).}
 }
 \value{
 soln, a list with three fields: prob (the input),
