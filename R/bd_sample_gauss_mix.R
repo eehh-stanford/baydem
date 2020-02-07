@@ -18,7 +18,7 @@
 bd_sample_gauss_mix <- function(N, th, taumin = NA, taumax = NA) {
   K <- length(th) / 3 # Number of  mixtures
 
-  # (Somewhat awkwardly), define the mixing distribution directly for K = 1
+  # (Somewhat awkwardly), define the mixing distribution for K = 1
   # to 4 directly. This is necessary because truncate expects an
   # AbscontDistribution but creating a mixture distribution via vectors
   # creates a UnivarMixingDistribution, which cannot be cast to an
