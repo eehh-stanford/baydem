@@ -23,7 +23,7 @@ Sample from a possibly truncated Gaussian mixture
 }
 \details{
 \code{N} is the number of samples to draw and \code{th} specifies the Gaussian
-mixture with the ordering \link{pi_1,...,pi_K,mu_1,...,mu_K,sig_1,...,sig_K},
+mixture with the ordering (pi_1,...,pi_K,mu_1,...,mu_K,sig_1,...,sig_K),
 where \code{K} is the number of mixture components. Optionally, the samples are
 drawn on the truncated interval \code{taumin} to \code{taumax}. Because of limitations
 in the package \code{distr}, the maximum number of mixture components suppored is

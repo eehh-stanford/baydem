@@ -1,7 +1,7 @@
 #' @title Sample from a possibly truncated Gaussian mixture
 #'
 #' @details `N` is the number of samples to draw and `th` specifies the Gaussian
-#' mixture with the ordering [pi_1,...,pi_K,mu_1,...,mu_K,sig_1,...,sig_K],
+#' mixture with the ordering (pi_1,...,pi_K,mu_1,...,mu_K,sig_1,...,sig_K),
 #' where `K` is the number of mixture components. Optionally, the samples are
 #' drawn on the truncated interval `taumin` to `taumax`. Because of limitations
 #' in the package `distr`, the maximum number of mixture components suppored is
