@@ -37,12 +37,13 @@ Imports:
     rstan,
     stats,
     tibble,
-    utils
+    utils,
+    distrMod
 Suggests:
     covr,
     knitr,
     pkgdown,
-    testthat,
+    testthat (>= 2.1.0),
     usethis
 VignetteBuilder: 
     knitr

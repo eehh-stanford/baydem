@@ -83,6 +83,7 @@
       "@type": "SoftwareApplication",
       "identifier": "testthat",
       "name": "testthat",
+      "version": ">= 2.1.0",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -250,11 +251,23 @@
       "@type": "SoftwareApplication",
       "identifier": "utils",
       "name": "utils"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "distrMod",
+      "name": "distrMod",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=distrMod"
     }
   ],
   "codeRepository": "https://github.com/eehh-stanford/baydem",
   "readme": "https://github.com/eehh-stanford/baydem/blob/master/README.md",
-  "fileSize": "384.088KB",
+  "fileSize": "385.463KB",
   "contIntegration": [
     "https://travis-ci.org/eehh-stanford/baydem",
     "https://codecov.io/gh/eehh-stanford/baydem?branch=master"
