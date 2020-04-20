@@ -31,25 +31,6 @@ You can install the development version from
 devtools::install_github("eehh-stanford/baydem")
 ```
 
-## Analysis
-
-The [:file\_folder: analysis](/analysis) directory contains the code,
-data, and output for Price et al. 2020.
-
-To re-create the analysis, please run the following in *R*:
-
-``` r
-# install.packages("devtools")
-devtools::install_github("eehh-stanford/baydem")
-
-library("baydem")
-
-list.files("analysis", 
-           full.names = TRUE, 
-           pattern = "FINAL") %>%
-           purrr::walk(source)
-```
-
 ## Contributor Code of Conduct
 
 Please note that the ‘baydem’ project is released with a [Contributor
