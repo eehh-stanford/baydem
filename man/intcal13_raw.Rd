@@ -4,7 +4,9 @@
 \name{intcal13_raw}
 \alias{intcal13_raw}
 \title{The raw data for constructing the IntCal13 calibration curve}
-\format{An object of class \code{list} of length 4.}
+\format{
+An object of class \code{list} of length 4.
+}
 \source{
 http://intcal.qub.ac.uk/intcal13/query/query.php
 }

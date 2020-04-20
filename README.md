@@ -14,11 +14,11 @@ coverage](https://codecov.io/gh/eehh-stanford/baydem/branch/master/graph/badge.s
 <!-- badges: end -->
 
 Bayesian tools for reconstructing past and present demography. This is
-the package described in used in Price et al. (2019):
+the package used in Price et al. (2020):
 
 > Price, M.H., J.M. Capriles, J. Hoggarth, R.K. Bocinsky, C.E. Ebert,
-> and J.H. Jones (2019). *New insights into Lowland Maya demography
-> using end-to-end Bayesian analysis of <sup>14</sup>C dates*. **In
+> and J.H. Jones (2020). *End-to-end Bayesian analysis of radiocarbon
+> dates reveals new insights into lowland Maya demography*. **In
 > review.**
 
 ## Installation
@@ -29,6 +29,25 @@ You can install the development version from
 ``` r
 # install.packages("devtools")
 devtools::install_github("eehh-stanford/baydem")
+```
+
+## Analysis
+
+The [:file\_folder: analysis](/analysis) directory contains the code,
+data, and output for Price et al. 2020.
+
+To re-create the analysis, please run the following in *R*:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("eehh-stanford/baydem")
+
+library("baydem")
+
+list.files("analysis", 
+           full.names = TRUE, 
+           pattern = "FINAL") %>%
+           purrr::walk(source)
 ```
 
 ## Contributor Code of Conduct

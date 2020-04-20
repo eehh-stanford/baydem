@@ -5,17 +5,17 @@
   ],
   "@type": "SoftwareSourceCode",
   "identifier": "baydem",
-  "description": "Bayesian tools for reconstructing past and present\n    demography. This is the package described in used in Price et al.\n    (2019): Price, M.H., J.M. Capriles, J. Hoggarth, R.K. Bocinsky, and\n    J.H. Jones (2029).  Bayesian probability distributions: Improving\n    demographic reconstructions using 14C dates.  *Proceedings of the\n    National Academy of Sciences*, in review.",
+  "description": "Bayesian tools for reconstructing past and present\n    demography. This is the package described in Price et al.\n    (2020): Price, M.H., J.M. Capriles, J. Hoggarth, R.K. Bocinsky, C.E. Ebert, and\n    J.H. Jones (2020). End-to-end Bayesian analysis of radiocarbon \n    dates reveals new insights into lowland Maya demography. (In review).",
   "name": "baydem: Bayesian Tools for Reconstructing Past and Present\n    Demography",
   "license": "https://spdx.org/licenses/MIT",
   "version": "0.1.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
-    "version": "3.6.2",
+    "version": "3.6.3",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 3.6.2 (2019-12-12)",
+  "runtimePlatform": "R version 3.6.3 (2020-02-29)",
   "author": [
     {
       "@type": "Person",
@@ -263,11 +263,47 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=distrMod"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "purrr",
+      "name": "purrr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=purrr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "stringr",
+      "name": "stringr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=stringr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "tidyr",
+      "name": "tidyr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=tidyr"
     }
   ],
   "codeRepository": "https://github.com/eehh-stanford/baydem",
   "readme": "https://github.com/eehh-stanford/baydem/blob/master/README.md",
-  "fileSize": "385.463KB",
+  "fileSize": "385.646KB",
   "contIntegration": [
     "https://travis-ci.org/eehh-stanford/baydem",
     "https://codecov.io/gh/eehh-stanford/baydem?branch=master"
