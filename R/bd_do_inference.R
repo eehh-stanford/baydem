@@ -10,11 +10,14 @@
 #' which is a list with the fields prob (the input) and fit (the result of the stan fit).
 #' prob can also have an optional field control that specifies the
 #' following control parameters for the Bayesian inference (default in parentheses):
-#'   numChains     -- (4)    Number of chains
-#'   sampsPerChain -- (2000) Number of samples per chain
-#'   initList      --        The initializations for each chain. The default is
-#'                           to set this using a mixture fit to the summed
-#'                           density
+#'   numChains     -- (4)      Number of chains
+#'   sampsPerChain -- (2000)   Number of samples per chain
+#'   warmup        -- (samp/2) Number of warmup samples (default is sampsPerChain/2)
+#'   initSeed      --          An optional random number seed for initializing the chains
+#'   stanSeed      --          An optional random number seed for the call to Stan
+#'   initList      --          The initializations for each chain. The default is
+#'                             to set this using a mixture fit to the summed
+#'                             density
 #'
 #' @param prob List with the fields `phi_m` (vector of radiocarbon measurements as fraction modern),
 #' `sig_m` (vector of measurement errors for phi_m), `hp` (list of hyperparameters), and
@@ -33,12 +36,16 @@ bd_do_inference <- function(prob) {
     haveNumChains <- exists("numChains", where = prob$control) == T
     haveSampsPerChain <- exists("sampsPerChain", where = prob$control) == T
     haveWarmup <- exists("warmup", where = prob$control) == T
+    haveInitSeed <- exists("initSeed", where = prob$control) == T
+    haveStanSeed <- exists("stanSeed", where = prob$control) == T
     haveInitList <- exists("initList", where = prob$control) == T
     haveStanControl <- exists("stanControl", where = prob$control) == T
   } else {
     haveNumChains <- F
     haveSampsPerChain <- F
     haveWarmup <- F
+    haveInitSeed <- F
+    haveStanSeed <- F
     haveInitList <- F
     haveStanControl <- F
   }
@@ -59,6 +66,14 @@ bd_do_inference <- function(prob) {
     warmup <- prob$control$warmup
   } else {
     warmup <- floor(sampsPerChain / 2)
+  }
+
+  if (haveInitSeed) {
+    set.seed(prob$control$initSeed)
+  }
+
+  if (haveStanSeed) {
+    stanSeed <- prob$control$stanSeed
   }
 
   if (haveStanControl) {
@@ -116,10 +131,20 @@ bd_do_inference <- function(prob) {
       package = "baydem"
     )
     options(mc.cores = parallel::detectCores())
-    if (haveStanControl) {
-      fit <- rstan::stan(filePath, chains = numChains, iter = sampsPerChain, warmup = warmup, init = initList, control = stanControl)
-    } else {
-      fit <- rstan::stan(filePath, chains = numChains, iter = sampsPerChain, warmup = warmup, init = initList)
+    # There are four possible calls depending on whether haveStanControl is
+    # TRUE and haveStanSeed is TRUE
+    if(!haveStanSeed) {
+      if (haveStanControl) {
+        fit <- rstan::stan(filePath, chains = numChains, iter = sampsPerChain, warmup = warmup, init = initList, control = stanControl)
+      } else {
+        fit <- rstan::stan(filePath, chains = numChains, iter = sampsPerChain, warmup = warmup, init = initList)
+      }
+    } else { # do have Stan seed
+      if (haveStanControl) {
+        fit <- rstan::stan(filePath, chains = numChains, iter = sampsPerChain, warmup = warmup, seed=stanSeed, init = initList, control = stanControl)
+      } else {
+        fit <- rstan::stan(filePath, chains = numChains, iter = sampsPerChain, warmup = warmup, seed=stanSeed,init = initList)
+      }
     }
   } else {
     stop(paste("Unrecognized fit type:", prob$hp$fitType))

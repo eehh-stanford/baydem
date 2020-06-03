@@ -4,7 +4,9 @@
 \name{marine13_raw}
 \alias{marine13_raw}
 \title{The raw data for constructing the Marine13 calibration curve}
-\format{An object of class \code{list} of length 5.}
+\format{
+An object of class \code{list} of length 5.
+}
 \source{
 http://intcal.qub.ac.uk/marine/query/query.php
 }

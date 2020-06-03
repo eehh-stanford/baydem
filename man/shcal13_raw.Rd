@@ -4,7 +4,9 @@
 \name{shcal13_raw}
 \alias{shcal13_raw}
 \title{The raw data for constructing the SHCal13 Southern Hemisphere atmospheric calibration curve}
-\format{An object of class \code{list} of length 3.}
+\format{
+An object of class \code{list} of length 3.
+}
 \source{
 http://intcal.qub.ac.uk/shcal13/query/query.php
 }

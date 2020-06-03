@@ -4,7 +4,9 @@
 \name{marine13}
 \alias{marine13}
 \title{The Marine13 calibration curve}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 4801 rows and 5 columns.}
+\format{
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 4801 rows and 5 columns.
+}
 \source{
 http://www.radiocarbon.org/IntCal13/
 }

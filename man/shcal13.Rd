@@ -4,7 +4,9 @@
 \name{shcal13}
 \alias{shcal13}
 \title{The SHCal13 Southern Hemisphere atmospheric radiocarbon calibration curve}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 5141 rows and 5 columns.}
+\format{
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 5141 rows and 5 columns.
+}
 \source{
 http://www.radiocarbon.org/IntCal13/
 }
