@@ -109,9 +109,10 @@ bd_analyze_soln <-
     # Calculate the measurement matrix
     M <- bd_calc_meas_matrix(tau, soln$prob$phi_m, soln$prob$sig_m, soln$prob$calibDf)
 
+    # Normalize by row
+    M <- M / replicate(length(tau),rowSums(M)*dtau)
     # Calculate and normalize the summed probability density vector
-    f_spdf <- colSums(M)
-    f_spdf <- f_spdf / sum(f_spdf) / dtau
+    f_spdf <- colMeans(M)
 
     out <- list(
       tau = tau,
