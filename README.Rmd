@@ -25,12 +25,15 @@ Bayesian tools for reconstructing past and present demography.
 
 ## Installation
 
-You can install the development version from [GitHub](https://github.com/) with:
+You can install the R package from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("eehh-stanford/baydem")
 ```
+
+## Requirements
+For package/version dependencies, imports, and suggestions see the package DESCRIPTION file. Stan must be installed to call the functions that use rstan.
 
 ## Contributor Code of Conduct
 

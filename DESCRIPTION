@@ -1,7 +1,6 @@
 Type: Package
 Package: baydem
-Title: Bayesian Tools for Reconstructing Past and Present
-    Demography
+Title: Bayesian Tools for Reconstructing Past and Present Demography
 Version: 0.1.0
 Authors@R: 
     c(person(given = c("Michael", "Holton"),
@@ -12,12 +11,7 @@ Authors@R:
              family = "Bocinsky",
              role = "ctb",
              email = "bocinsky@gmail.com"))
-Description: Bayesian tools for reconstructing past and present
-    demography. This is the package described in used in Price et al.
-    (2019): Price, M.H., J.M. Capriles, J. Hoggarth, R.K. Bocinsky, and
-    J.H. Jones (2029).  Bayesian probability distributions: Improving
-    demographic reconstructions using 14C dates.  *Proceedings of the
-    National Academy of Sciences*, in review.
+Description: Bayesian tools for reconstructing past and present demography
 License: MIT + file LICENSE
 URL: https://github.com/eehh-stanford/baydem
 BugReports: https://github.com/eehh-stanford/baydem/issues
