@@ -1,7 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# baydem
+baydem
+======
 
 <!-- badges: start -->
 
@@ -13,25 +14,25 @@ status](https://travis-ci.org/eehh-stanford/baydem.svg?branch=master)](https://t
 coverage](https://codecov.io/gh/eehh-stanford/baydem/branch/master/graph/badge.svg)](https://codecov.io/gh/eehh-stanford/baydem?branch=master)
 <!-- badges: end -->
 
-Bayesian tools for reconstructing past and present demography. This is
-the package used in Price et al. (2020):
+Bayesian tools for reconstructing past and present demography.
 
-> Price, M.H., J.M. Capriles, J. Hoggarth, R.K. Bocinsky, C.E. Ebert,
-> and J.H. Jones (2020). *End-to-end Bayesian analysis of radiocarbon
-> dates reveals new insights into lowland Maya demography*. **In
-> review.**
+Installation
+------------
 
-## Installation
+You can install the R package from [GitHub](https://github.com/) with:
 
-You can install the development version from
-[GitHub](https://github.com/) with:
+    # install.packages("devtools")
+    devtools::install_github("eehh-stanford/baydem")
 
-``` r
-# install.packages("devtools")
-devtools::install_github("eehh-stanford/baydem")
-```
+Requirements
+------------
 
-## Contributor Code of Conduct
+For package/version dependencies, imports, and suggestions see the
+package DESCRIPTION file. Stan must be installed to call the functions
+that use rstan.
+
+Contributor Code of Conduct
+---------------------------
 
 Please note that the ‘baydem’ project is released with a [Contributor
 Code of Conduct](CODE_OF_CONDUCT.md). By contributing to this project,

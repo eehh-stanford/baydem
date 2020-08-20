@@ -29,9 +29,12 @@ The output is the variable soln of class bd_soln,
 which is a list with the fields prob (the input) and fit (the result of the stan fit).
 prob can also have an optional field control that specifies the
 following control parameters for the Bayesian inference (default in parentheses):
-numChains     -- (4)    Number of chains
-sampsPerChain -- (2000) Number of samples per chain
-initList      --        The initializations for each chain. The default is
+numChains     -- (4)      Number of chains
+sampsPerChain -- (2000)   Number of samples per chain
+warmup        -- (samp/2) Number of warmup samples (default is sampsPerChain/2)
+initSeed      --          An optional random number seed for initializing the chains
+stanSeed      --          An optional random number seed for the call to Stan
+initList      --          The initializations for each chain. The default is
 to set this using a mixture fit to the summed
 density
 }
