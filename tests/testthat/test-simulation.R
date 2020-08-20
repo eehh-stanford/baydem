@@ -13,7 +13,7 @@ run_simulation <- function() {
   th_sim <- c(.2, .8, 775, 1000, 35, 45)
 
   # Load the calibration data frame by calling bd_load_calib_curve
-  calibDf <- baydem::bd_load_calib_curve("intcal13")
+  calibDf <- baydem::bd_load_calib_curve("intcal20")
 
   # For simulating radiocarbon measurements, a draw is made for the standard
   # deviation of the fraction modern from a uniform density on the interval 0.0021

@@ -1,3 +1,5 @@
+globalVariables(c("mu", "sig"))
+
 #' @title Create a possibly truncated Gaussian mixture
 #'
 #' @details `x` is a [`data.frame`] that specifies the Gaussian mixture.
@@ -10,7 +12,7 @@
 #' @param taumax (Optional) Upper bound for samples
 #'
 #' @return An object of class [`distr::UnivarMixingDistribution`]
-#'
+#' @importFrom magrittr `%$%` `%<>%`
 #' @export
 bd_create_gauss_mix <-
   function(x,

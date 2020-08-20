@@ -1,8 +1,8 @@
 # Run unit tests for functions with simple-to-construct inputs
 
-# Check that loading the intcal13 data does not raise an error
+# Check that loading the intcal20 data does not raise an error
 expect_error(
-  calibDf <- bd_load_calib_curve("intcal13"),
+  calibDf <- bd_load_calib_curve("intcal20"),
   NA
 )
 # Check that calling bd_assess_calib_curve_equif does not raise an error and

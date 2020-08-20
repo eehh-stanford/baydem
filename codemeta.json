@@ -12,10 +12,9 @@
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
-    "version": "3.6.3",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 3.6.3 (2020-02-29)",
+  "runtimePlatform": "R version 4.0.2 (2020-06-22)",
   "author": [
     {
       "@type": "Person",
@@ -303,11 +302,8 @@
   ],
   "codeRepository": "https://github.com/eehh-stanford/baydem",
   "readme": "https://github.com/eehh-stanford/baydem/blob/master/README.md",
-  "fileSize": "385.646KB",
-  "contIntegration": [
-    "https://travis-ci.org/eehh-stanford/baydem",
-    "https://codecov.io/gh/eehh-stanford/baydem?branch=master"
-  ],
+  "fileSize": "5430.774KB",
+  "contIntegration": ["https://travis-ci.org/eehh-stanford/baydem", "https://codecov.io/gh/eehh-stanford/baydem?branch=master"],
   "developmentStatus": "https://www.tidyverse.org/lifecycle/#experimental",
   "issueTracker": "https://github.com/eehh-stanford/baydem/issues"
 }
