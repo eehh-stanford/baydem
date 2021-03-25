@@ -424,6 +424,7 @@ expect_error(
 )
 
 # (4d) bd_plot_known_sim_density
+#      bd_plot_summed_density
 expect_error(
   bd_plot_known_sim_density(anal,add=T),
   NA
@@ -441,6 +442,12 @@ expect_error(
 
 expect_error(
   bd_plot_summed_density(anal),
+  NA
+)
+
+# (4e) bd_vis_calib_curve
+expect_error(
+  bd_vis_calib_curve(600, 700, calib_df),
   NA
 )
 
@@ -709,6 +716,7 @@ expect_equal(
 # (6) Do unit tests for the measurement matrix calculation
 #
 # coverage: bd_calc_meas_matrix
+#           bd_calc_trapez_weights
 # ------------------------------------------------------------------------------
 
 
@@ -815,10 +823,108 @@ expect_equal(
   FALSE
 )
 
-# TODO: unit test bd_sample_trunc_exp
-# TODO: unit test bd_assess_calib_curve_equif
-# TODO: unit test bd_calc_calib_curve_equif_dates
-# TODO: unit test bd_vis_calib_curve
-# TODO: unit test bd_calc_calib_curve_frac_modern
-# TODO: unit test bd_calc_trapez_weights
-# TODO: unit test bd_phi2tau
+# (6e) bd_calc_trapez_weights
+expect_equal(
+  bd_calc_trapez_weights(c(-1.5, 2, 3, 4, 7)),
+  c(1.75, 2.25, 1, 2, 1.5)
+)
+
+# ------------------------------------------------------------------------------
+# (7) Do unit tests for identifiability functions
+#
+# coverage: bd_assess_calib_curve_equif
+#             bd_phi2tau [indirect]
+#           bd_calc_calib_curve_equif_dates
+#           bd_calc_calib_curve_frac_modern
+# ------------------------------------------------------------------------------
+
+# (7a) bd_assess_calib_curve_equif
+#        bd_phi2tau [indirect]
+#      bd_calc_calib_curve_equif_dates
+expect_error(
+  equif_result1 <- bd_assess_calib_curve_equif(calib_df),
+  NA
+)
+
+expect_equal(
+  names(equif_result1),
+  c("invSpanList","canInvert")
+)
+
+expect_equal(
+  length(equif_result1$canInvert),
+  nrow(calib_df)
+)
+
+expect_error(
+  equif_dates <- bd_calc_calib_curve_equif_dates(calib_df),
+  NA
+)
+
+expect_error(
+  equif_result2 <- bd_assess_calib_curve_equif(calib_df,equif_dates),
+  NA
+)
+
+expect_equal(
+  names(equif_result2),
+  c("invSpanList","canInvert")
+)
+
+expect_equal(
+  length(equif_result2$canInvert),
+  nrow(calib_df)
+)
+
+expect_equal(
+  equif_result1,
+  equif_result2
+)
+
+# (7b) bd_calc_calib_curve_frac_modern
+
+expect_error(
+  phi <- bd_calc_calib_curve_frac_modern(calib_df),
+  NA
+)
+
+expect_equal(
+  phi,
+  exp(-calib_df$uncalYearBP / 8033)
+)
+
+tau2 <- c(600, 602, 805.89)
+expect_error(
+  phi2 <- bd_calc_calib_curve_frac_modern(calib_df,tau2),
+  NA
+)
+
+expect_equal(
+  length(phi2),
+  length(tau2)
+)
+
+# ------------------------------------------------------------------------------
+# (8) Do unit tests for truncated exponential model
+#
+# coverage: bd_assess_calib_curve_equif
+# ------------------------------------------------------------------------------
+expect_error(
+  exp_samp1 <- bd_sample_trunc_exp(50, 0.01, 600, 1300),
+  NA
+)
+
+expect_equal(
+  length(exp_samp1),
+  50
+)
+
+expect_error(
+  exp_samp2 <- bd_sample_trunc_exp(50, -0.01, 600, 1300),
+  NA
+)
+
+expect_equal(
+  length(exp_samp2),
+  50
+)
