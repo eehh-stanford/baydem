@@ -11,7 +11,7 @@ bd_calc_meas_matrix(tau, phi_m, sig_m, calibDf, addCalibUnc = T, useTrapez = F)
 
 \item{phi_m}{A vector of fraction moderns indexed by i}
 
-\item{sig_m}{A vector of standard deviations for phi_m by i}
+\item{sig_m}{A vector of standard deviations for phi_m indexed by i}
 
 \item{calibDf}{Calibration curve (see bd_load_calib_curve)}
 

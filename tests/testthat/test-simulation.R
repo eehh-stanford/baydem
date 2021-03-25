@@ -2,7 +2,8 @@
 # Also, use the outputs of the simulation to do unit testing on other
 # functions.
 
-# Do this in standalone function so that expect_error can be used
+# Create a standalone function to run the simulation so that expect_error can be
+# used to ensure the simulated data can be created.
 run_simulation <- function() {
 
   # Set the random number seed (seed from random.org)
@@ -18,7 +19,7 @@ run_simulation <- function() {
   # For simulating radiocarbon measurements, a draw is made for the standard
   # deviation of the fraction modern from a uniform density on the interval 0.0021
   # to 0.0028. This is specified via the list errorSpec
-  errorSpec <- list(min = .0021, max = .0028)
+  errorSpec <- list(type = "unif_fm", min = .0021, max = .0028)
 
   # taumin and taumax are the minimum and maximum calendar date used in the
   # Bayesian inference. Dates older than taumin and younger than taumax are
@@ -93,11 +94,10 @@ run_simulation <- function() {
 }
 
 # Calling run_simulation should not raise an error. If it does, the test fails.
-simOutput <- run_simulation()
-# expect_error(
-#   simOutput <- run_simulation(),
-#   NA
-# )
+expect_error(
+  simOutput <- run_simulation(),
+  NA
+)
 
 # Check that building a density plot from individual functions does not raise
 # an error. This checks:
@@ -376,3 +376,4 @@ expect_error(
   bd_plot_known_sim_density(simOutput$anal),
   NA
 )
+

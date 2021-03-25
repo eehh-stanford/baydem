@@ -9,17 +9,23 @@ bd_draw_rc_meas_using_date(t_e, calibDf, errorSpec, isAD = F)
 \arguments{
 \item{t_e}{A vector of event dates (calBP by default)}
 
-\item{calibDf}{The calibration dataframe, with columns yearBP, uncalYearBP, and uncalYearBPError}
+\item{calibDf}{The calibration dataframe, with columns yearBP, uncalYearBP,
+and uncalYearBPError}
 
-\item{errorSpec}{A list with entries min and max specifying the interval for a uniform draw}
+\item{errorSpec}{A list with entries type and parameter values specifying how
+to add uncertainty to the simualted measurement. Currently, only type =
+"unif_fm" is supported, for which the parameters min and max must be in
+errorSpec.}
 
 \item{isAD}{(Optional; default F) Whether t_e is calBP or AD}
 }
 \description{
-Given input calendar dates t_e, simulate the radiocarbon
-measurement process to yield a fraction modern and uncertainty.
-errorSpec is a list with named components min and max. The
-uncertainty, sig_m, is drawn uniformily from this range. By
-default, t_e is assumed to be calBP, but can be AD if isAD is
-True.
+Given input calendar dates t_e, simulate the radiocarbon measurement process
+to yield a fraction modern and uncertainty. error_spec is a list with named
+type and additional fields specifying the parameters. Currently only type
+unif_fm (for uniform fraction modern) is supported, which makes a uniform
+draw on the interval min to max for the uncertainty of the fraction modern
+value, where min and max are fields in error_spec giving the boundaries of
+the uniform draw. By default, t_e is assumed to be calBP, but can be AD (more
+more precisely, 1950 - BP value) if isAD is True.
 }

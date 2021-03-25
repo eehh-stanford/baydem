@@ -22,7 +22,7 @@
 #'
 #' @param tau A vector of calendar dates indexed by g
 #' @param phi_m A vector of fraction moderns indexed by i
-#' @param sig_m A vector of standard deviations for phi_m by i
+#' @param sig_m A vector of standard deviations for phi_m indexed by i
 #' @param calibDf Calibration curve (see bd_load_calib_curve)
 #' @param addCalibUnc (default TRUE) Whether to add calibration uncertainty
 #' @param useTrapez (default FALSE) Whether to use the trapezoidal rule for integration

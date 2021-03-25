@@ -28,6 +28,7 @@ Imports:
     gtools,
     miscTools,
     mixtools,
+    MCMCpack,
     RGeode,
     rstan,
     stats,
