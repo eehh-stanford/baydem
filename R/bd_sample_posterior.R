@@ -24,6 +24,7 @@
 #                          ymin         -- minimum calendar date
 #                          ymax         -- maximum calendar date
 
+# TODO: Either document this function using roxygen2 tags or delete it
 bd_sample_posterior <- function(fit, N) {
   samps <- bd_extract_param(fit)
   numSamp <- length(samps)

@@ -14,6 +14,7 @@
 #   Name    Type           Description
 #   r       vector         [(G-1) x 1] The growth rate
 
+# TODO: Either document this function using roxygen2 tags or delete it
 bd_calc_r_from_f <- function(f, dy = 1) {
   G <- length(f)
   r <- log(f[2:G] / f[1:(G - 1)]) / dy
