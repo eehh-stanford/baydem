@@ -814,3 +814,11 @@ expect_equal(
   any(is.na((M6d))),
   FALSE
 )
+
+# TODO: unit test bd_sample_trunc_exp
+# TODO: unit test bd_assess_calib_curve_equif
+# TODO: unit test bd_calc_calib_curve_equif_dates
+# TODO: unit test bd_vis_calib_curve
+# TODO: unit test bd_calc_calib_curve_frac_modern
+# TODO: unit test bd_calc_trapez_weights
+# TODO: unit test bd_phi2tau
