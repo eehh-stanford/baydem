@@ -49,7 +49,8 @@
 #'         trc_m               A vector of simulated uncalibrated radiocarbon
 #'                              years (BP)
 #'         sig_trc_m           A vector of simulated uncertainties for trc_m
-
+#'
+#' @export
 bd_simulate_rc_data <- function(sim_spec) {
   # Right now, two model types are supported for the target density:
   # (a) A non-truncated Gaussian mixture (gauss_mix)
