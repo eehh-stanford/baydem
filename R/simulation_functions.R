@@ -58,7 +58,7 @@ bd_simulate_rc_data <- function(sim_spec) {
 
   # (1) If necessary, set the random number seed
   if( "seed" %in% names(sim_spec)) {
-    set.seed(sim_spec$speed)
+    set.seed(sim_spec$seed)
   }
 
   # (2) Make draws for the dates
@@ -127,13 +127,13 @@ bd_sample_gauss_mix <- function(N, th, taumin = NA, taumax = NA) {
     )
   } else if (K == 3) {
     normMix <- distr::UnivarMixingDistribution(distr::Norm(mean = th[4], sd = th[7]),
-      distr::Norm(mean = th[5], sd = th[8]), ,
+      distr::Norm(mean = th[5], sd = th[8]),
       distr::Norm(mean = th[6], sd = th[9]),
       mixCoeff = th[1:3]
     )
   } else if (K == 4) {
     normMix <- distr::UnivarMixingDistribution(distr::Norm(mean = th[5], sd = th[9]),
-      distr::Norm(mean = th[6], sd = th[10]), ,
+      distr::Norm(mean = th[6], sd = th[10]),
       distr::Norm(mean = th[7], sd = th[11]),
       distr::Norm(mean = th[8], sd = th[12]),
       mixCoeff = th[1:4]
