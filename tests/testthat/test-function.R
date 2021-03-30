@@ -38,7 +38,7 @@ tau_max <- 1500
 dtau <- 1
 tau <- seq(tau_min,tau_max,by=dtau)
 
-calib_df <- bd_load_calib_curve("intcal20")
+calib_df <- load_calib_curve("intcal20")
 
 # Explicitly create a vector of random seeds for the simulations
 set.seed(135066)
@@ -54,7 +54,7 @@ for(n_s in 1:num_sims) {
                    N=N,
                    calib_curve="intcal20",
                    seed=seed_vect[n_s])
-  sim <- bd_simulate_rc_data(sim_spec)
+  sim <- simulate_rc_data(sim_spec)
   expect_error(
     max_lik_fit <- fit_trunc_gauss_mix(2,
                                    sim$data$rc_meas$phi_m,

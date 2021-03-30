@@ -30,7 +30,7 @@
 #' fit (the result of the call to stan),
 #' and control (the control parameters used)
 #'
-bd_do_inference <- function(prob) {
+do_inference <- function(prob) {
   # Unpack and/or define the control parameters
   if (exists("control", where = prob) == T) {
     haveNumChains <- exists("numChains", where = prob$control) == T
@@ -96,7 +96,7 @@ bd_do_inference <- function(prob) {
     mumin <- prob$hp$mumin
     mumax <- prob$hp$mumax
     tau <- seq(taumin, taumax, by = prob$hp$dtau)
-    M <- bd_calc_meas_matrix(tau, prob$phi_m, prob$sig_m, prob$calibDf)
+    M <- calc_meas_matrix(tau, prob$phi_m, prob$sig_m, prob$calibDf)
 
     if (haveInitList) {
       initList <- prob$control$initList
@@ -158,17 +158,17 @@ bd_do_inference <- function(prob) {
   return(soln)
 }
 
-#' @title Analyze the result of a call to \code{bd_do_inference}
+#' @title Analyze the result of a call to \code{do_inference}
 #'
-#' @description \code{bd_do_inference} calls Stan to do Bayesian inference by generating
+#' @description \code{do_inference} calls Stan to do Bayesian inference by generating
 #' a sample of parameters from the posterior of theta (or th).
 #' This function analyzes the result of that inference.
 #' In particular, it calculates the quantiles of the density function and growth rate.
 #'
-#' @details `soln` is the result of a call to \code{bd_do_inference}.
+#' @details `soln` is the result of a call to \code{do_inference}.
 #' It contains both the resulting samples and the parameters used in the inference,
-#' such as the hyperparameters (see \code{bd_do_inference} for further details).
-#' The primary thing \code{bd_analyze_soln} does is calculate quantiles of both
+#' such as the hyperparameters (see \code{do_inference} for further details).
+#' The primary thing \code{analyze_soln} does is calculate quantiles of both
 #' the parameterized density and growth rate. For example,
 #' for a calendar date y each sample yields a density and growth rate.
 #' The quantile is the value of the density or growth rate such that
@@ -177,7 +177,7 @@ bd_do_inference <- function(prob) {
 #' where `lev` is the level (0.025 by default, so that 95% of the observations
 #' lie between the first and last quantile bands).
 #'
-#' In addition, \code{bd_analyze_soln} identifies calendar dates for which
+#' In addition, \code{analyze_soln} identifies calendar dates for which
 #' the growth rate quantiles defined by `lev` and `1 - lev` do not contain zero.
 #' This indicates significant positive or negative growth for the density curve.
 #' The output vector `growthState` codes calendar dates by growth state as 'negative',
@@ -191,20 +191,20 @@ bd_do_inference <- function(prob) {
 #' By default, `rateProp` is NA and no calendar dates are classified as missing.
 #'
 #' By default, a summary is done for each sample by calling
-#' bd_summarize_sample. This is not done of doSummary is FALSE
+#' summarize_sample. This is not done of doSummary is FALSE
 #'
-#' @param soln The solution, a list-like object of class bd_soln (see \code{bd_do_inference})
+#' @param soln The solution, a list-like object of class bd_soln (see \code{do_inference})
 #' @param tau (optional) The calendar dates at which to evaluate densities.
 #' If tau is not input, tau is built from the hyperparameters.
 #' @param th_sim (optional) The known parameters used to create simulation data
 #' @param lev (default: 0.025) The level to use for the quantile bands
 #' @param rateProp (optional) The cumulative density needed to define rate growth bands
-#' @param doSummary (default: `TRUE`) Whether to summarize each sample by calling bd_summarize_sample
+#' @param doSummary (default: `TRUE`) Whether to summarize each sample by calling summarize_sample
 #'
 #' @return A list with information on the quantiles of the density function and growth rate (and sample summaries)
 #'
 #' @export
-bd_analyze_soln <-
+analyze_soln <-
   function(soln,
            tau = NA,
            th_sim = NA,
@@ -227,7 +227,7 @@ bd_analyze_soln <-
     # possibly of a specific class (e.g., gaussmix) with dimensions
     # numSamp x numParam, where numSamp is the number of samples and numParam is
     # the number of parameters (length of th).
-    TH <- bd_extract_param(soln$fit)
+    TH <- extract_param(soln$fit)
 
     numMix <- ncol(TH) / 3 # This assumes a gassian mixture fit. Future updates may generalize this
     numSamp <- nrow(TH)
@@ -236,15 +236,15 @@ bd_analyze_soln <-
     # Calculate the pdf matrix, which is the density of the parametric model for
     # theta for each sample and each grid point. fMat has dimensions
     # N x G, where N is the number of samples in TH and G is the length of the vector tau.
-    # Because bd_calc_gauss_mix_pdf_mat is called with taumin and taumax, the density
+    # Because calc_gauss_mix_pdf_mat is called with taumin and taumax, the density
     # is normalized to integrate to 1 on the interval taumin to taumax.
-    fMat <- bd_calc_gauss_mix_pdf_mat(TH, tau, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax)
+    fMat <- calc_gauss_mix_pdf_mat(TH, tau, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax)
 
     # Calculate the rate for each sample and grid point (f' / f, where f is density)
-    rateMat <- bd_calc_gauss_mix_pdf_mat(TH, tau, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax, type = "rate")
+    rateMat <- calc_gauss_mix_pdf_mat(TH, tau, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax, type = "rate")
 
     # Calculate the quantiles of the normalized density matrix
-    Qdens <- bd_calc_quantiles(fMat, probs)
+    Qdens <- calc_quantiles(fMat, probs)
 
     # Normalized 50% densities (not normalized to integrate to 1)
     f50 <- Qdens[2, ] # The second row gives the 50% quantiles
@@ -258,7 +258,7 @@ bd_analyze_soln <-
 
     # Identify regions with growth rates that differ from zero per the input quantile level (lev)
     # growthState0 is -1 for significant negative growth, 1 for significant positive growth, and 0 otherwise
-    Qrate <- bd_calc_quantiles(rateMat[, rateInd], probs)
+    Qrate <- calc_quantiles(rateMat[, rateInd], probs)
     growthState0 <- rep("zero", length(rateInd)) # growthState0 indices in rateInd
     growthState0[Qrate[2, ] > 0 & Qrate[1, ] > 0] <- "positive"
     growthState0[Qrate[2, ] < 0 & Qrate[3, ] < 0] <- "negative"
@@ -267,7 +267,7 @@ bd_analyze_soln <-
 
 
     # Calculate the measurement matrix
-    M <- bd_calc_meas_matrix(tau, soln$prob$phi_m, soln$prob$sig_m, soln$prob$calibDf)
+    M <- calc_meas_matrix(tau, soln$prob$phi_m, soln$prob$sig_m, soln$prob$calibDf)
 
     # Normalize by row
     M <- M / replicate(length(tau),rowSums(M)*dtau)
@@ -291,24 +291,24 @@ bd_analyze_soln <-
       summList <- list()
       for (n in 1:numSamp) {
         th <- TH[n, ]
-        summList[[n]] <- bd_summarize_trunc_gauss_mix_sample(th, soln$prob$hp$taumin, soln$prob$hp$taumax)
+        summList[[n]] <- summarize_trunc_gauss_mix_sample(th, soln$prob$hp$taumin, soln$prob$hp$taumax)
       }
       out$summList <- summList
     }
 
     haveSim <- !all(is.na(th_sim))
     if (haveSim) {
-      f_sim <- bd_calc_gauss_mix_pdf(th_sim, tau, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax)
-      rate_sim <- bd_calc_gauss_mix_pdf(th_sim, tau, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax, type = "rate")
+      f_sim <- calc_gauss_mix_pdf(th_sim, tau, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax)
+      rate_sim <- calc_gauss_mix_pdf(th_sim, tau, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax, type = "rate")
       out$f_sim <- f_sim
       out$rate_sim <- rate_sim
     }
     return(out)
   }
-#' @title Extract the Bayesian samples for a Gaussian mixture model generated by bd_do_inference
+#' @title Extract the Bayesian samples for a Gaussian mixture model generated by do_inference
 #'
 #' @description
-#' The input fit is the result of a call to stan by \code{bd_do_inference}, of
+#' The input fit is the result of a call to stan by \code{do_inference}, of
 #' class stanfit. Return a matrix TH with dimensions S x (3*K), where S is the
 #' number of samples (across all chains, and excluding warmup), and K is the
 #' number of mixtures. The final column of as.matrix for class stanfit is the
@@ -319,7 +319,7 @@ bd_analyze_soln <-
 #' @return A matrix or list of samples
 #' @export
 
-bd_extract_param <- function(fit) {
+extract_param <- function(fit) {
   if (class(fit) != "stanfit") {
     stop(paste("Expected fit to be class stanfit, but it is", class(fit)))
   }
@@ -370,11 +370,11 @@ bd_extract_param <- function(fit) {
 #' @return A list consisting of tlo / thi (specifying the time periods), indPeak, tpeak, fpeak, and pattern (see Description)
 #'
 #' @export
-bd_summarize_trunc_gauss_mix_sample <- function(th, taumin, taumax, N = 1000) {
+summarize_trunc_gauss_mix_sample <- function(th, taumin, taumax, N = 1000) {
   # (1) Calculate the derivative of the density
   K <- length(th) / 3 # Number of mixtures
   t <- seq(taumin, taumax, len = N)
-  fprime <- bd_calc_gauss_mix_pdf(th, t, taumin, taumax, type = "derivative")
+  fprime <- calc_gauss_mix_pdf(th, t, taumin, taumax, type = "derivative")
 
   # (2) Identify locations in t where the derivative changes sign. This happens
   #     if fprime[n] * fprime[n+1] is less than zero. Then, numerically
@@ -389,21 +389,21 @@ bd_summarize_trunc_gauss_mix_sample <- function(th, taumin, taumax, N = 1000) {
   if (M > 0) {
     # Objective function to maximize
     rootFun <- function(t) {
-      return(bd_calc_gauss_mix_pdf(th, t, taumin, taumax, type = "derivative"))
+      return(calc_gauss_mix_pdf(th, t, taumin, taumax, type = "derivative"))
     }
 
     # Iterate over crossings
     for (m in 1:M) {
       root <- stats::uniroot(rootFun, lower = t[ind[m]], upper = t[ind[m] + 1])
       tcross[m] <- root$root
-      fcross[m] <- bd_calc_gauss_mix_pdf(th, tcross[m], taumin, taumax)
+      fcross[m] <- calc_gauss_mix_pdf(th, tcross[m], taumin, taumax)
     }
   }
 
   # (3-4) Create the vector of critical points, calculate densities, and
   #       identify peak
   tcrit <- c(taumin, tcross, taumax)
-  fcrit <- c(bd_calc_gauss_mix_pdf(th, taumin, taumin, taumax), fcross, bd_calc_gauss_mix_pdf(th, taumin, taumin, taumax))
+  fcrit <- c(calc_gauss_mix_pdf(th, taumin, taumin, taumax), fcross, calc_gauss_mix_pdf(th, taumin, taumin, taumax))
   indPeak <- which.max(fcrit)
   tpeak <- tcrit[indPeak]
   fpeak <- fcrit[indPeak]
@@ -434,7 +434,7 @@ bd_summarize_trunc_gauss_mix_sample <- function(th, taumin, taumax, N = 1000) {
 #' @return The quantiles, a matrix with dimension length(probs) x G
 #'
 #' @export
-bd_calc_quantiles <- function(X, probs = c(.025, .5, .975)) {
+calc_quantiles <- function(X, probs = c(.025, .5, .975)) {
   numQuant <- length(probs) # Number of quantiles
   G <- dim(X)[2] # Number of grid points
 
@@ -457,27 +457,27 @@ bd_calc_quantiles <- function(X, probs = c(.025, .5, .975)) {
 #' interior peak in the range peakRange, which is taumin to taumax by default,
 #' the half life is set to NA.
 #'
-#' @param soln The result of a call to bd_do_inference
+#' @param soln The result of a call to do_inference
 #' @param propChange (Default 0.5) The relative decrease in density to use for the duration calculation
-#' @param anal (Optional) The result of a call to bd_analyze_soln. If not provided, it is calculated
+#' @param anal (Optional) The result of a call to analyze_soln. If not provided, it is calculated
 #' @param peakRange (default: `c(taumin, taumax)`) peakRange can be given so that the peak density used is on the range peakRange
 #'
 #' @return A vector of "half-lives" (proportional change set by propChange)
 #'
 #' @export
-bd_calc_half_life_from_peak <-
+calc_half_life_from_peak <-
   function(soln,
            propChange = 0.5,
            anal = NA,
            peakRange = NA) {
-    TH <- bd_extract_param(soln$fit)
+    TH <- extract_param(soln$fit)
     N <- nrow(TH)
     taumin <- soln$prob$hp$taumin
     taumax <- soln$prob$hp$taumax
     dtau <- soln$prob$hp$dtau
 
     if (all(is.na(anal))) {
-      anal <- bd_analyze_soln(soln)
+      anal <- analyze_soln(soln)
     }
     summList <- anal$summList
 
@@ -494,7 +494,7 @@ bd_calc_half_life_from_peak <-
       # critical points
       tcrit <- c(summList[[n]]$periods$tlo, summList[[n]]$periods$thi[length(summList[[n]]$periods$thi)])
       tcrit <- tcrit[peakRange[1] <= tcrit & tcrit <= peakRange[2]]
-      fcrit <- bd_calc_gauss_mix_pdf(th, tcrit, taumin, taumax)
+      fcrit <- calc_gauss_mix_pdf(th, tcrit, taumin, taumax)
       indPeak <- which.max(fcrit)
       tpeak <- tcrit[indPeak]
       fpeak <- fcrit[indPeak]
@@ -502,7 +502,7 @@ bd_calc_half_life_from_peak <-
       if (isIn) {
         # Function for root finder
         rootFun <- function(t) {
-          return(fpeak * propChange - bd_calc_gauss_mix_pdf(th, t, taumin, taumax, type = "density"))
+          return(fpeak * propChange - calc_gauss_mix_pdf(th, t, taumin, taumax, type = "density"))
         }
 
         # Find root. Catch any errors in case the half life does not exist on the
@@ -539,27 +539,27 @@ bd_calc_half_life_from_peak <-
 #' length of 2. For the peak, spec1/spec2 should be the string 'peak'.
 #'
 #' By default, this calculation is done for all the Bayesian samples in soln,
-#' which is the result of a call to bd_do_inference. Optionally, a subset can be
+#' which is the result of a call to do_inference. Optionally, a subset can be
 #' specified via the input ind, which should be a vector of integer indices at
 #' which to do the calculation. To save computation if either spec1 or spec2 is
-#' 'peak', the result of a call to bd_analyze_soln for which doSummary was T
+#' 'peak', the result of a call to analyze_soln for which doSummary was T
 #' can be input.
 #'
 #'
-#' @param soln The result of a call to bd_do_inference
-#' @param anal The result of a call to bd_analyze_soln
+#' @param soln The result of a call to do_inference
+#' @param anal The result of a call to analyze_soln
 #' @param spec1 The specification for the first density (see details)
 #' @param spec2 The specification for the second density (see details)
 #' @param ind (Optional) Indices at which to do the calculation. By default,
 #'            all the samples in anal are used.
-#' @param anal (Optional) The result of a call to bd_analyze_soln. This is only
+#' @param anal (Optional) The result of a call to analyze_soln. This is only
 #'             needed if either spec1 or spec2 is 'peak'
 #'
 #' @return A vector of relative densities (f_spec1 / f_spec2)
 #'
 #' @export
-bd_calc_relative_density <- function(soln, spec1, spec2, ind = NA, anal = NA) {
-  TH <- bd_extract_param(soln$fit)
+calc_relative_density <- function(soln, spec1, spec2, ind = NA, anal = NA) {
+  TH <- extract_param(soln$fit)
   N <- nrow(TH)
   if (all(is.na(ind))) {
     ind <- 1:N
@@ -572,18 +572,18 @@ bd_calc_relative_density <- function(soln, spec1, spec2, ind = NA, anal = NA) {
 
   if (spec1$type == "peak" || spec2$type == "peak") {
     if (all(is.na(anal))) {
-      anal <- bd_analyze_soln(soln) # If ind is not NA, this may involve unused computation
+      anal <- analyze_soln(soln) # If ind is not NA, this may involve unused computation
     }
     summList <- anal$summList[ind]
   }
 
   # Calculate the density for spec1
   if (spec1$type == "point") {
-    f1 <- bd_calc_point_density(TH[ind, ], soln, spec1$value)
+    f1 <- calc_point_density(TH[ind, ], soln, spec1$value)
   } else if (spec1$type == "range") {
-    f1 <- bd_calc_range_density(TH[ind, ], soln, spec1$lower, spec1$upper)
+    f1 <- calc_range_density(TH[ind, ], soln, spec1$lower, spec1$upper)
   } else if (spec1$type == "peak") {
-    f1 <- bd_calc_peak_density(summList)
+    f1 <- calc_peak_density(summList)
   } else {
     # This should not happen, but throw an error regardless
     stop("Unsupported spec type")
@@ -591,11 +591,11 @@ bd_calc_relative_density <- function(soln, spec1, spec2, ind = NA, anal = NA) {
 
   # Calculate the density for spec2
   if (spec2$type == "point") {
-    f2 <- bd_calc_point_density(TH[ind, ], soln, spec2$value)
+    f2 <- calc_point_density(TH[ind, ], soln, spec2$value)
   } else if (spec2$type == "range") {
-    f2 <- bd_calc_range_density(TH[ind, ], soln, spec2$lower, spec2$upper)
+    f2 <- calc_range_density(TH[ind, ], soln, spec2$lower, spec2$upper)
   } else if (spec2$type == "peak") {
-    f2 <- bd_calc_peak_density(summList)
+    f2 <- calc_peak_density(summList)
   } else {
     # This should not happen, but throw an error regardless
     stop("Unsupported spec type")
@@ -651,21 +651,21 @@ unpack_spec <- function(spec, soln, isOne) {
 
 
 # A helper function to calculate point densities
-bd_calc_point_density <- function(TH, soln, t) {
-  return(as.numeric(bd_calc_gauss_mix_pdf_mat(TH, t, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax)))
+calc_point_density <- function(TH, soln, t) {
+  return(as.numeric(calc_gauss_mix_pdf_mat(TH, t, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax)))
 }
 
 
 # A helper function to calculate the mean density over a range
-bd_calc_range_density <- function(TH, soln, tlo, thi) {
-  flo <- as.numeric(bd_calc_gauss_mix_pdf_mat(TH, tlo, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax, type = "cumulative"))
-  fhi <- as.numeric(bd_calc_gauss_mix_pdf_mat(TH, thi, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax, type = "cumulative"))
+calc_range_density <- function(TH, soln, tlo, thi) {
+  flo <- as.numeric(calc_gauss_mix_pdf_mat(TH, tlo, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax, type = "cumulative"))
+  fhi <- as.numeric(calc_gauss_mix_pdf_mat(TH, thi, taumin = soln$prob$hp$taumin, taumax = soln$prob$hp$taumax, type = "cumulative"))
   return((fhi - flo) / (thi - tlo))
 }
 
 
 # A helper function to calculate the peak density
-bd_calc_peak_density <- function(summList) {
+calc_peak_density <- function(summList) {
   return(unlist(lapply(summList, function(x) {
     x$fpeak
   })))

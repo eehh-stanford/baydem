@@ -37,7 +37,7 @@
 #' @param tau_min The minimum calendar date (AD) for the sampling grid
 #' @param tau_max The maximum calendar date (AD) for the sampling grid
 #' @param dtau The spacing of the sampling grid
-#' @param calib_df Calibration curve (see bd_load_calib_curve)
+#' @param calib_df Calibration curve (see load_calib_curve)
 #' @param num_restarts Number of restarts to use (default: 100)
 #' @param maxfeval Maximum number of function evaluations for each restart
 #'   (default: (K-1)*10000)
@@ -68,7 +68,7 @@ fit_trunc_gauss_mix <- function(K,
   tau <- seq(tau_min,tau_max,dtau)
 
   # Calculate the measurement matrix, M
-  M <- bd_calc_meas_matrix(tau, phi_m, sig_m, calib_df)
+  M <- calc_meas_matrix(tau, phi_m, sig_m, calib_df)
 
   # Iterate over restarts. To generate the starting vectors, assume the
   # following:
@@ -152,7 +152,7 @@ fit_trunc_gauss_mix <- function(K,
 
 
   # Calculate the probability density for the best fit parameter
-  f  <- bd_calc_gauss_mix_pdf(th_best,tau,tau_min,tau_max)
+  f  <- calc_gauss_mix_pdf(th_best, tau, tau_min, tau_max)
 
   # Calculate the Bayesian information criterion (BIC) and Akaike information
   # criterion (AIC).
@@ -201,7 +201,7 @@ calc_trunc_gauss_mix_neg_log_lik <- function(th_reduced,M,tau,sig_min=0) {
 
   th <- c(1-sum(pi_),th_reduced)
   # Calculate v, the vector of densities
-  v <- bd_calc_gauss_mix_pdf(th,tau,tau_min,tau_max)
+  v <- calc_gauss_mix_pdf(th, tau, tau_min, tau_max)
   h <- M %*% v
   return(-sum(log(h)))
 }
@@ -216,7 +216,7 @@ calc_trunc_gauss_mix_neg_log_lik <- function(th_reduced,M,tau,sig_min=0) {
 #'
 #' Neither bounds on the values of the means or the upper values of the standard
 #' deviations are checked, but they are enforced in the optimization in
-#' bd_fit_trunc_gauss_mix.
+#' fit_trunc_gauss_mix.
 #'
 #' @param th_reduced The paramater vector without the first mixture weight
 #' @param sig_min A minimum value for the mixture standard deviations

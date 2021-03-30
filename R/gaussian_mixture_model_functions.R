@@ -3,11 +3,11 @@
 #' @description TH is a matrix of samples of a possibly truncated Gaussian
 #'              mixture with dimensions S x P, where S is the number of samples
 #'              and P is the number of parameters. Repeatedly call
-#'              \code{bd_calc_gauss_mix_pdf} to calculate the density function
+#'              \code{calc_gauss_mix_pdf} to calculate the density function
 #'              for each sample at the points in the vector tau, which has length
 #'              G. The output density matrix, fMat, has dimensions S x G.
-#'              \code{bd_calc_gauss_mix_pdf_mat} supports the same optional
-#'              as \code{bd_calc_gauss_mix_pdf}: taumin / taumax to specify the
+#'              \code{calc_gauss_mix_pdf_mat} supports the same optional
+#'              as \code{calc_gauss_mix_pdf}: taumin / taumax to specify the
 #'              boundaries of truncation and type to set whether the density,
 #'              cumuluative distribution, derivative, or rate is calculated.
 #'
@@ -21,21 +21,21 @@
 #'
 #' @export
 
-bd_calc_gauss_mix_pdf_mat <- function(TH, tau, taumin = NA, taumax = NA, type = "density") {
+calc_gauss_mix_pdf_mat <- function(TH, tau, taumin = NA, taumax = NA, type = "density") {
   S <- dim(TH)[1] # number of samples
   G <- length(tau) # number of time-values (usually grid points)
   fMat <- matrix(NA, S, G)
 
   # Iterate over samples to fill fMat
   for (s in 1:S) {
-    fMat[s, ] <- bd_calc_gauss_mix_pdf(TH[s, ], tau, taumin = taumin, taumax = taumax, type = type)
+    fMat[s, ] <- calc_gauss_mix_pdf(TH[s, ], tau, taumin = taumin, taumax = taumax, type = type)
   }
   return(fMat)
 }
 
 #' @title Caculate the density of a possibly truncated Gaussian mixture
 #'
-#' @description \code{bd_calc_gauss_mix_pdf} calculates the probability density
+#' @description \code{calc_gauss_mix_pdf} calculates the probability density
 #' for a possibly truncated Gaussian mixture. The density, f', and rate, f'/f,
 #' can also be calculated by specifying the input \code{type}, which is
 #' 'density' by default, but can also be 'cumulative', 'derivative', or 'rate'.
@@ -55,11 +55,11 @@ bd_calc_gauss_mix_pdf_mat <- function(TH, tau, taumin = NA, taumax = NA, type = 
 #' @return The output vector with length G
 #'
 #' @export
-bd_calc_gauss_mix_pdf <- function(th,
-                                  tau,
-                                  taumin = NA,
-                                  taumax = NA,
-                                  type = "density") {
+calc_gauss_mix_pdf <- function(th,
+                               tau,
+                               taumin = NA,
+                               taumax = NA,
+                               type = "density") {
   # First, determine whether taumin and taumax are input
   doNorm <- !is.na(taumin)
 
@@ -104,7 +104,7 @@ bd_calc_gauss_mix_pdf <- function(th,
     stop("type must be density, cumulative, derivative, or rate")
   }
   if (doNorm) {
-    normFact <- diff(bd_calc_gauss_mix_pdf(th, c(taumin, taumax), type = "cumulative"))
+    normFact <- diff(calc_gauss_mix_pdf(th, c(taumin, taumax), type = "cumulative"))
     output <- output / normFact
   }
   return(output)

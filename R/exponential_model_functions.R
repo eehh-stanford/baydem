@@ -13,7 +13,7 @@
 #'
 #' @export
 
-bd_sample_trunc_exp <- function(N, r0, taumin, taumax) {
+sample_trunc_exp <- function(N, r0, taumin, taumax) {
   # Call RGeode::rexptr for the sampling. rexptr cannot be used direclty
   # because it does not support r0 being zero or negative. The input to rexptr
   # is -r0.

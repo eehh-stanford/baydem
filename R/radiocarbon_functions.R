@@ -14,7 +14,7 @@
 #'
 #' @return The vector of calibration curve fraction modern values
 #' @export
-bd_calc_calib_curve_frac_modern <-
+calc_calib_curve_frac_modern <-
   function(calibDf,
            tau = NA,
            isBP = FALSE) {
@@ -52,20 +52,20 @@ bd_calc_calib_curve_frac_modern <-
 #'              using a Riemann sum with the density calculated at the points
 #'              tau and the width for each point being dtau. Alternatively,
 #'              the trapezoidal rule can be used (for details see
-#'              bd_calc_trapez_weights). If the spacing of tau is irregular,
+#'              calc_trapez_weights). If the spacing of tau is irregular,
 #'              the trapezoidal rule must be used. An error is thrown if tau is
 #'              irregularly spaced and the the trapezoidal rule is not used
 #'
 #' @param tau A vector of calendar dates indexed by g
 #' @param phi_m A vector of fraction moderns indexed by i
 #' @param sig_m A vector of standard deviations for phi_m indexed by i
-#' @param calibDf Calibration curve (see bd_load_calib_curve)
+#' @param calibDf Calibration curve (see load_calib_curve)
 #' @param addCalibUnc (default TRUE) Whether to add calibration uncertainty
 #' @param useTrapez (default FALSE) Whether to use the trapezoidal rule for integration
 #'
 #' @export
 
-bd_calc_meas_matrix <- function(tau, phi_m, sig_m, calibDf, addCalibUnc = T, useTrapez = F) {
+calc_meas_matrix <- function(tau, phi_m, sig_m, calibDf, addCalibUnc = T, useTrapez = F) {
   # First, check the consistency of the spacing in tau and the value of
   # useTrapez, which must be TRUE if tau is irregularly spaced.
   irreg <- length(unique(diff(tau))) != 1
@@ -105,7 +105,7 @@ bd_calc_meas_matrix <- function(tau, phi_m, sig_m, calibDf, addCalibUnc = T, use
     M <- M * (tau[2] - tau[1])
   } else {
     G <- length(tau)
-    dtauVect <- bd_calc_trapez_weights(tau)
+    dtauVect <- calc_trapez_weights(tau)
     dtauMat <- t(replicate(length(phi_m), dtauVect))
     M <- M * dtauMat
   }
@@ -129,7 +129,7 @@ bd_calc_meas_matrix <- function(tau, phi_m, sig_m, calibDf, addCalibUnc = T, use
 #' @return A vector of integration weights the same length as tau
 
 #' @export
-bd_calc_trapez_weights <- function(tau) {
+calc_trapez_weights <- function(tau) {
   G <- length(tau)
   weightVect <- rep(NA, length(tau))
   indCent <- 2:(G - 1)
@@ -161,7 +161,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @author Michael Holton Price <MichaelHoltonPrice@gmail.com>
 
-bd_load_calib_curve <- function(calibCurve) {
+load_calib_curve <- function(calibCurve) {
   if (!(calibCurve %in% c("intcal20", "marine20", "shcal20", "intcal13", "marine13", "shcal13"))) {
     stop(paste("Unknown calibration curve name:", calibCurve))
   }
@@ -206,7 +206,7 @@ bd_load_calib_curve <- function(calibCurve) {
 #' radiocarbon calibration curve. It is known that the calendar date lies
 #' lies between `tau_curve[ii_lo]` and `tau_curve[ii_hi]`. Interpolate to find the
 #' calendar date corresponding to the input phi_known. This function is called
-#' by bd_assess_calib_curve_equif.
+#' by assess_calib_curve_equif.
 #'
 #' @param tau_curve Calibration curve calendar dates
 #' @param phi_curve Calibration curve fraction moderns
@@ -217,7 +217,7 @@ bd_load_calib_curve <- function(calibCurve) {
 #' @return The calendar date corresponding to the input phi_known
 #'
 #' @export
-bd_phi2tau <- function(tau_curve, phi_curve, phi_known, ii_lo, ii_hi) {
+phi2tau <- function(tau_curve, phi_curve, phi_known, ii_lo, ii_hi) {
   tau <- tau_curve[ii_lo] + (tau_curve[ii_hi] - tau_curve[ii_lo]) * (phi_known - phi_curve[ii_lo]) / (phi_curve[ii_hi] - phi_curve[ii_lo])
   return(tau)
 }

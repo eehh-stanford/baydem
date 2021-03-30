@@ -51,7 +51,7 @@
 #'         sig_trc_m           A vector of simulated uncertainties for trc_m
 #'
 #' @export
-bd_simulate_rc_data <- function(sim_spec) {
+simulate_rc_data <- function(sim_spec) {
   # Right now, two model types are supported for the target density:
   # (a) A non-truncated Gaussian mixture (gauss_mix)
   # (b) A     truncated Gaussian mixture (trunc_gauss_mix)
@@ -63,11 +63,11 @@ bd_simulate_rc_data <- function(sim_spec) {
 
   # (2) Make draws for the dates
   if (sim_spec$model_spec$density_type == "gauss_mix") {
-    dates <- baydem::bd_sample_gauss_mix(sim_spec$N,
+    dates <- baydem::sample_gauss_mix(sim_spec$N,
                                          sim_spec$model_spec$th)
   } else if (sim_spec$model_spec$density_type == "trunc_gauss_mix") {
     K <- (length(sim_spec$model_spec$th) - 2)/3
-    dates <- baydem::bd_sample_gauss_mix(sim_spec$N,
+    dates <- baydem::sample_gauss_mix(sim_spec$N,
                                          sim_spec$model_spec$th[1:(3*K)],
                                          taumin=sim_spec$model_spec$th[3*K+1],
                                          taumax=sim_spec$model_spec$th[3*K+2])
@@ -81,12 +81,12 @@ bd_simulate_rc_data <- function(sim_spec) {
   #     dates
   # TODO: consider adding an error check of the input calibration curve
   # TODO: consider allowing arbitrary calibration curves to be used
-  calib_df <- bd_load_calib_curve(sim_spec$calib_curve)
+  calib_df <- load_calib_curve(sim_spec$calib_curve)
   rc_meas <-
-    bd_draw_rc_meas_using_date(dates,
-                               calib_df,
-                               sim_spec$model_spec$error_spec,
-                               sim_spec$model_spec$isAD)
+    draw_rc_meas_using_date(dates,
+                            calib_df,
+                            sim_spec$model_spec$error_spec,
+                            sim_spec$model_spec$isAD)
   # rc_meas contains phi_m, sig_m, trc_m, and sig_trc_m, though phi_m and sig_m
   # uniquely determine trc_m and sig_trc_m.
   return(list(sim_spec=sim_spec,data=list(dates=dates,rc_meas=rc_meas)))
@@ -109,7 +109,7 @@ bd_simulate_rc_data <- function(sim_spec) {
 #' @return N samples from the Gaussian mixture
 #'
 #' @export
-bd_sample_gauss_mix <- function(N, th, taumin = NA, taumax = NA) {
+sample_gauss_mix <- function(N, th, taumin = NA, taumax = NA) {
   K <- length(th) / 3 # Number of  mixtures
 
   # (Somewhat awkwardly), define the mixing distribution for K = 1
@@ -173,7 +173,7 @@ bd_sample_gauss_mix <- function(N, th, taumin = NA, taumax = NA) {
 #' @param isAD (Optional; default F) Whether t_e is calBP or AD
 
 #' @export
-bd_draw_rc_meas_using_date <- function(t_e, calibDf, errorSpec, isAD = F) {
+draw_rc_meas_using_date <- function(t_e, calibDf, errorSpec, isAD = F) {
 
   # Check that the errorSpec is of a know type
   if (errorSpec$type != "unif_fm") {

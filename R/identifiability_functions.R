@@ -36,19 +36,19 @@
 #' ii_next   -- The index (row) of the calibDf later than the invertible
 #'
 #' @param calibDf The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError
-#' @param equiList (Optional) The result of a call to bd_calc_calib_curve_equif_dates
+#' @param equiList (Optional) The result of a call to calc_calib_curve_equif_dates
 #'
 #' @return A list of with named variables canInvert and invSpanlist (see details)
 #'
 #' @export
-bd_assess_calib_curve_equif <- function(calibDf, equiList = NA) {
+assess_calib_curve_equif <- function(calibDf, equiList = NA) {
   if (all(is.na(equiList))) {
-    equiList <- baydem::bd_calc_calib_curve_equif_dates(calibDf)
+    equiList <- calc_calib_curve_equif_dates(calibDf)
   }
 
   canInvert <- rep(T, length(calibDf$yearBP))
   tau_curve <- 1950 - calibDf$yearBP
-  phi_curve <- baydem::bd_calc_calib_curve_frac_modern(calibDf)
+  phi_curve <- calc_calib_curve_frac_modern(calibDf)
   for (equiEntry in equiList) {
     canInvert[equiEntry$indBase] <- F
   }
@@ -65,7 +65,7 @@ bd_assess_calib_curve_equif <- function(calibDf, equiList = NA) {
       ii_prev <- 1
     } else {
       ii_prev <- which.min(abs(phi_curve[1:(lo - 1)] - phi_curve[lo]))
-      tau_left <- baydem::bd_phi2tau(tau_curve, phi_curve, phi_curve[ii_prev], lo - 1, lo)
+      tau_left <- phi2tau(tau_curve, phi_curve, phi_curve[ii_prev], lo - 1, lo)
       phi_left <- phi_curve[ii_prev]
     }
 
@@ -76,7 +76,7 @@ bd_assess_calib_curve_equif <- function(calibDf, equiList = NA) {
       ii_next <- length(tau_curve)
     } else {
       ii_next <- hi + which.min(abs(phi_curve[(hi + 1):length(phi_curve)] - phi_curve[hi]))
-      tau_right <- baydem::bd_phi2tau(tau_curve, phi_curve, phi_curve[ii_next], hi, hi + 1)
+      tau_right <- phi2tau(tau_curve, phi_curve, phi_curve[ii_next], hi, hi + 1)
       phi_right <- phi_curve[ii_next]
     }
     invSpan <- list(ind = lo:hi, tau_left = tau_left, phi_left = phi_left, tau_right = tau_right, phi_right = phi_right, ii_prev = ii_prev, ii_next = ii_next)
@@ -107,11 +107,11 @@ bd_assess_calib_curve_equif <- function(calibDf, equiList = NA) {
 #' @return A list of equifinality information for each point in the calibration curve (see details)
 #'
 #' @export
-bd_calc_calib_curve_equif_dates <- function(calibDf) {
+calc_calib_curve_equif_dates <- function(calibDf) {
   # For all the calendar dates in the calibration dataframe, identify points
   # (other calendar dates) with the same fraction modern.
   tau_curve <- 1950 - calibDf$yearBP
-  phi_curve <- bd_calc_calib_curve_frac_modern(calibDf)
+  phi_curve <- calc_calib_curve_frac_modern(calibDf)
   outputList <- list()
   for (ii in 1:(length(phi_curve) - 1)) {
     tau <- tau_curve[ii]

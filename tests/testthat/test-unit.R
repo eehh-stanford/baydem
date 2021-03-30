@@ -6,12 +6,12 @@
 # ------------------------------------------------------------------------------
 # (1) Do unit tests for functions that generate simulated data
 #
-# Coverage: bd_sample_gauss_mix
-#           bd_draw_rc_meas_using_date
-#           bd_simulate_rc_data
+# Coverage: sample_gauss_mix
+#           draw_rc_meas_using_date
+#           simulate_rc_data
 # ------------------------------------------------------------------------------
 
-# (1a) test bd_sample_gauss_mix
+# (1a) test sample_gauss_mix
 N <- 75
 th_sim <-
   c(
@@ -24,8 +24,8 @@ th_sim <-
   )
 
 expect_error(
-  sample <- bd_sample_gauss_mix(N,
-                                th_sim),
+  sample <- sample_gauss_mix(N,
+                             th_sim),
   NA
 )
 
@@ -37,10 +37,10 @@ expect_equal(
 tau_min <- 600
 tau_max <- 1300
 expect_error(
-  sample <- bd_sample_gauss_mix(N,
-                                th_sim,
-                                tau_min,
-                                tau_max),
+  sample <- sample_gauss_mix(N,
+                             th_sim,
+                             tau_min,
+                             tau_max),
   NA
 )
 
@@ -50,20 +50,20 @@ expect_equal(
 )
 
 expect_error(
-  bd_sample_gauss_mix(N,1:15),
+  sample_gauss_mix(N, 1:15),
   "The maximum number of supported mixture components is 4"
 )
 
-# (1b) test bd_draw_rc_meas_using_date
-calib_df <- bd_load_calib_curve("intcal20")
+# (1b) test draw_rc_meas_using_date
+calib_df <- load_calib_curve("intcal20")
 # test with isAD FALSE
 expect_error(
-  rc_meas <- bd_draw_rc_meas_using_date(sample,
-                                        calib_df,
-                                        list(type="unif_fm",
+  rc_meas <- draw_rc_meas_using_date(sample,
+                                     calib_df,
+                                     list(type="unif_fm",
                                              min=.0021,
                                              max=.0028),
-                                        isAD=F),
+                                     isAD=F),
   NA
 )
 
@@ -80,23 +80,23 @@ for(vector_name in names(rc_meas)) {
 }
 
 expect_error(
-  rc_meas <- bd_draw_rc_meas_using_date(sample,
-                                        calib_df,
-                                        list(type="not_valid",
+  rc_meas <- draw_rc_meas_using_date(sample,
+                                     calib_df,
+                                     list(type="not_valid",
                                              min=.0021,
                                              max=.0028),
-                                        isAD=F),
+                                     isAD=F),
   "Unrecognized error type = not_valid"
 )
 
 # test with isAD TRUE
 expect_error(
-  rc_meas <- bd_draw_rc_meas_using_date(sample,
-                                        calib_df,
-                                        list(type="unif_fm",
+  rc_meas <- draw_rc_meas_using_date(sample,
+                                     calib_df,
+                                     list(type="unif_fm",
                                              min=.0021,
                                              max=.0028),
-                                        isAD=T),
+                                     isAD=T),
   NA
 )
 
@@ -113,16 +113,16 @@ for(vector_name in names(rc_meas)) {
 }
 
 expect_error(
-  rc_meas <- bd_draw_rc_meas_using_date(sample,
-                                        calib_df,
-                                        list(type="not_valid",
+  rc_meas <- draw_rc_meas_using_date(sample,
+                                     calib_df,
+                                     list(type="not_valid",
                                              min=.0021,
                                              max=.0028),
-                                        isAD=T),
+                                     isAD=T),
   "Unrecognized error type = not_valid"
 )
 
-# (1c) test bd_simulate_rc_data
+# (1c) test simulate_rc_data
 
 # Check simulation of a non-truncated Gaussian mixture with no random number
 # seed set
@@ -135,7 +135,7 @@ sim_spec <- list(model_spec=
                  calib_curve="intcal20")
 
 expect_error(
-  sim <- bd_simulate_rc_data(sim_spec),
+  sim <- simulate_rc_data(sim_spec),
   NA
 )
 
@@ -165,7 +165,7 @@ sim_spec <- list(model_spec=
                  calib_curve="intcal20")
 
 expect_error(
-  sim <- bd_simulate_rc_data(sim_spec),
+  sim <- simulate_rc_data(sim_spec),
   NA
 )
 
@@ -196,7 +196,7 @@ sim_spec <- list(model_spec=
                  seed=1002)
 
 expect_error(
-  sim <- bd_simulate_rc_data(sim_spec),
+  sim <- simulate_rc_data(sim_spec),
   NA
 )
 
@@ -249,10 +249,10 @@ expect_equal(
 
 # (2b) calc_trunc_gauss_mix_neg_log_lik
 tau <- seq(tau_min,tau_max,by=5)
-M <- bd_calc_meas_matrix(tau,
-                         sim$data$rc_meas$phi_m,
-                         sim$data$rc_meas$sig_m,
-                         calib_df)
+M <- calc_meas_matrix(tau,
+                      sim$data$rc_meas$phi_m,
+                      sim$data$rc_meas$sig_m,
+                      calib_df)
 expect_error(
   neg_log_lik <- calc_trunc_gauss_mix_neg_log_lik(th_sim[-1],M,tau),
   NA
@@ -316,8 +316,8 @@ expect_equal(
 # ------------------------------------------------------------------------------
 # (3) Do unit tests for functions related to the Bayesian inference
 #
-# coverage: bd_do_inference
-#           bd_analyze_soln
+# coverage: do_inference
+#           analyze_soln
 # ------------------------------------------------------------------------------
 
 # hyperparameters for inference
@@ -354,9 +354,9 @@ prob <- list(
   )
 )
 
-# (3a) bd_do_inference
+# (3a) do_inference
 expect_error(
-  soln <- bd_do_inference(prob),
+  soln <- do_inference(prob),
   NA
 )
 
@@ -380,9 +380,9 @@ expect_equal(
   c("numChains","sampsPerChain","warmup","stanControl","initList")
 )
 
-# (3b) bd_analyze_soln
+# (3b) analyze_soln
 expect_error(
-  anal <- bd_analyze_soln(soln),
+  anal <- analyze_soln(soln),
   NA
 )
 
@@ -395,79 +395,79 @@ expect_equal(
 # ------------------------------------------------------------------------------
 # (4) Do unit tests for plotting functions
 #
-# coverage: bd_make_blank_density_plot
-#           bd_plot_50_percent_quantile
-#           bd_add_shaded_quantiles
-#           bd_plot_summed_density
-#           bd_plot_known_sim_density
+# coverage: make_blank_density_plot
+#           plot_50_percent_quantile
+#           add_shaded_quantiles
+#           plot_summed_density
+#           plot_known_sim_density
 # ------------------------------------------------------------------------------
 
-# (4a) bd_make_blank_density_plot
+# (4a) make_blank_density_plot
 expect_error(
-  bd_make_blank_density_plot(anal),
+  make_blank_density_plot(anal),
   NA
 )
 
-# (4b) bd_plot_50_percent_quantile
+# (4b) plot_50_percent_quantile
 expect_error(
-  bd_plot_50_percent_quantile(anal, add = T),
+  plot_50_percent_quantile(anal, add = T),
   NA
 )
 
-# (4c) bd_add_shaded_quantiles
+# (4c) add_shaded_quantiles
 expect_error(
-  bd_add_shaded_quantiles(anal),
+  add_shaded_quantiles(anal),
   NA
 )
 
-# (4d) bd_plot_known_sim_density
-#      bd_plot_summed_density
+# (4d) plot_known_sim_density
+#      plot_summed_density
 expect_error(
-  bd_plot_known_sim_density(anal,add=T),
-  NA
-)
-
-expect_error(
-  bd_plot_summed_density(anal,add=T),
+  plot_known_sim_density(anal, add=T),
   NA
 )
 
 expect_error(
-  bd_plot_known_sim_density(anal),
+  plot_summed_density(anal, add=T),
   NA
 )
 
 expect_error(
-  bd_plot_summed_density(anal),
+  plot_known_sim_density(anal),
   NA
 )
 
-# (4e) bd_vis_calib_curve
 expect_error(
-  bd_vis_calib_curve(600, 700, calib_df),
+  plot_summed_density(anal),
+  NA
+)
+
+# (4e) vis_calib_curve
+expect_error(
+  vis_calib_curve(600, 700, calib_df),
   NA
 )
 
 # ------------------------------------------------------------------------------
 # (5) Do unit tests for density calculations and related "helper functions"
 #
-# coverage: bd_extract_param
-#           bd_calc_gauss_mix_pdf
-#           bd_calc_gauss_mix_pdf_mat
-#           bd_calc_quantiles
-#           bd_calc_half_life_from_peak
-#           bd_calc_relative_density
+# coverage: extract_param
+#           calc_gauss_mix_pdf
+#           calc_gauss_mix_pdf_mat
+#           calc_quantiles
+#           calc_half_life_from_peak
+#           calc_relative_density
 #             unpack_spec           [indirect]
-#             bd_calc_point_density [indirect]
-#             bd_calc_range_density [indirect]
-#             bd_calc_peak_density  [indirect]
-#           bd_summarize_trunc_gauss_mix_sample
+#             calc_point_density [indirect]
+#             calc_range_density [indirect]
+#             calc_peak_density  [indirect]
+#           summarize_trunc_gauss_mix_sample
 # ------------------------------------------------------------------------------
 
-# (5a) bd_extract_param
+# (5a) extract_param
 total_samples <- 800
 expect_error(
-  TH <- bd_extract_param(soln$fit),
+  TH <- extract_param(soln$fit),
   NA
 )
 
@@ -476,12 +476,12 @@ expect_equal(
   c(total_samples,6)
 )
 
-# (5b) bd_calc_gauss_mix_pdf
+# (5b) calc_gauss_mix_pdf
 tau <- seq(hp$taumin,hp$taumax,by=hp$dtau)
 
 # density is the default type
 expect_error(
-  pdf_vect <- bd_calc_gauss_mix_pdf(TH[50, ],tau),
+  pdf_vect <- calc_gauss_mix_pdf(TH[50, ], tau),
   NA
 )
 
@@ -496,7 +496,7 @@ expect_equal(
 )
 
 expect_error(
-  cdf_vect <- bd_calc_gauss_mix_pdf(TH[50, ], tau, type = "cumulative"),
+  cdf_vect <- calc_gauss_mix_pdf(TH[50, ], tau, type = "cumulative"),
   NA
 )
 
@@ -511,7 +511,7 @@ expect_equal(
 )
 
 expect_error(
-  deriv_vect <- bd_calc_gauss_mix_pdf(TH[50, ], tau, type = "derivative"),
+  deriv_vect <- calc_gauss_mix_pdf(TH[50, ], tau, type = "derivative"),
   NA
 )
 
@@ -526,7 +526,7 @@ expect_equal(
 )
 
 expect_error(
-  rate_vect <- bd_calc_gauss_mix_pdf(TH[50, ], tau, type = "rate"),
+  rate_vect <- calc_gauss_mix_pdf(TH[50, ], tau, type = "rate"),
   NA
 )
 
@@ -540,11 +540,11 @@ expect_equal(
   FALSE
 )
 
-# (5c) bd_calc_gauss_mix_pdf_mat
+# (5c) calc_gauss_mix_pdf_mat
 
 # density is the default type
 expect_error(
-  pdf_mat <- bd_calc_gauss_mix_pdf_mat(TH,tau),
+  pdf_mat <- calc_gauss_mix_pdf_mat(TH, tau),
   NA
 )
 
@@ -559,7 +559,7 @@ expect_equal(
 )
 
 expect_error(
-  cdf_mat <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = "cumulative"),
+  cdf_mat <- calc_gauss_mix_pdf_mat(TH, tau, type = "cumulative"),
   NA
 )
 
@@ -574,7 +574,7 @@ expect_equal(
 )
 
 expect_error(
-  deriv_mat <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = "derivative"),
+  deriv_mat <- calc_gauss_mix_pdf_mat(TH, tau, type = "derivative"),
   NA
 )
 
@@ -589,7 +589,7 @@ expect_equal(
 )
 
 expect_error(
-  rate_mat <- bd_calc_gauss_mix_pdf_mat(TH, tau, type = "rate"),
+  rate_mat <- calc_gauss_mix_pdf_mat(TH, tau, type = "rate"),
   NA
 )
 
@@ -603,10 +603,10 @@ expect_equal(
   FALSE
 )
 
-# (5d) bd_calc_quantiles
+# (5d) calc_quantiles
 
 expect_error(
-  Qdens1 <- bd_calc_quantiles(pdf_mat),
+  Qdens1 <- calc_quantiles(pdf_mat),
   NA
 )
 
@@ -616,17 +616,18 @@ expect_equal(
 )
 
 expect_error(
-  Qdens2 <- bd_calc_quantiles(pdf_mat, c(.025, .05, .5, .90, .975)),
+  Qdens2 <- calc_quantiles(pdf_mat, c(.025, .05, .5, .90, .975)),
   NA
 )
+
 expect_equal(
   dim(Qdens2),
   c(5, ncol(pdf_mat))
 )
 
-# (5e) bd_calc_half_life_from_peak
+# (5e) calc_half_life_from_peak
 expect_error(
-  half_life1 <- bd_calc_half_life_from_peak(soln),
+  half_life1 <- calc_half_life_from_peak(soln),
   NA
 )
 
@@ -641,7 +642,7 @@ expect_equal(
 )
 
 expect_error(
-  half_life2 <- bd_calc_half_life_from_peak(soln, propChange = .25),
+  half_life2 <- calc_half_life_from_peak(soln, propChange = .25),
   NA
 )
 
@@ -660,16 +661,16 @@ expect_equal(
   TRUE
 )
 
-# (5f) bd_calc_relative_density
+# (5f) calc_relative_density
 #        unpack_spec           [indirect]
-#        bd_calc_point_density [indirect]
-#        bd_calc_range_density [indirect]
-#        bd_calc_peak_density  [indirect]
-# Check two calls to bd_calc_relative_density to check all four helper
+#        calc_point_density [indirect]
+#        calc_range_density [indirect]
+#        calc_peak_density  [indirect]
+# Check two calls to calc_relative_density to check all four helper
 # functions (which are only checked indirectly).
 
 expect_error(
-  rel_dens1 <- bd_calc_relative_density(soln, "peak", 1100),
+  rel_dens1 <- calc_relative_density(soln, "peak", 1100),
   NA
 )
 
@@ -684,7 +685,7 @@ expect_equal(
 )
 
 expect_error(
-  rel_dens2 <- bd_calc_relative_density(soln, 900, c(700, 750)),
+  rel_dens2 <- calc_relative_density(soln, 900, c(700, 750)),
   NA
 )
 
@@ -698,9 +699,9 @@ expect_equal(
   FALSE
 )
 
-# (5g) bd_summarize_trunc_gauss_mix_sample
+# (5g) summarize_trunc_gauss_mix_sample
 expect_error(
-  summ <- bd_summarize_trunc_gauss_mix_sample(TH[50, ], hp$taumin, hp$taumax),
+  summ <- summarize_trunc_gauss_mix_sample(TH[50, ], hp$taumin, hp$taumax),
   NA
 )
 
@@ -712,8 +713,8 @@ expect_equal(
 # ------------------------------------------------------------------------------
 # (6) Do unit tests for the measurement matrix calculation
 #
-# coverage: bd_calc_meas_matrix
-#           bd_calc_trapez_weights
+# coverage: calc_meas_matrix
+#           calc_trapez_weights
 # ------------------------------------------------------------------------------
 
 
@@ -721,11 +722,11 @@ expect_equal(
 #     is regularly spaced. Do this for both using and not using calibration
 #     uncertainty. Also check the dimensions of the output
 
-# (6a) bd_calc_meas_matrix
+# (6a) calc_meas_matrix
 #        tau regularly spaced
 #        with calibration uncertainty
 expect_error(
-  M6a <- bd_calc_meas_matrix(tau,prob$phi_m,prob$sig_m,calib_df,addCalibUnc=T),
+  M6a <- calc_meas_matrix(tau, prob$phi_m, prob$sig_m, calib_df, addCalibUnc=T),
   NA
 )
 
@@ -739,11 +740,11 @@ expect_equal(
   FALSE
 )
 
-# (6b) bd_calc_meas_matrix
+# (6b) calc_meas_matrix
 #        tau regularly spaced
 #        without calibration uncertainty
 expect_error(
-  M6b <- bd_calc_meas_matrix(tau,prob$phi_m,prob$sig_m,calib_df,addCalibUnc=F),
+  M6b <- calc_meas_matrix(tau, prob$phi_m, prob$sig_m, calib_df, addCalibUnc=F),
   NA
 )
 
@@ -757,19 +758,19 @@ expect_equal(
   FALSE
 )
 
-# (6c) bd_calc_meas_matrix
+# (6c) calc_meas_matrix
 #        tau irrregularly spaced
 #        with calibration uncertainty
 tau_irreg <- c(800, 805, 810, 825)
 
 # an error is expected if useTrapez is not set to TRUE
 expect_error(
-  bd_calc_meas_matrix(tau_irreg,prob$phi_m,prob$sig_m,calib_df,addCalibUnc=T),
+  calc_meas_matrix(tau_irreg, prob$phi_m, prob$sig_m, calib_df, addCalibUnc=T),
   "tau is irregularly spaced but useTrapez is FALSE"
 )
 
 expect_error(
-  M6c <- bd_calc_meas_matrix(
+  M6c <- calc_meas_matrix(
     tau_irreg,
     prob$phi_m,
     prob$sig_m,
@@ -789,18 +790,18 @@ expect_equal(
   FALSE
 )
 
-# (6d) bd_calc_meas_matrix
+# (6d) calc_meas_matrix
 #        tau irrregularly spaced
 #        without calibration uncertainty
 
 # an error is expected if useTrapez is not set to TRUE
 expect_error(
-  bd_calc_meas_matrix(tau_irreg,prob$phi_m,prob$sig_m,calib_df,addCalibUnc=F),
+  calc_meas_matrix(tau_irreg, prob$phi_m, prob$sig_m, calib_df, addCalibUnc=F),
   "tau is irregularly spaced but useTrapez is FALSE"
 )
 
 expect_error(
-  M6d <- bd_calc_meas_matrix(
+  M6d <- calc_meas_matrix(
     tau_irreg,
     prob$phi_m,
     prob$sig_m,
@@ -820,26 +821,26 @@ expect_equal(
   FALSE
 )
 
-# (6e) bd_calc_trapez_weights
+# (6e) calc_trapez_weights
 expect_equal(
-  bd_calc_trapez_weights(c(-1.5, 2, 3, 4, 7)),
+  calc_trapez_weights(c(-1.5, 2, 3, 4, 7)),
   c(1.75, 2.25, 1, 2, 1.5)
 )
 
 # ------------------------------------------------------------------------------
 # (7) Do unit tests for identifiability functions
 #
-# coverage: bd_assess_calib_curve_equif
-#             bd_phi2tau [indirect]
-#           bd_calc_calib_curve_equif_dates
-#           bd_calc_calib_curve_frac_modern
+# coverage: assess_calib_curve_equif
+#             phi2tau [indirect]
+#           calc_calib_curve_equif_dates
+#           calc_calib_curve_frac_modern
 # ------------------------------------------------------------------------------
 
-# (7a) bd_assess_calib_curve_equif
-#        bd_phi2tau [indirect]
-#      bd_calc_calib_curve_equif_dates
+# (7a) assess_calib_curve_equif
+#        phi2tau [indirect]
+#      calc_calib_curve_equif_dates
 expect_error(
-  equif_result1 <- bd_assess_calib_curve_equif(calib_df),
+  equif_result1 <- assess_calib_curve_equif(calib_df),
   NA
 )
 
@@ -854,12 +855,12 @@ expect_equal(
 )
 
 expect_error(
-  equif_dates <- bd_calc_calib_curve_equif_dates(calib_df),
+  equif_dates <- calc_calib_curve_equif_dates(calib_df),
   NA
 )
 
 expect_error(
-  equif_result2 <- bd_assess_calib_curve_equif(calib_df,equif_dates),
+  equif_result2 <- assess_calib_curve_equif(calib_df, equif_dates),
   NA
 )
 
@@ -878,10 +879,10 @@ expect_equal(
   equif_result2
 )
 
-# (7b) bd_calc_calib_curve_frac_modern
+# (7b) calc_calib_curve_frac_modern
 
 expect_error(
-  phi <- bd_calc_calib_curve_frac_modern(calib_df),
+  phi <- calc_calib_curve_frac_modern(calib_df),
   NA
 )
 
@@ -892,7 +893,7 @@ expect_equal(
 
 tau2 <- c(600, 602, 805.89)
 expect_error(
-  phi2 <- bd_calc_calib_curve_frac_modern(calib_df,tau2),
+  phi2 <- calc_calib_curve_frac_modern(calib_df, tau2),
   NA
 )
 
@@ -904,10 +905,10 @@ expect_equal(
 # ------------------------------------------------------------------------------
 # (8) Do unit tests for truncated exponential model
 #
-# coverage: bd_assess_calib_curve_equif
+# coverage: assess_calib_curve_equif
 # ------------------------------------------------------------------------------
 expect_error(
-  exp_samp1 <- bd_sample_trunc_exp(50, 0.01, 600, 1300),
+  exp_samp1 <- sample_trunc_exp(50, 0.01, 600, 1300),
   NA
 )
 
@@ -917,7 +918,7 @@ expect_equal(
 )
 
 expect_error(
-  exp_samp2 <- bd_sample_trunc_exp(50, -0.01, 600, 1300),
+  exp_samp2 <- sample_trunc_exp(50, -0.01, 600, 1300),
   NA
 )
 

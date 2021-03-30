@@ -31,7 +31,7 @@ fit_trunc_gauss_mix(
 
 \item{dtau}{The spacing of the sampling grid}
 
-\item{calib_df}{Calibration curve (see bd_load_calib_curve)}
+\item{calib_df}{Calibration curve (see load_calib_curve)}
 
 \item{num_restarts}{Number of restarts to use (default: 100)}
 

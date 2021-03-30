@@ -25,5 +25,5 @@ The paramater vector is invalid if:
 
 Neither bounds on the values of the means or the upper values of the standard
 deviations are checked, but they are enforced in the optimization in
-bd_fit_trunc_gauss_mix.
+fit_trunc_gauss_mix.
 }
