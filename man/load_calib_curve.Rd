@@ -4,17 +4,16 @@
 \alias{load_calib_curve}
 \title{Load Calibration Curve}
 \usage{
-load_calib_curve(calibCurve)
+load_calib_curve(calib_curve)
 }
 \arguments{
-\item{calibCurve}{Name of calibration curve}
+\item{calib_curve}{Name of calibration curve}
 }
 \value{
-The calibration dataframe, with columns yearBP, uncalYearBP, and uncalYearBPError
+The calibration dataframe, with columns year_BP, uncal_year_BP, and
+uncal_year_BP_error
 }
 \description{
-Parse and return the radiocarbon calibration curve stored in data
-}
-\author{
-Michael Holton Price \href{mailto:MichaelHoltonPrice@gmail.com}{MichaelHoltonPrice@gmail.com}
+Parse and return the radiocarbon calibration curve stored in
+data
 }

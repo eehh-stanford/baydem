@@ -13,15 +13,15 @@ required fields and one optional field: model_spec (model specification),
 N (number of samples), calib_curve (calibration curve), and seed (an optional
 random number seed). model_spec, in turn, is a list than consists of three
 required fields: density_type (the type of parametric model to use for the
-target density), th (the parameter vector for the target density), isAD (a
+target density), th (the parameter vector for the target density), is_AD (a
 boolean variable indicating whether the target density is for years AD or
 BP), and error_spec (a specification for how to model the measurement
 errors). Currently, two model types are supported for the target density,
 gauss_mix = a Gaussian mixture and trunc_gauss_mix = a truncated Gaussian
-mixture. Currently, one specfiaction of the error_spec (a list) is supported:
-unif_fm = a uniform draw for the error of the fraction modern value.
-For unif_fm, error_spec must contain the fields min and max (the minimum and
-maximum values for the uniform draw).
+mixture. Currently, one specification of the error_spec (a list) is
+supported: unif_fm = a uniform draw for the error of the fraction modern
+value. For unif_fm, error_spec must contain the fields min and max (the
+minimum and maximum values for the uniform draw).
 }
 \details{
 The output is a list with the fields dates and rc_meas. Dates is a length N
@@ -37,7 +37,7 @@ data
 density_type    The model type to use for the target density (e.g., a
 a truncated Gaussian mixture)
 th              The parameter vector for the target density
-isAD            A boolean indicating whether the parameter vector
+is_AD           A boolean indicating whether the parameter vector
 assumes AD or BP (AD is 1950 - BP, which allows
 negative dates)
 error_spec      A specification for the measurement errors

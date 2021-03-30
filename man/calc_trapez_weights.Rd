@@ -7,7 +7,8 @@
 calc_trapez_weights(tau)
 }
 \arguments{
-\item{tau}{A vector of locations where the function is sampled, possibly irregularly}
+\item{tau}{A vector of locations where the function is sampled, possibly
+irregularly}
 }
 \value{
 A vector of integration weights the same length as tau

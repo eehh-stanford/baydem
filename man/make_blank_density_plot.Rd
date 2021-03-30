@@ -21,9 +21,9 @@ information on the quantiles of the density function and growth rate}
 
 \item{ylim}{Numeric vector of length 2, giving the y coordinate range}
 
-\item{xlab}{X axis label}
+\item{xlab}{x-axis label}
 
-\item{ylab}{Y axis label}
+\item{ylab}{y-axis label}
 
 \item{...}{Additional parameters to pass to plot}
 }

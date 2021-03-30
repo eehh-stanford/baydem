@@ -4,29 +4,31 @@
 \alias{calc_calib_curve_equif_dates}
 \title{Calculate equifinal dates for each point in the calibration curve}
 \usage{
-calc_calib_curve_equif_dates(calibDf)
+calc_calib_curve_equif_dates(calib_df)
 }
 \arguments{
-\item{calibDf}{The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError}
+\item{calib_df}{The calibration data frame, with columns year_BP,
+uncal_year_BP, and uncal_year_BP_error}
 }
 \value{
-A list of equifinality information for each point in the calibration curve (see details)
+A list of equifinality information for each point in the calibration
+curve (see details)
 }
 \description{
 Calculate equifinal dates for each point in the calibration curve
 }
 \details{
-The input calibration data frame has three columns: yearBP, uncalYearBP, and
-uncalYearBPError. For each date in the column yearBP, determine all other
-dates with the same fraction modern. These dates are equifinal since, in the
-absence of additional information, there is no way to determine which year
-a sample came from. Typically the actual equifinal date lies between two
-observations in yearBP, so linear interpolation is used to estimate the
-decimal year. A list of length nrow(calibDf) is returned with, for each
+The input calibration data frame has three columns: year_BP, uncal_year_BP,
+and uncal_year_BP_error. For each date in the column year_BP, determine all
+other dates with the same fraction modern. These dates are equifinal since,
+in the absence of additional information, there is no way to determine which
+year a sample came from. Typically the actual equifinal date lies between two
+observations in year_BP, so linear interpolation is used to estimate the
+decimal year. A list of length nrow(calib_df) is returned with, for each
 point in the calibration curve, the following information:
 
-indBase -- The row index in calibDf of the point
-tauBase -- The calendar date (AD) of the point
-indEqui -- The row index/indices in calibDf of the equifinal points
-tauEqui -- The calendar date(s) (AD) of the equifinal points
+ind_base -- The row index in calib_df of the point
+tau_base -- The calendar date (AD) of the point
+ind_equi -- The row index/indices in calib-df of the equifinal points
+tau_equi -- The calendar date(s) (AD) of the equifinal points
 }

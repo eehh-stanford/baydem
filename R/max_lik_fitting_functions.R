@@ -180,15 +180,15 @@ fit_trunc_gauss_mix <- function(K,
 #' @param th_reduced The paramater vector without the first mixture weight
 #' @param M The measurement matrix
 #' @param tau The sampling grid
-#' @param sig_min A minimum value for the mixture standard deviations
+#' @param s_min A minimum value for the mixture standard deviations
 #'   (default: 0)
 #'
 #' @return The negative log-likelihood
 #'
 #' @export
-calc_trunc_gauss_mix_neg_log_lik <- function(th_reduced,M,tau,sig_min=0) {
+calc_trunc_gauss_mix_neg_log_lik <- function(th_reduced,M,tau,s_min=0) {
   # If the parameter vector is invalid, return infinity
-  if (!is_th_reduced_valid(th_reduced,sig_min)) {
+  if (!is_th_reduced_valid(th_reduced,s_min)) {
     return(Inf)
   }
 
@@ -212,20 +212,20 @@ calc_trunc_gauss_mix_neg_log_lik <- function(th_reduced,M,tau,sig_min=0) {
 #'
 #' (a) Any mixture weight does not lie between 0 and 1
 #' (b) mu is not ordered from small to large values
-#' (c) A standard deviation is lower than sig_min
+#' (c) A standard deviation is lower than s_min
 #'
 #' Neither bounds on the values of the means or the upper values of the standard
 #' deviations are checked, but they are enforced in the optimization in
 #' fit_trunc_gauss_mix.
 #'
 #' @param th_reduced The paramater vector without the first mixture weight
-#' @param sig_min A minimum value for the mixture standard deviations
+#' @param s_min A minimum value for the mixture standard deviations
 #'   (default: 0)
 #'
 #' @return TRUE or FALSE
 #'
 #' @export
-is_th_reduced_valid <- function(th_reduced,sig_min=0) {
+is_th_reduced_valid <- function(th_reduced,s_min=0) {
   # TODO: Consider adding a check on the length of th_reduced
   K <- (length(th_reduced) + 1)/3
 
@@ -248,9 +248,9 @@ is_th_reduced_valid <- function(th_reduced,sig_min=0) {
     return(FALSE)
   }
 
-  # The standard deviations must be strictly positive (or greater than sig_min)
-  sig <- th_reduced[(2*K):(3*K-1)]
-  if(any(sig <= sig_min)) {
+  # The standard deviations must be strictly positive (or greater than s_min)
+  s <- th_reduced[(2*K):(3*K-1)]
+  if(any(s <= s_min)) {
     return(FALSE)
   }
   return(TRUE)

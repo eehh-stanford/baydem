@@ -4,16 +4,16 @@
 \alias{sample_gauss_mix}
 \title{Sample from a possibly truncated Gaussian mixture}
 \usage{
-sample_gauss_mix(N, th, taumin = NA, taumax = NA)
+sample_gauss_mix(N, th, tau_min = NA, tau_max = NA)
 }
 \arguments{
 \item{N}{Number of samples}
 
 \item{th}{Parameterization vector for the Gaussian mixture}
 
-\item{taumin}{(Optional) Lower bound for samples}
+\item{tau_min}{(Optional) Lower bound for samples}
 
-\item{taumax}{(Optional) Upper bound for samples}
+\item{tau_max}{(Optional) Upper bound for samples}
 }
 \value{
 N samples from the Gaussian mixture
@@ -23,9 +23,8 @@ Sample from a possibly truncated Gaussian mixture
 }
 \details{
 \code{N} is the number of samples to draw and \code{th} specifies the Gaussian
-mixture with the ordering (pi_1,...,pi_K,mu_1,...,mu_K,sig_1,...,sig_K),
-where \code{K} is the number of mixture components. Optionally, the samples are
-drawn on the truncated interval \code{taumin} to \code{taumax}. Because of limitations
-in the package \code{distr}, the maximum number of mixture components suppored is
-K=4.
+mixture with the ordering (pi_1,...,pi_K,mu_1,...,mu_K,s_1,...,s_K), where
+\code{K} is the number of mixture components. Optionally, the samples are drawn on
+the truncated interval \code{tau_min} to \code{tau_max}. Because of limitations in the
+package \code{distr}, the maximum number of mixture components suppored is K=4.
 }

@@ -4,20 +4,20 @@
 \alias{draw_rc_meas_using_date}
 \title{Simulate radiocarbon measurements from input calendar dates}
 \usage{
-draw_rc_meas_using_date(t_e, calibDf, errorSpec, isAD = F)
+draw_rc_meas_using_date(t_e, calib_df, error_spec, is_AD = F)
 }
 \arguments{
 \item{t_e}{A vector of event dates (calBP by default)}
 
-\item{calibDf}{The calibration dataframe, with columns yearBP, uncalYearBP,
-and uncalYearBPError}
+\item{calib_df}{The calibration dataframe, with columns year_BP,
+uncal_year_BP, and uncal_year_BP_error}
 
-\item{errorSpec}{A list with entries type and parameter values specifying how
-to add uncertainty to the simualted measurement. Currently, only type =
+\item{error_spec}{A list with entries type and parameter values specifying
+how to add uncertainty to the simualted measurement. Currently, only type =
 "unif_fm" is supported, for which the parameters min and max must be in
-errorSpec.}
+error_spec.}
 
-\item{isAD}{(Optional; default F) Whether t_e is calBP or AD}
+\item{is_AD}{(Optional; default F) Whether t_e is cal_BP or AD}
 }
 \description{
 Given input calendar dates t_e, simulate the radiocarbon measurement process
@@ -27,5 +27,5 @@ unif_fm (for uniform fraction modern) is supported, which makes a uniform
 draw on the interval min to max for the uncertainty of the fraction modern
 value, where min and max are fields in error_spec giving the boundaries of
 the uniform draw. By default, t_e is assumed to be calBP, but can be AD (more
-more precisely, 1950 - BP value) if isAD is True.
+more precisely, 1950 - BP value) if is_AD is True.
 }

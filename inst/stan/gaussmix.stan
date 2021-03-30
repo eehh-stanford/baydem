@@ -5,16 +5,16 @@ data {
   matrix[G,N] Mt; // Measurement matrix (transposed)
   vector[G] tau; // Calendar grid points for the measurement matrix calculation
   real<lower=0> alpha_d; // Concentration parameter for pi prior
-  real taumin; // Lower calendar date. Same as min(tau)
-  real taumax; // Upper calendar date. Same as max(tau)
-  real<lower=0> alpha_s; // shape parameter of gamma distribution for sigma
-  real<lower=0> alpha_r; // rate parameter of gamma distribution for sigma
+  real tau_min; // Lower calendar date. Same as min(tau)
+  real tau_max; // Upper calendar date. Same as max(tau)
+  real<lower=0> alpha_s; // shape parameter of gamma distribution for s
+  real<lower=0> alpha_r; // rate parameter of gamma distribution for s
 }
 
 parameters {
   simplex[K] pi;
   ordered[K] mu;
-  vector<lower=0>[K] sig;
+  vector<lower=0>[K] s;
 }
 
 model {
@@ -27,7 +27,7 @@ model {
   for (g in 1:G) {
     vector[K] lse = logpi;
     for (k in 1:K) {
-      lse[k] += normal_lpdf(tau[g]|mu[k],sig[k]);
+      lse[k] += normal_lpdf(tau[g]|mu[k],s[k]);
     }
     logf[g] = log_sum_exp(lse);
   }
@@ -38,8 +38,8 @@ model {
   f = f / sum(f);
 
   pi ~ dirichlet(rep_vector(alpha_d,K));
-  sig ~ gamma(alpha_s,alpha_r);
-  mu ~ uniform(taumin,taumax);
+  s ~ gamma(alpha_s,alpha_r);
+  mu ~ uniform(tau_min,tau_max);
   L = f * Mt;
   target += sum(log(L));
 }

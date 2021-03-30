@@ -7,18 +7,19 @@
 do_inference(prob)
 }
 \arguments{
-\item{prob}{List with the fields \code{phi_m} (vector of radiocarbon measurements as fraction modern),
-\code{sig_m} (vector of measurement errors for phi_m), \code{hp} (list of hyperparameters), and
-\code{calibDf}.
-In addition, the field control is optional in prob (see above).}
+\item{prob}{List with the fields \code{phi_m} (vector of fraction modern values
+for the radiocarbon measurements, \code{sig_m} (measurement errors for phi_m),
+\code{hp} (list of hyperparameters), and \code{calibDf}.}
+
+\item{control}{Control parameters (see details)}
 }
 \value{
-soln, a list with three fields: prob (the input),
-fit (the result of the call to stan),
-and control (the control parameters used)
+soln, a list with three fields: prob (the input), fit (the result of
+the call to stan), and control (the control parameters used)
 }
 \description{
-This is the core function that implements the Bayesian inference.
+This is the core function that implements the Bayesian
+inference.
 }
 \details{
 The input is a problem statement object (a list),
@@ -26,15 +27,19 @@ prob, that consists of the input data (the vectors phi_m and sig_m)
 and the hyperparameters (hp).
 stan is called via the rstan package to sample from the posterior.
 The output is the variable soln of class bd_soln,
-which is a list with the fields prob (the input) and fit (the result of the stan fit).
+which is a list with the fields prob (the input) and fit (the result of the
+stan fit).
+
 prob can also have an optional field control that specifies the
-following control parameters for the Bayesian inference (default in parentheses):
-numChains     -- (4)      Number of chains
-sampsPerChain -- (2000)   Number of samples per chain
-warmup        -- (samp/2) Number of warmup samples (default is sampsPerChain/2)
-initSeed      --          An optional random number seed for initializing the chains
-stanSeed      --          An optional random number seed for the call to Stan
-initList      --          The initializations for each chain. The default is
-to set this using a mixture fit to the summed
-density
+following control parameters for the Bayesian inference (defaults in
+parentheses):
+
+num_chains      -- Number of chains (4)
+samps_per_chain -- Number of samples per chain (2000)
+warmup          -- Number of warmup samples(default is samps_per_chain/2)
+init_seed        -- An optional random number seed for initializing the
+chains
+stan_seed        -- An optional random number seed for the call to Stan
+init_list        -- The initializations for each chain. The default is to
+set this using a mixture fit of the summed density
 }

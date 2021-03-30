@@ -7,9 +7,11 @@
 plot_summed_density(an, add = F, ...)
 }
 \arguments{
-\item{an}{A list-like object of class \code{baydem::bd_analysis} with information on the quantiles of the density function and growth rate}
+\item{an}{A list-like object of class \code{baydem::bd_analysis} with
+information on the quantiles of the density function and growth rate}
 
-\item{add}{(default: \code{FALSE}) Whether to make a new plot or add to the active plot}
+\item{add}{(default: \code{FALSE}) Whether to make a new plot or add to the active
+plot}
 
 \item{...}{Additional parameters to pass to plot / lines}
 }
@@ -18,7 +20,7 @@ Plot the summed probability density function (SPDF)
 }
 \details{
 The input, an, is the result of a call to analyze_soln. It is a
-list-like object of class bayDem_analysis with information on the quantiles
-of the density function and growth rate. By default, a new plot is made, but
-if add = TRUE the curve is added to the active plot.
+list-like object of class bd_analysis with information on the quantiles of
+the density function and growth rate. By default, a new plot is made, but if
+add = TRUE the curve is added to the active plot.
 }

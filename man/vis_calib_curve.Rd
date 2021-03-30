@@ -2,38 +2,42 @@
 % Please edit documentation in R/plotting_functions.R
 \name{vis_calib_curve}
 \alias{vis_calib_curve}
-\title{Visualize the calibration curve with equifinal and non-equifinal time spans}
+\title{Visualize the calibration curve with equifinal and non-equifinal time
+spans}
 \usage{
 vis_calib_curve(
-  taumin,
-  taumax,
-  calibDf,
-  invertCol = "gray90",
-  pointCol = "black",
-  pointPch = 19,
+  tau_min,
+  tau_max,
+  calib_df,
+  invert_col = "gray90",
+  point_col = "black",
+  point_pch = 19,
   ...
 )
 }
 \arguments{
-\item{taumin}{The minimum calendar date for plotting (AD)}
+\item{tau_min}{The minimum calendar date for plotting (AD)}
 
-\item{taumax}{The maximum calendar date for plotting (AD)}
+\item{tau_max}{The maximum calendar date for plotting (AD)}
 
-\item{calibDf}{The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError}
+\item{calib_df}{The calibration data frame, with columns year_BP,
+uncal_year_BP, and uncal_year_BP_error}
 
-\item{invertCol}{(default: \code{gray90}) The color for shading invertible regions}
+\item{invert_col}{(default: \code{gray90}) The color for shading invertible
+regions}
 
-\item{pointCol}{(default: \code{black}) The color for calibration curve points}
+\item{point_col}{(default: \code{black}) The color for calibration curve points}
 
-\item{pointPch}{(default: \code{19}) The symbol for calibration curve points}
+\item{point_pch}{(default: \code{19}) The symbol for calibration curve points}
 
 \item{...}{Additional inputs to plots}
 }
 \description{
-Visualize the calibration curve with equifinal and non-equifinal time spans
+Visualize the calibration curve with equifinal and non-equifinal time
+spans
 }
 \details{
-Vizualize the input calibration curve, calibDf, on the interval taumin to
-taumax. This involves plotting the curve itself and shading invertible
+Vizualize the input calibration curve, calib_df, on the interval tau_min to
+tau_max. This involves plotting the curve itself and shading invertible
 (non-equifinal) and non-invertible (equifinal) regions.
 }

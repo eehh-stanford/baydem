@@ -2,47 +2,51 @@
 % Please edit documentation in R/bayesian_inference_functions.R
 \name{summarize_trunc_gauss_mix_sample}
 \alias{summarize_trunc_gauss_mix_sample}
-\title{Identify growth periods and the peak value for a truncated Gaussian mixture}
+\title{Identify growth periods and the peak value for a truncated Gaussian
+mixture}
 \usage{
-summarize_trunc_gauss_mix_sample(th, taumin, taumax, N = 1000)
+summarize_trunc_gauss_mix_sample(th, tau_min, tau_max, N = 1000)
 }
 \arguments{
 \item{th}{The Gaussian mixture parameterization}
 
-\item{taumin}{The lower truncation value}
+\item{tau_min}{The lower truncation value}
 
-\item{taumax}{The upper truncation value}
+\item{tau_max}{The upper truncation value}
 
-\item{N}{(Default 1000) The number of points use for identifying slope changes}
+\item{N}{(Default 1000) The number of points use for identifying slope
+changes}
 }
 \value{
-A list consisting of tlo / thi (specifying the time periods), indPeak, tpeak, fpeak, and pattern (see Description)
+A list consisting of t_lo / t_hi (specifying the time periods),
+ind_peak, t_peak, f_peak, and pattern (see Description)
 }
 \description{
-The input vector th parameterizes a Gaussian mixture, and taumin / taumax
+The input vector th parameterizes a Gaussian mixture, and tau_min / tau_max
 give the limits of truncation. Summarize the sample by identifying growth /
 decay periods and the peak value using the following procedure.
 
-(1) Calculate the derivative, f'(t), at the points t = seq(taumin,taumax,len=N),
-where N is 1000 by default.
+(1) Calculate the derivative, f'(t), at the points t =
+seq(tau_min,tau_max,len=N), where N is 1000 by default.
 
 (2) Identify points where f'(t) changes sign, then numerically estimate the
 crossing point between the two t values where there was a sign change.
 
-(3) Create a vector of critical points, tcrit, which includes taumin / taumax
-as well as the crossing points found in the preceding step.
+(3) Create a vector of critical points, t_crit, which includes
+tau_min / tau_max as well as the crossing points found in the preceding
+step.
 
 (4) Calculate the density at the critical points to identify the peak value,
-fpeak, and corresponding calendar date, tpeak, as well as the index of
-of the peak in tcrit, indPeak.
+f_peak, and corresponding calendar date, t_peak, as well as the index of
+of the peak in t_crit, ind_peak.
 
-(5) For each time period (the length(tpeak)-1 durations defined by ypeak)
+(5) For each time period (the length(t_peak)-1 durations defined by y_peak)
 determine the sign of the density function, f(t), and create a character
 vector, slope, that has the value 'pos' if f(t) is positive and 'neg' if
 f(t) is negative.
 
 (6) Finally, create a character vector, pattern, that appends the index of
-the peak in tcrit (converted to a character) to the character vector
+the peak in t_crit (converted to a character) to the character vector
 slope. This defines a unique pattern of the sample that takes into
 account periods of growth / decline and the relative location of the
 peak.

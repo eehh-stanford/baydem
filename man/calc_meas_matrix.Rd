@@ -2,9 +2,17 @@
 % Please edit documentation in R/radiocarbon_functions.R
 \name{calc_meas_matrix}
 \alias{calc_meas_matrix}
-\title{Calculate the measurement matrix given N observations and G grid points}
+\title{Calculate the measurement matrix given N observations and G grid
+points}
 \usage{
-calc_meas_matrix(tau, phi_m, sig_m, calibDf, addCalibUnc = T, useTrapez = F)
+calc_meas_matrix(
+  tau,
+  phi_m,
+  sig_m,
+  calib_df,
+  add_calib_unc = T,
+  use_trapez = F
+)
 }
 \arguments{
 \item{tau}{A vector of calendar dates indexed by g}
@@ -13,11 +21,12 @@ calc_meas_matrix(tau, phi_m, sig_m, calibDf, addCalibUnc = T, useTrapez = F)
 
 \item{sig_m}{A vector of standard deviations for phi_m indexed by i}
 
-\item{calibDf}{Calibration curve (see load_calib_curve)}
+\item{calib_df}{Calibration curve (see load_calib_curve)}
 
-\item{addCalibUnc}{(default TRUE) Whether to add calibration uncertainty}
+\item{add_calib_unc}{(default TRUE) Whether to add calibration uncertainty}
 
-\item{useTrapez}{(default FALSE) Whether to use the trapezoidal rule for integration}
+\item{use_trapez}{(default FALSE) Whether to use the trapezoidal rule for
+integration}
 }
 \description{
 tau is a vector of calendar dates indexed from g = 1,2,...,G.

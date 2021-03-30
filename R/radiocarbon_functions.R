@@ -1,30 +1,35 @@
-#' @title Calculation the calibration curve fraction taumodern for input calendar dates
+#' @title Calculation the calibration curve fraction taumodern for input
+#' calendar dates
 #'
 #' @details
-#' The input calibration data frame has three columns: yearBP, uncalYearBP, and
-#' uncalYearBPError. For each input calendar date, tau, use the calibration curve
-#' information to estimate the fraction modern of the calibration curve. If
-#' tau is not specified, calibDf$uncalYearBP is used as the dates for the
-#' calculation. By default, dates are assumed to be AD, but this can be changed
-#' using the optional input isBP, which is FALSE by default.
+#' The input calibration data frame has three columns: year_BP, uncal_year_BP,
+#' and uncal_year_BP_error. For each input calendar date, tau, use the
+#' calibration curve information to estimate the fraction modern of the
+#' calibration curve. If tau is not specified, calib_df$uncal_year_BP is used as
+#' the dates for the calculation. By default, dates are assumed to be AD, but
+#' this can be changed using the optional input is_BP, which is FALSE by
+#' default.
 #'
-#' @param calibDf The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError
-#' @param tau The calendar dates tau (if not input, calibDf$uncalYearBP is used)
-#' @param isBP (default FALSE) Whether the input dates are before present (BP), as opposed to AD
+#' @param calib_df The calibration data frame, with columns year_BP,
+#'   uncal_year_BP, and uncal_year_BP_error
+#' @param tau The calendar dates tau (if not input, calib_df$uncal_year_BP is
+#'   used)
+#' @param is_BP (default FALSE) Whether the input dates are before present (BP),
+#'   as opposed to AD
 #'
 #' @return The vector of calibration curve fraction modern values
 #' @export
 calc_calib_curve_frac_modern <-
-  function(calibDf,
+  function(calib_df,
            tau = NA,
-           isBP = FALSE) {
-    phi_curve <- exp(-calibDf$uncalYearBP / 8033)
+           is_BP = FALSE) {
+    phi_curve <- exp(-calib_df$uncal_year_BP / 8033)
     if (all(is.na(tau))) {
       return(phi_curve)
     }
 
-    tau_curve <- 1950 - calibDf$yearBP
-    if (isBP) {
+    tau_curve <- 1950 - calib_df$year_BP
+    if (is_BP) {
       tau <- 1950 - tau # Convert to AD
     }
 
@@ -34,7 +39,8 @@ calc_calib_curve_frac_modern <-
   }
 
 
-#' @title Calculate the measurement matrix given N observations and G grid points
+#' @title Calculate the measurement matrix given N observations and G grid
+#' points
 #'
 #' @description tau is a vector of calendar dates indexed from g = 1,2,...,G.
 #'              phi_m is a vector of n = 1,2,...,N radiocarbon determinations
@@ -59,17 +65,23 @@ calc_calib_curve_frac_modern <-
 #' @param tau A vector of calendar dates indexed by g
 #' @param phi_m A vector of fraction moderns indexed by i
 #' @param sig_m A vector of standard deviations for phi_m indexed by i
-#' @param calibDf Calibration curve (see load_calib_curve)
-#' @param addCalibUnc (default TRUE) Whether to add calibration uncertainty
-#' @param useTrapez (default FALSE) Whether to use the trapezoidal rule for integration
+#' @param calib_df Calibration curve (see load_calib_curve)
+#' @param add_calib_unc (default TRUE) Whether to add calibration uncertainty
+#' @param use_trapez (default FALSE) Whether to use the trapezoidal rule for
+#'   integration
 #'
 #' @export
 
-calc_meas_matrix <- function(tau, phi_m, sig_m, calibDf, addCalibUnc = T, useTrapez = F) {
+calc_meas_matrix <- function(tau,
+                             phi_m,
+                             sig_m,
+                             calib_df,
+                             add_calib_unc = T,
+                             use_trapez = F) {
   # First, check the consistency of the spacing in tau and the value of
-  # useTrapez, which must be TRUE if tau is irregularly spaced.
+  # use_trapez, which must be TRUE if tau is irregularly spaced.
   irreg <- length(unique(diff(tau))) != 1
-  if (irreg && !useTrapez) {
+  if (irreg && !use_trapez) {
     stop("tau is irregularly spaced but useTrapez is FALSE")
   }
 
@@ -77,9 +89,9 @@ calc_meas_matrix <- function(tau, phi_m, sig_m, calibDf, addCalibUnc = T, useTra
   tau_BP <- 1950 - tau
 
   # extract the calibration curve variables and convert to fraction modern
-  tau_curve <- rev(calibDf$yearBP)
-  mu_c_curve <- exp(-rev(calibDf$uncalYearBP) / 8033)
-  sig_c_curve <- rev(calibDf$uncalYearBPError) * mu_c_curve / 8033
+  tau_curve <- rev(calib_df$year_BP)
+  mu_c_curve <- exp(-rev(calib_df$uncal_year_BP) / 8033)
+  sig_c_curve <- rev(calib_df$uncal_year_BP_error) * mu_c_curve / 8033
 
   # Interpolate curves at tau_BP to yield mu_c and sig_c
   mu_c <- stats::approx(tau_curve, mu_c_curve, tau_BP)
@@ -91,7 +103,7 @@ calc_meas_matrix <- function(tau, phi_m, sig_m, calibDf, addCalibUnc = T, useTra
   SIG_m <- replicate(length(tau_BP), sig_m)
 
   MU_c <- t(replicate(length(phi_m), mu_c))
-  if (addCalibUnc) {
+  if (add_calib_unc) {
     SIG_c <- t(replicate(length(sig_m), sig_c))
     SIG_sq <- SIG_m^2 + SIG_c^2
   } else {
@@ -101,13 +113,13 @@ calc_meas_matrix <- function(tau, phi_m, sig_m, calibDf, addCalibUnc = T, useTra
   M <- exp(-(PHI_m - MU_c)^2 / (SIG_sq) / 2) / sqrt(SIG_sq) / sqrt(2 * pi)
 
   # If necessary, add the integration widths
-  if (!useTrapez) {
+  if (!use_trapez) {
     M <- M * (tau[2] - tau[1])
   } else {
     G <- length(tau)
-    dtauVect <- calc_trapez_weights(tau)
-    dtauMat <- t(replicate(length(phi_m), dtauVect))
-    M <- M * dtauMat
+    dtau_vect <- calc_trapez_weights(tau)
+    dtau_mat <- t(replicate(length(phi_m), dtau_vect))
+    M <- M * dtau_mat
   }
 
   return(M)
@@ -124,89 +136,87 @@ calc_meas_matrix <- function(tau, phi_m, sig_m, calibDf, addCalibUnc = T, useTra
 #'              dtau_g = (tau_(g+1) - tau_(g-1)) / 2, where the conventions
 #'              tau_0 = tau_1 and tau_(G+1) = tau_G are used.
 #'
-#' @param tau A vector of locations where the function is sampled, possibly irregularly
+#' @param tau A vector of locations where the function is sampled, possibly
+#'   irregularly
 #'
 #' @return A vector of integration weights the same length as tau
 
 #' @export
 calc_trapez_weights <- function(tau) {
   G <- length(tau)
-  weightVect <- rep(NA, length(tau))
-  indCent <- 2:(G - 1)
-  weightVect[indCent] <- (tau[indCent + 1] - tau[indCent - 1]) / 2
-  weightVect[1] <- (tau[2] - tau[1]) / 2
-  weightVect[G] <- (tau[G] - tau[G - 1]) / 2
-  return(weightVect)
+  weight_vect <- rep(NA, length(tau))
+  ind_cent <- 2:(G - 1)
+  weight_vect[ind_cent] <- (tau[ind_cent + 1] - tau[ind_cent - 1]) / 2
+  weight_vect[1] <- (tau[2] - tau[1]) / 2
+  weight_vect[G] <- (tau[G] - tau[G - 1]) / 2
+  return(weight_vect)
 }
 
-if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c(
-    "CAL BP",
-    "14C age",
-    "Error"
-  ))
-}
+#if (getRversion() >= "2.15.1") {
+#  utils::globalVariables(c(
+#    "CAL BP",
+#    "14C age",
+#    "Error"
+#  ))
+#}
 
 #' @title Load Calibration Curve
 #'
-#' @description Parse and return the radiocarbon calibration curve stored in data
+#' @description Parse and return the radiocarbon calibration curve stored in
+#'   data
 #'
-#' @param calibCurve Name of calibration curve
+#' @param calib_curve Name of calibration curve
 #'
-#' @export
+#' @return The calibration dataframe, with columns year_BP, uncal_year_BP, and
+#'   uncal_year_BP_error
 #'
 #' @importFrom magrittr %>%
-#'
-#' @return The calibration dataframe, with columns yearBP, uncalYearBP, and uncalYearBPError
-#'
-#' @author Michael Holton Price <MichaelHoltonPrice@gmail.com>
+#' @export
 
-load_calib_curve <- function(calibCurve) {
-  if (!(calibCurve %in% c("intcal20", "marine20", "shcal20", "intcal13", "marine13", "shcal13"))) {
-    stop(paste("Unknown calibration curve name:", calibCurve))
+load_calib_curve <- function(calib_curve) {
+  if (!(calib_curve %in%
+    c("intcal20", "marine20", "shcal20", "intcal13", "marine13", "shcal13"))) {
+    stop(paste("Unknown calibration curve name:", calib_curve))
   }
 
-  # calibDf <- read.csv(calibFile,comment.char='#',header=F)
-  # calibDf <- calibDf[,1:3]
-  # colnames(calibDf) <- c('yearBP','uncalYearBP','uncalYearBPError')
-
-  if (calibCurve == "intcal20") {
-    calibCurve <- baydem::intcal20
-  } else if (calibCurve == "marine20") {
-    calibCurve <- baydem::marine20
-  } else if (calibCurve == "shcal20") {
-    calibCurve <- baydem::shcal20
-  } else if (calibCurve == "intcal13") {
-    calibCurve <- baydem::intcal13
-  } else if (calibCurve == "marine13") {
-    calibCurve <- baydem::marine13
-  } else if (calibCurve == "shcal13") {
-    calibCurve <- baydem::shcal13
+  if (calib_curve == "intcal20") {
+    calib_curve <- baydem::intcal20
+  } else if (calib_curve == "marine20") {
+    calib_curve <- baydem::marine20
+  } else if (calib_curve == "shcal20") {
+    calib_curve <- baydem::shcal20
+  } else if (calib_curve == "intcal13") {
+    calib_curve <- baydem::intcal13
+  } else if (calib_curve == "marine13") {
+    calib_curve <- baydem::marine13
+  } else if (calib_curve == "shcal13") {
+    calib_curve <- baydem::shcal13
   }
 
-  calibDf <- calibCurve %>%
+  calib_df <- calib_curve %>%
     dplyr::select(
       `CAL BP`,
       `14C age`,
       Error
     ) %>%
     dplyr::rename(
-      yearBP = `CAL BP`,
-      uncalYearBP = `14C age`,
-      uncalYearBPError = `Error`
+      year_BP = `CAL BP`,
+      uncal_year_BP = `14C age`,
+      uncal_year_BP_error = `Error`
     )
 
-  return(calibDf)
+  return(calib_df)
 }
 
-#' @title Find calendar date from fraction modern value given known bounding indices
+#' @title Find calendar date from fraction modern value given known bounding
+#' indices
 #'
 #' @details
 #' tau_curve and phi_curve give the calendar date and fraction modern of the
 #' radiocarbon calibration curve. It is known that the calendar date lies
-#' lies between `tau_curve[ii_lo]` and `tau_curve[ii_hi]`. Interpolate to find the
-#' calendar date corresponding to the input phi_known. This function is called
-#' by assess_calib_curve_equif.
+#' lies between `tau_curve[ii_lo]` and `tau_curve[ii_hi]`. Interpolate to find
+#' the calendar date corresponding to the input phi_known. This function is
+#' called by assess_calib_curve_equif.
 #'
 #' @param tau_curve Calibration curve calendar dates
 #' @param phi_curve Calibration curve fraction moderns
@@ -218,6 +228,8 @@ load_calib_curve <- function(calibCurve) {
 #'
 #' @export
 phi2tau <- function(tau_curve, phi_curve, phi_known, ii_lo, ii_hi) {
-  tau <- tau_curve[ii_lo] + (tau_curve[ii_hi] - tau_curve[ii_lo]) * (phi_known - phi_curve[ii_lo]) / (phi_curve[ii_hi] - phi_curve[ii_lo])
+  tau <- tau_curve[ii_lo] +
+    (tau_curve[ii_hi] - tau_curve[ii_lo]) *
+      (phi_known - phi_curve[ii_lo]) / (phi_curve[ii_hi] - phi_curve[ii_lo])
   return(tau)
 }

@@ -7,9 +7,11 @@
 plot_50_percent_quantile(an, add = F, ...)
 }
 \arguments{
-\item{an}{A list-like object of class \code{baydem::bd_analysis} with information on the quantiles of the density function and growth rate}
+\item{an}{A list-like object of class \code{baydem::bd_analysis} with
+information on the quantiles of the density function and growth rate}
 
-\item{add}{(default: \code{FALSE}) Whether to make a new plot or add to the active plot}
+\item{add}{(default: \code{FALSE}) Whether to make a new plot or add to the active
+plot}
 
 \item{...}{Additional parameters to pass to plot / lines}
 }

@@ -4,16 +4,16 @@
 \alias{calc_gauss_mix_pdf}
 \title{Caculate the density of a possibly truncated Gaussian mixture}
 \usage{
-calc_gauss_mix_pdf(th, tau, taumin = NA, taumax = NA, type = "density")
+calc_gauss_mix_pdf(th, tau, tau_min = NA, tau_max = NA, type = "density")
 }
 \arguments{
 \item{th}{A vector-like object that parameterizes the distribution}
 
 \item{tau}{Vector of locations at which to calculate the density}
 
-\item{taumin}{Minimum truncation bound}
+\item{tau_min}{Minimum truncation bound}
 
-\item{taumax}{Maximum truncation bound}
+\item{tau_max}{Maximum truncation bound}
 
 \item{type}{(default density) An optional input specifying whether to
 calculate the density, cumulative distribution, derivative of the
@@ -27,8 +27,8 @@ The output vector with length G
 for a possibly truncated Gaussian mixture. The density, f', and rate, f'/f,
 can also be calculated by specifying the input \code{type}, which is
 'density' by default, but can also be 'cumulative', 'derivative', or 'rate'.
-The parameter vector th has the ordering (pik, muk, sigk), where
-pik, muk, and sigk are the weight, mean, and standard deviation of the k-th
-mixture. There are K total mixtures. The truncation boundaries taumin and
-taumax are optional.
+The parameter vector th has the ordering (pi_k, mu_k, s_k), where
+pi_k, mu_k, and s_k are the weight, mean, and standard deviation of the k-th
+mixture. There are K total mixtures. The truncation boundaries tau_min and
+tau_max are optional.
 }

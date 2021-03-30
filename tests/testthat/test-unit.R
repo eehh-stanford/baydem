@@ -56,14 +56,14 @@ expect_error(
 
 # (1b) test draw_rc_meas_using_date
 calib_df <- load_calib_curve("intcal20")
-# test with isAD FALSE
+# test with is_AD FALSE
 expect_error(
   rc_meas <- draw_rc_meas_using_date(sample,
                                      calib_df,
                                      list(type="unif_fm",
                                              min=.0021,
                                              max=.0028),
-                                     isAD=F),
+                                     is_AD=F),
   NA
 )
 
@@ -85,18 +85,18 @@ expect_error(
                                      list(type="not_valid",
                                              min=.0021,
                                              max=.0028),
-                                     isAD=F),
+                                     is_AD=F),
   "Unrecognized error type = not_valid"
 )
 
-# test with isAD TRUE
+# test with is_AD TRUE
 expect_error(
   rc_meas <- draw_rc_meas_using_date(sample,
                                      calib_df,
                                      list(type="unif_fm",
                                              min=.0021,
                                              max=.0028),
-                                     isAD=T),
+                                     is_AD=T),
   NA
 )
 
@@ -118,7 +118,7 @@ expect_error(
                                      list(type="not_valid",
                                              min=.0021,
                                              max=.0028),
-                                     isAD=T),
+                                     is_AD=T),
   "Unrecognized error type = not_valid"
 )
 
@@ -130,7 +130,7 @@ sim_spec <- list(model_spec=
                    list(density_type = "gauss_mix",
                         th=th_sim,
                         error_spec=list(type="unif_fm",min=.0021,max=.0028),
-                        isAD=T),
+                        is_AD=T),
                  N=N,
                  calib_curve="intcal20")
 
@@ -160,7 +160,7 @@ sim_spec <- list(model_spec=
                    list(density_type = "trunc_gauss_mix",
                         th=c(th_sim,tau_min,tau_max),
                         error_spec=list(type="unif_fm",min=.0021,max=.0028),
-                        isAD=T),
+                        is_AD=T),
                  N=N,
                  calib_curve="intcal20")
 
@@ -190,7 +190,7 @@ sim_spec <- list(model_spec=
                    list(density_type = "trunc_gauss_mix",
                         th=c(th_sim,tau_min,tau_max),
                         error_spec=list(type="unif_fm",min=.0021,max=.0028),
-                        isAD=T),
+                        is_AD=T),
                  N=N,
                  calib_curve="intcal20",
                  seed=1002)
@@ -243,7 +243,7 @@ expect_equal(
 
 # Fails for s
 expect_equal(
-  is_th_reduced_valid(c(0.5,10,20,2,3),sig_min=10),
+  is_th_reduced_valid(c(0.5,10,20,2,3),s_min=10),
   FALSE
 )
 
@@ -268,7 +268,7 @@ expect_equal(
 )
 
 expect_equal(
-  calc_trunc_gauss_mix_neg_log_lik(th_sim[-1],M,tau,sig_min=100),
+  calc_trunc_gauss_mix_neg_log_lik(th_sim[-1],M,tau,s_min=100),
   Inf
 )
 
@@ -324,7 +324,7 @@ expect_equal(
 hp <-
   list(
     # Class of fit (Gaussian mixture)
-    fitType = "gaussmix",
+    fit_type = "gauss_mix",
     # Parameter for the dirichlet draw of the mixture probabilities
     alpha_d = 1,
     # The gamma distribution shape parameter for sigma
@@ -332,9 +332,9 @@ hp <-
     # The gamma distribution rate parameter for sigma, yielding a mode of 300
     alpha_r = (3 - 1) / 300,
     # Minimum calendar date (years BC/AD)
-    taumin = tau_min,
+    tau_min = tau_min,
     # Maximum calendar date (years BC/AD)
-    taumax = tau_max,
+    tau_max = tau_max,
     # Spacing for the measurement matrix (years)
     dtau = 5,
     # Number of mixtures
@@ -346,11 +346,11 @@ prob <- list(
   phi_m = sim$data$rc_meas$phi_m,
   sig_m = sim$data$rc_meas$sig_m,
   hp = hp,
-  calibDf = calib_df,
+  calib_df = calib_df,
   control = list(
-    sampsPerChain = 400,
-    warmup = 200,
-    stanControl = list(adapt_delta = .99)
+    samps_per_chain = 2000,
+    warmup = 1000,
+    stan_control = list(adapt_delta = .99)
   )
 )
 
@@ -377,7 +377,7 @@ expect_is(
 
 expect_equal(
   names(soln$control),
-  c("numChains","sampsPerChain","warmup","stanControl","initList")
+  c("num_chains","samps_per_chain","warmup","stan_control","init_list")
 )
 
 # (3b) analyze_soln
@@ -389,7 +389,7 @@ expect_error(
 expect_equal(
   names(anal),
   c("tau","f_spdf","Qdens","Qrate","probs",
-    "rateProp","rateInd","growthState","dtau","summList")
+    "rate_prop","rate_ind","growth_state","dtau","summ_list")
 )
 
 # ------------------------------------------------------------------------------
@@ -465,7 +465,7 @@ expect_error(
 # ------------------------------------------------------------------------------
 
 # (5a) extract_param
-total_samples <- 800
+total_samples <- 4000
 expect_error(
   TH <- extract_param(soln$fit),
   NA
@@ -477,7 +477,7 @@ expect_equal(
 )
 
 # (5b) calc_gauss_mix_pdf
-tau <- seq(hp$taumin,hp$taumax,by=hp$dtau)
+tau <- seq(hp$tau_min,hp$tau_max,by=hp$dtau)
 
 # density is the default type
 expect_error(
@@ -642,7 +642,7 @@ expect_equal(
 )
 
 expect_error(
-  half_life2 <- calc_half_life_from_peak(soln, propChange = .25),
+  half_life2 <- calc_half_life_from_peak(soln, prop_change = .25),
   NA
 )
 
@@ -701,13 +701,13 @@ expect_equal(
 
 # (5g) summarize_trunc_gauss_mix_sample
 expect_error(
-  summ <- summarize_trunc_gauss_mix_sample(TH[50, ], hp$taumin, hp$taumax),
+  summ <- summarize_trunc_gauss_mix_sample(TH[50, ], hp$tau_min, hp$tau_max),
   NA
 )
 
 expect_equal(
   names(summ),
-  c("periods","indPeak","tpeak","fpeak","pattern")
+  c("periods","ind_peak","t_peak","f_peak","pattern")
 )
 
 # ------------------------------------------------------------------------------
@@ -726,7 +726,8 @@ expect_equal(
 #        tau regularly spaced
 #        with calibration uncertainty
 expect_error(
-  M6a <- calc_meas_matrix(tau, prob$phi_m, prob$sig_m, calib_df, addCalibUnc=T),
+  M6a <- calc_meas_matrix(tau, prob$phi_m, prob$sig_m,
+                          calib_df, add_calib_unc=T),
   NA
 )
 
@@ -744,7 +745,8 @@ expect_equal(
 #        tau regularly spaced
 #        without calibration uncertainty
 expect_error(
-  M6b <- calc_meas_matrix(tau, prob$phi_m, prob$sig_m, calib_df, addCalibUnc=F),
+  M6b <- calc_meas_matrix(tau, prob$phi_m, prob$sig_m,
+                          calib_df, add_calib_unc=F),
   NA
 )
 
@@ -765,7 +767,8 @@ tau_irreg <- c(800, 805, 810, 825)
 
 # an error is expected if useTrapez is not set to TRUE
 expect_error(
-  calc_meas_matrix(tau_irreg, prob$phi_m, prob$sig_m, calib_df, addCalibUnc=T),
+  calc_meas_matrix(tau_irreg, prob$phi_m, prob$sig_m,
+                   calib_df, add_calib_unc=T),
   "tau is irregularly spaced but useTrapez is FALSE"
 )
 
@@ -775,8 +778,8 @@ expect_error(
     prob$phi_m,
     prob$sig_m,
     calib_df,
-    addCalibUnc=T,
-    useTrapez=T),
+    add_calib_unc=T,
+    use_trapez=T),
   NA
 )
 
@@ -796,7 +799,8 @@ expect_equal(
 
 # an error is expected if useTrapez is not set to TRUE
 expect_error(
-  calc_meas_matrix(tau_irreg, prob$phi_m, prob$sig_m, calib_df, addCalibUnc=F),
+  calc_meas_matrix(tau_irreg, prob$phi_m, prob$sig_m,
+                   calib_df, add_calib_unc=F),
   "tau is irregularly spaced but useTrapez is FALSE"
 )
 
@@ -806,8 +810,8 @@ expect_error(
     prob$phi_m,
     prob$sig_m,
     calib_df,
-    addCalibUnc=F,
-    useTrapez=T),
+    add_calib_unc=F,
+    use_trapez=T),
   NA
 )
 
@@ -846,11 +850,11 @@ expect_error(
 
 expect_equal(
   names(equif_result1),
-  c("invSpanList","canInvert")
+  c("inv_span_list","can_invert")
 )
 
 expect_equal(
-  length(equif_result1$canInvert),
+  length(equif_result1$can_invert),
   nrow(calib_df)
 )
 
@@ -866,11 +870,11 @@ expect_error(
 
 expect_equal(
   names(equif_result2),
-  c("invSpanList","canInvert")
+  c("inv_span_list","can_invert")
 )
 
 expect_equal(
-  length(equif_result2$canInvert),
+  length(equif_result2$can_invert),
   nrow(calib_df)
 )
 
@@ -888,7 +892,7 @@ expect_error(
 
 expect_equal(
   phi,
-  exp(-calib_df$uncalYearBP / 8033)
+  exp(-calib_df$uncal_year_BP / 8033)
 )
 
 tau2 <- c(600, 602, 805.89)

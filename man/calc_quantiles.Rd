@@ -9,7 +9,8 @@ calc_quantiles(X, probs = c(0.025, 0.5, 0.975))
 \arguments{
 \item{X}{The matrix for which quantiles are calculated, with dimension S x G}
 
-\item{probs}{The probability values at which to calculate the quantiles (default: \code{c(0.025, 0.5, 0.975)})}
+\item{probs}{The probability values at which to calculate the quantiles
+(default: \code{c(0.025, 0.5, 0.975)})}
 }
 \value{
 The quantiles, a matrix with dimension length(probs) x G

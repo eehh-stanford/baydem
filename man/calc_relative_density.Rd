@@ -2,7 +2,8 @@
 % Please edit documentation in R/bayesian_inference_functions.R
 \name{calc_relative_density}
 \alias{calc_relative_density}
-\title{Calculate the relative density at two dates (or a range of dates / the peak)}
+\title{Calculate the relative density at two dates (or a range of dates / the
+peak)}
 \usage{
 calc_relative_density(soln, spec1, spec2, ind = NA, anal = NA)
 }
@@ -23,7 +24,8 @@ needed if either spec1 or spec2 is 'peak'}
 A vector of relative densities (f_spec1 / f_spec2)
 }
 \description{
-Calculate the relative density at two dates, and/or a range of dates and/or the peak value (see details).
+Calculate the relative density at two dates, and/or a range of dates and/or
+the peak value (see details).
 }
 \details{
 Calculate the relative density for two dates or, more generally, for two
@@ -37,6 +39,6 @@ By default, this calculation is done for all the Bayesian samples in soln,
 which is the result of a call to do_inference. Optionally, a subset can be
 specified via the input ind, which should be a vector of integer indices at
 which to do the calculation. To save computation if either spec1 or spec2 is
-'peak', the result of a call to analyze_soln for which doSummary was T
+'peak', the result of a call to analyze_soln for which do_summary was TRUE
 can be input.
 }

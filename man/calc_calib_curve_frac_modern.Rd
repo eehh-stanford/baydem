@@ -2,28 +2,34 @@
 % Please edit documentation in R/radiocarbon_functions.R
 \name{calc_calib_curve_frac_modern}
 \alias{calc_calib_curve_frac_modern}
-\title{Calculation the calibration curve fraction taumodern for input calendar dates}
+\title{Calculation the calibration curve fraction taumodern for input
+calendar dates}
 \usage{
-calc_calib_curve_frac_modern(calibDf, tau = NA, isBP = FALSE)
+calc_calib_curve_frac_modern(calib_df, tau = NA, is_BP = FALSE)
 }
 \arguments{
-\item{calibDf}{The calibration data frame, with columns yearBP, uncalYearBP, and uncalYearBPError}
+\item{calib_df}{The calibration data frame, with columns year_BP,
+uncal_year_BP, and uncal_year_BP_error}
 
-\item{tau}{The calendar dates tau (if not input, calibDf$uncalYearBP is used)}
+\item{tau}{The calendar dates tau (if not input, calib_df$uncal_year_BP is
+used)}
 
-\item{isBP}{(default FALSE) Whether the input dates are before present (BP), as opposed to AD}
+\item{is_BP}{(default FALSE) Whether the input dates are before present (BP),
+as opposed to AD}
 }
 \value{
 The vector of calibration curve fraction modern values
 }
 \description{
-Calculation the calibration curve fraction taumodern for input calendar dates
+Calculation the calibration curve fraction taumodern for input
+calendar dates
 }
 \details{
-The input calibration data frame has three columns: yearBP, uncalYearBP, and
-uncalYearBPError. For each input calendar date, tau, use the calibration curve
-information to estimate the fraction modern of the calibration curve. If
-tau is not specified, calibDf$uncalYearBP is used as the dates for the
-calculation. By default, dates are assumed to be AD, but this can be changed
-using the optional input isBP, which is FALSE by default.
+The input calibration data frame has three columns: year_BP, uncal_year_BP,
+and uncal_year_BP_error. For each input calendar date, tau, use the
+calibration curve information to estimate the fraction modern of the
+calibration curve. If tau is not specified, calib_df$uncal_year_BP is used as
+the dates for the calculation. By default, dates are assumed to be AD, but
+this can be changed using the optional input is_BP, which is FALSE by
+default.
 }

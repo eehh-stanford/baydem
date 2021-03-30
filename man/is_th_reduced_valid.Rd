@@ -4,12 +4,12 @@
 \alias{is_th_reduced_valid}
 \title{A helper function to determine if the reduced form parameter vector is valid}
 \usage{
-is_th_reduced_valid(th_reduced, sig_min = 0)
+is_th_reduced_valid(th_reduced, s_min = 0)
 }
 \arguments{
 \item{th_reduced}{The paramater vector without the first mixture weight}
 
-\item{sig_min}{A minimum value for the mixture standard deviations
+\item{s_min}{A minimum value for the mixture standard deviations
 (default: 0)}
 }
 \value{
@@ -21,7 +21,7 @@ The paramater vector is invalid if:
 \details{
 (a) Any mixture weight does not lie between 0 and 1
 (b) mu is not ordered from small to large values
-(c) A standard deviation is lower than sig_min
+(c) A standard deviation is lower than s_min
 
 Neither bounds on the values of the means or the upper values of the standard
 deviations are checked, but they are enforced in the optimization in

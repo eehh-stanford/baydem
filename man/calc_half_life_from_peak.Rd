@@ -2,31 +2,36 @@
 % Please edit documentation in R/bayesian_inference_functions.R
 \name{calc_half_life_from_peak}
 \alias{calc_half_life_from_peak}
-\title{For each sample, calculate the time it takes for the density to decrease by half from the peak}
+\title{For each sample, calculate the time it takes for the density to
+decrease by half from the peak}
 \usage{
-calc_half_life_from_peak(soln, propChange = 0.5, anal = NA, peakRange = NA)
+calc_half_life_from_peak(soln, prop_change = 0.5, anal = NA, peak_range = NA)
 }
 \arguments{
 \item{soln}{The result of a call to do_inference}
 
-\item{propChange}{(Default 0.5) The relative decrease in density to use for the duration calculation}
+\item{prop_change}{(Default 0.5) The relative decrease in density to use for
+the duration calculation}
 
-\item{anal}{(Optional) The result of a call to analyze_soln. If not provided, it is calculated}
+\item{anal}{(Optional) The result of a call to analyze_soln. If not provided,
+it is calculated}
 
-\item{peakRange}{(default: \code{c(taumin, taumax)}) peakRange can be given so that the peak density used is on the range peakRange}
+\item{peak_range}{(default: \code{c(tau_min, tau_max)}) peak_range can be given so
+that the peak density used is on the range peak_range}
 }
 \value{
-A vector of "half-lives" (proportional change set by propChange)
+A vector of "half-lives" (proportional change set by prop_change)
 }
 \description{
-For each sample, calculate the time it takes for the density to decrease by half from the peak
+For each sample, calculate the time it takes for the density to
+decrease by half from the peak
 }
 \details{
 For each sample, calculate the time it takes for the density to decrease by
 half from the peak. Optionally, a different proportion can be used than the
-default propChange = 0.5. For example, with propChange = 0.1 the time it
+default prop_change = 0.5. For example, with prop_change = 0.1 the time it
 takes for the density to decrease by 10\% is used. If the relative density is
 not reached, the half life for the sample is set to NA. If there is no
-interior peak in the range peakRange, which is taumin to taumax by default,
-the half life is set to NA.
+interior peak in the range peak_range, which is tau_min to tau_max by
+default, the half life is set to NA.
 }

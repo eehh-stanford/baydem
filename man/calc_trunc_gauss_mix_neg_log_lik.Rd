@@ -4,7 +4,7 @@
 \alias{calc_trunc_gauss_mix_neg_log_lik}
 \title{Calculate the negative log-likelihood of a truncuated Gaussian mixture fit}
 \usage{
-calc_trunc_gauss_mix_neg_log_lik(th_reduced, M, tau, sig_min = 0)
+calc_trunc_gauss_mix_neg_log_lik(th_reduced, M, tau, s_min = 0)
 }
 \arguments{
 \item{th_reduced}{The paramater vector without the first mixture weight}
@@ -13,7 +13,7 @@ calc_trunc_gauss_mix_neg_log_lik(th_reduced, M, tau, sig_min = 0)
 
 \item{tau}{The sampling grid}
 
-\item{sig_min}{A minimum value for the mixture standard deviations
+\item{s_min}{A minimum value for the mixture standard deviations
 (default: 0)}
 }
 \value{

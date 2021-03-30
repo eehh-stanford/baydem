@@ -2,20 +2,22 @@
 % Please edit documentation in R/gaussian_mixture_model_functions.R
 \name{calc_gauss_mix_pdf_mat}
 \alias{calc_gauss_mix_pdf_mat}
-\title{Calculate the density of a possibly truncated Gaussian mixture for a matrix of samples}
+\title{Calculate the density of a possibly truncated Gaussian mixture for a
+matrix of samples}
 \usage{
-calc_gauss_mix_pdf_mat(TH, tau, taumin = NA, taumax = NA, type = "density")
+calc_gauss_mix_pdf_mat(TH, tau, tau_min = NA, tau_max = NA, type = "density")
 }
 \arguments{
 \item{TH}{A matrix of samples with dimensions S x P}
 
 \item{tau}{A vector of points for the density calculation with length G}
 
-\item{taumin}{(optional) The mininum time-value for truncation}
+\item{tau_min}{(optional) The mininum time-value for truncation}
 
-\item{taumax}{(optional) The maximum time-value for truncation}
+\item{tau_max}{(optional) The maximum time-value for truncation}
 
-\item{type}{(optional) The type of calculation: density (default), cumulative, derivative, or rate}
+\item{type}{(optional) The type of calculation: density (default),
+cumulative, derivative, or rate}
 }
 \value{
 The output matrix with dimensions S x G
@@ -26,9 +28,9 @@ mixture with dimensions S x P, where S is the number of samples
 and P is the number of parameters. Repeatedly call
 \code{calc_gauss_mix_pdf} to calculate the density function
 for each sample at the points in the vector tau, which has length
-G. The output density matrix, fMat, has dimensions S x G.
+G. The output density matrix, f_mat, has dimensions S x G.
 \code{calc_gauss_mix_pdf_mat} supports the same optional
-as \code{calc_gauss_mix_pdf}: taumin / taumax to specify the
+as \code{calc_gauss_mix_pdf}: tau_min / tau_max to specify the
 boundaries of truncation and type to set whether the density,
 cumuluative distribution, derivative, or rate is calculated.
 }

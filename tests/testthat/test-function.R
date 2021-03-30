@@ -29,8 +29,8 @@ th_sim <-
     pi2 = 0.6,
     mu1 = 1000,
     mu2 = 1250,
-    sig1 = 45,
-    sig2 = 35
+    s1 = 45,
+    s2 = 35
   )
 
 tau_min <- 700
@@ -50,7 +50,7 @@ for(n_s in 1:num_sims) {
                    list(density_type = "trunc_gauss_mix",
                         th=c(th_sim,tau_min,tau_max),
                         error_spec=list(type="unif_fm",min=.0021,max=.0028),
-                        isAD=T),
+                        is_AD=T),
                    N=N,
                    calib_curve="intcal20",
                    seed=seed_vect[n_s])

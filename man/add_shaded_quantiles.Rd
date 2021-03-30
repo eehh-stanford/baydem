@@ -11,18 +11,20 @@ add_shaded_quantiles(
 )
 }
 \arguments{
-\item{an}{A list-like object of class \code{baydem::bd_analysis} with information on the quantiles of the density function and growth rate}
+\item{an}{A list-like object of class \code{baydem::bd_analysis} with
+information on the quantiles of the density function and growth rate}
 
 \item{col}{The color of the shaded region}
 
 \item{...}{Additional parameters to pass to \code{graphics::polygon}}
 }
 \description{
-Add a shaded region showing the min/max quantiles (usually +/-2.5\%) to a plot
+Add a shaded region showing the min/max quantiles (usually
++/-2.5\%) to a plot
 }
 \details{
 The input, an, is the result of a call to analyze_soln. It is a
-list-like object of class bayDem_analysis with information on the quantiles
+list-like object of class bd_analysis with information on the quantiles
 of the density function and growth rate. Typically, the min/max quantiles
 are 2.5\% and 97.5\%, but this can be changed via the input lev in the call to
 analyze_soln.
