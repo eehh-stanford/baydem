@@ -1,5 +1,5 @@
-#' Use parallel tempering to fit a truncated Gaussian mixture to radiocarbon
-#' data
+#' Fit a truncated Gaussian mixture to radiocarbon data using the Hooke-Jeeves
+#' algorithm with multiple restarts
 #'
 #' The radiocarbon data are specified by phi_m, the vector of fraction modern
 #' values, and sig_m, the vector of associated standard deviations (both indexed
@@ -26,9 +26,10 @@
 #' tau_min < mu_k < tau_max
 #' 10*dtau < s_k  < tau_max-tau_min.
 #'
-#' The parallel tempering algorithm in the enneal R package is used to do the
-#' optimization. This ensures that the space of possible curves is well-explored
-#' and possible local optima are avoided.
+#' The bounded Hooke-Jeeves algorithm in the dfoptim R package (dfoptim::hjkb)
+#' is used to do the optimization. The Hooke-Jeeves algorithm is perhaps the
+#' best known varient of derivative free pattern-searches. Using multiple
+#' restarts helps identify the global optimum (rather than a local optimum).
 #'
 #' @param K The number of mixture components to use for the fit
 #' @param phi_m A vector of fraction moderns
@@ -37,9 +38,9 @@
 #' @param tau_max The maximum calendar date (AD) for the sampling grid
 #' @param dtau The spacing of the sampling grid
 #' @param calib_df Calibration curve (see bd_load_calib_curve)
-#' @param samps_per_cyc Number of samples per cycle for the tempering
-#'  (default:10)
-#' @param num_cyc Number of cycles for the tempering (default:10)
+#' @param num_restarts Number of restarts to use (default: 100)
+#' @param maxfeval Maximum number of function evaluations for each restart
+#'   (default: (K-1)*10000)
 #' @param num_cores The number of cores to use for parallelization (default: NA,
 #'   do not parallelize)
 #'
@@ -52,16 +53,16 @@
 #' @import foreach
 #' @export
 
-temper_trunc_gauss_mix <- function(K,
-                                   phi_m,
-                                   sig_m,
-                                   tau_min,
-                                   tau_max,
-                                   dtau,
-                                   calib_df,
-                                   samps_per_cyc=10,
-                                   num_cyc=1000,
-                                   num_cores=NA) {
+fit_trunc_gauss_mix <- function(K,
+                                phi_m,
+                                sig_m,
+                                tau_min,
+                                tau_max,
+                                dtau,
+                                calib_df,
+                                num_restarts=100,
+                                maxfeval=(K-1)*10000,
+                                num_cores=NA) {
 
   # Create the sampling grid, tau
   tau <- seq(tau_min,tau_max,dtau)
@@ -75,6 +76,14 @@ temper_trunc_gauss_mix <- function(K,
   # (2) mu, the means, are restricted to the interval tau_min to tau_max.
   # (3) s, the standard deviations, are restricted to the interval 10*dtau to
   #     tau_max-tau_min
+  TH0_reduced <- matrix(NA,3*K-1,num_restarts)
+  for(m in 1:num_restarts) {
+    th0 <- c(MCMCpack::rdirichlet(1,rep(1,K)),
+             sort(runif(K,tau_min,tau_max)),
+             runif(K,10*dtau,tau_max-tau_min))
+    th0_reduced <- th0[-1]
+    TH0_reduced[,m] <- th0_reduced
+  }
 
   # Create the lower and upper bounds for optimization
   lower_bounds <- c(rep(0,K-1),rep(tau_min,K),rep(dtau*10,K))
@@ -95,82 +104,74 @@ temper_trunc_gauss_mix <- function(K,
     return(calc_trunc_gauss_mix_neg_log_lik(th_reduced,M,tau))
   }
 
-  # For the parallel tempering, use a temperature vector with temperatures
-  # between sqrt(10) and 1/sqrt(10)
-  temp_vect <- rev(10^seq(-0.5,0.5,len=10))
+  # Create the control list variable to set the maximum number of function
+  # evaluations
+  control_list <- list(maxfeval=maxfeval)
 
-  # For the largest temperature, use the following for the standard deviation of
-  # the proposal distribution:
-  # pi_k  0.5
-  # mu_k  (tau_max-tau_min)/2
-  #  s_k  (tau_max-tau_min)/4
-  tau_range <- tau_max - tau_min
-  scale_vect0 <- c(rep(0.5,K-1),rep(tau_range/2,K),rep(tau_range/4,K))
+  # Solve the problem using either a conventional for loop (if num_cores is NA)
+  # or a parallel for loop. For the parallel for loops, it faster to preload
+  # libraries and avoid using namespacing with :: (as is called for by some
+  # style guides); hence, @import tags have been added to the function
+  # documentation.
+  if(is.na(num_cores)) {
+    # Use a conventional for loop to do the fits
 
-  # For other temperatures, rescale the standard deviation used for the proposal
-  # distribution such that the the smallest temperature has a scale 0.01 that
-  # of the largest.
-  scale_matrix <- matrix(NA,3*K-1,length(temp_vect))
-  rescale_vect <- seq(1,.01,len=length(temp_vect))
-  for(tt in 1:length(temp_vect)) {
-    scale_matrix[,tt] <- scale_vect0 * rescale_vect[tt]
-  }
-
-  th0 <- c(MCMCpack::rdirichlet(1,rep(1,K)),
-           sort(runif(K,tau_min,tau_max)),
-           runif(K,10*dtau,tau_max-tau_min))
-  th0_reduced <- th0[-1]
-
-  if (is.na(num_cores)) {
-    # If num_cores is NA, iterate over restarts using a regular for loop
-    # A list of fits
-    tempering <- enneal::par_temper(th0_reduced,
-                                    neg_log_lik_rewrap,
-                                    samps_per_cyc=samps_per_cyc,
-                                    temp_vect=temp_vect,
-                                    prop_scale=scale_matrix,
-                                    num_cyc=num_cyc,
-                                    M=M,
-                                    tau=tau,
-                                    lower_bounds=lower_bounds,
-                                    upper_bounds=upper_bounds)
+    # A list in which to store the fits for the restarts
+    hjkb_fit_list <- list()
+    for(m in 1:num_restarts) {
+      hjkb_fit_list[[m]] <- dfoptim::hjkb(TH0_reduced[,m],
+                                          neg_log_lik_rewrap,
+                                          M=M,
+                                          tau=tau,
+                                          lower_bounds=lower_bounds,
+                                          upper_bounds=upper_bounds,
+                                          control=control_list)
+    }
   } else {
-    # For speed, do not use :: to call functions. This means that doParallel
-    # (for registerDoParallel) and foreach (for %dopar%) must have been
-    # pre-loaded; hence, @import statements have been added to the function
-    # documentation.
-    registerDoParallel(num_cores)
-    # Must explicitly export functions so that dopar works on Windows
-    #function_exports <- c("calc_trunc_gauss_mix_neg_log_lik",
-    #                      "is_th_reduced_valid")
-    tempering <- enneal::par_temper(th0_reduced,
-                                    neg_log_lik_rewrap,
-                                    samps_per_cyc=samps_per_cyc,
-                                    temp_vect=temp_vect,
-                                    prop_scale=scale_matrix,
-                                    num_cyc=num_cyc,
-                                    num_cores=num_cores,
-                                    M=M,
-                                    tau=tau,
-                                    lower_bounds=lower_bounds,
-                                    upper_bounds=upper_bounds)
+    # Use a parallel for loop to do the fits
+  temp <- function(th0_reduced,M,tau,lower_bounds,upper_bounds,control_list,m) {
+    print("")
+    print(m)
+    fit <- dfoptim::hjkb(TH0_reduced[,m],
+                      neg_log_lik_rewrap,
+                      M=M,
+                      tau=tau,
+                      lower_bounds=lower_bounds,
+                      upper_bounds=upper_bounds,
+                      control=control_list)
+    return(fit)
+  }
+   doParallel::registerDoParallel(num_cores)
+    hjkb_fit_list <-
+      foreach(m=1:num_restarts,.packages=c('baydem')) %dopar% {
+        temp(TH0_reduced[,m],M,tau,lower_bounds,upper_bounds,control_list,m)
+#        dfoptim::hjkb(TH0_reduced[,m],
+#                      neg_log_lik_rewrap,
+#                      M=M,
+#                      tau=tau,
+#                      lower_bounds=lower_bounds,
+#                      upper_bounds=upper_bounds,
+#                      control=control_list)
+      }
   }
 
-  ind_best <- which.min(unlist(lapply(
-    tempering$chains,function(fit){fit$eta_best})))
-  th_best  <- tempering$chains[[ind_best]]$theta_best
+  # Identify the best solution across restarts and get the corresponding best
+  # parameter vector and negative log-likelihood value.
+  m_best <- which.min(unlist(lapply(
+    hjkb_fit_list,function(hjkb_fit){hjkb_fit$value})))
+  th_best <- hjkb_fit_list[[m_best]]$par
   th_best <- c(1-sum(th_best[1:(K-1)]),th_best)
-  eta_best <- tempering$chains[[ind_best]]$eta_best
+  neg_log_lik_best <- hjkb_fit_list[[m_best]]$value
+
 
   # Calculate the probability density for the best fit parameter
   f  <- bd_calc_gauss_mix_pdf(th_best,tau,tau_min,tau_max)
 
   # Calculate the Bayesian information criterion (BIC) and Akaike information
-  # criterion (AIC). General wisdom holds that BIC is preferred if the true
-  # model is in the set of models tested and AIC is preferred if it may not be.
+  # criterion (AIC).
   N <- length(phi_m)
-  bic <- log(N)*(3*K-1) + 2*eta_best
-  aic <-      2*(3*K-1) + 2*eta_best
+  bic <- log(N)*(3*K-1) + 2*neg_log_lik_best
+  aic <-      2*(3*K-1) + 2*neg_log_lik_best
 
   # Return a list with:
   # th          The best fit paramater vector
@@ -179,7 +180,8 @@ temper_trunc_gauss_mix <- function(K,
   # f           The probability density evaluted at locations in tau
   # bic         The Bayesian information criterion
   # aic         The Akaike information criterion
-  return(list(th=th_best,neg_log_lik=eta_best,tau=tau,f=f,bic=bic,aic=aic))
+  return(list(th=th_best,neg_log_lik=neg_log_lik_best,tau=tau,f=f,
+              bic=bic,aic=aic,hjkb_fit_list=hjkb_fit_list))
 }
 
 #' Calculate the negative log-likelihood of a truncuated Gaussian mixture fit

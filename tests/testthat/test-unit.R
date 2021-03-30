@@ -278,7 +278,7 @@ expect_equal(
 # cores.
 expect_error(
   max_lik_fit <-
-    temper_trunc_gauss_mix(
+    fit_trunc_gauss_mix(
                            2,
                            sim$data$rc_meas$phi_m,
                            sim$data$rc_meas$sig_m,
@@ -286,34 +286,31 @@ expect_error(
                            1300,
                            1,
                            calib_df,
-                           samps_per_cyc=5,
-                           num_cyc=10),
+                           num_restarts=3),
   NA
 )
 
 expect_equal(
   names(max_lik_fit),
-  c("th","neg_log_lik","tau","f","bic","aic")
+  c("th","neg_log_lik","tau","f","bic","aic","hjkb_fit_list")
 )
 
 expect_error(
   max_lik_fit <-
-    temper_trunc_gauss_mix(2,
-                           sim$data$rc_meas$phi_m,
-                           sim$data$rc_meas$sig_m,
-                           600,
-                           1300,
-                           1,
-                           calib_df,
-                           samps_per_cyc=5,
-                           num_cyc=10,
-                           num_cores=2),
+    fit_trunc_gauss_mix(2,
+                        sim$data$rc_meas$phi_m,
+                        sim$data$rc_meas$sig_m,
+                        600,
+                        1300,
+                        1,
+                        calib_df,
+                        num_restarts=3),
   NA
 )
 
 expect_equal(
   names(max_lik_fit),
-  c("th","neg_log_lik","tau","f","bic","aic")
+  c("th","neg_log_lik","tau","f","bic","aic","hjkb_fit_list")
 )
 
 # ------------------------------------------------------------------------------
