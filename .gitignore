@@ -17,3 +17,5 @@ R/.DS_Store
 # vi temp files
 *.swp
 *.swo
+
+.idea
