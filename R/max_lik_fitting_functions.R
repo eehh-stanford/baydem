@@ -129,29 +129,16 @@ fit_trunc_gauss_mix <- function(K,
     }
   } else {
     # Use a parallel for loop to do the fits
-  temp <- function(th0_reduced,M,tau,lower_bounds,upper_bounds,control_list,m) {
-    print("")
-    print(m)
-    fit <- dfoptim::hjkb(TH0_reduced[,m],
+   doParallel::registerDoParallel(num_cores)
+    hjkb_fit_list <-
+      foreach(m=1:num_restarts,.packages=c('baydem')) %dopar% {
+        dfoptim::hjkb(TH0_reduced[,m],
                       neg_log_lik_rewrap,
                       M=M,
                       tau=tau,
                       lower_bounds=lower_bounds,
                       upper_bounds=upper_bounds,
                       control=control_list)
-    return(fit)
-  }
-   doParallel::registerDoParallel(num_cores)
-    hjkb_fit_list <-
-      foreach(m=1:num_restarts,.packages=c('baydem')) %dopar% {
-        temp(TH0_reduced[,m],M,tau,lower_bounds,upper_bounds,control_list,m)
-#        dfoptim::hjkb(TH0_reduced[,m],
-#                      neg_log_lik_rewrap,
-#                      M=M,
-#                      tau=tau,
-#                      lower_bounds=lower_bounds,
-#                      upper_bounds=upper_bounds,
-#                      control=control_list)
       }
   }
 

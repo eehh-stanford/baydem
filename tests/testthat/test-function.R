@@ -69,10 +69,6 @@ for(n_s in 1:num_sims) {
     NA
   )
   relative_error <- (max_lik_fit$th - th_sim)/th_sim
-  print("")
-  print("--")
-  print(n_s)
-  print(relative_error)
   expect_equal(
     all(abs(relative_error) <= maximum_relative_error),
     TRUE
