@@ -930,3 +930,229 @@ expect_equal(
   length(exp_samp2),
   50
 )
+
+# ------------------------------------------------------------------------------
+# (9) Do unit tests for task management functions
+#
+# coverage: import_rc_data
+#           set_rc_meas
+# ------------------------------------------------------------------------------
+
+# (9a) import_rc_data
+
+# Specifying phi_m and sig_m with named columns
+file_name <- system.file("extdata",
+                         "fraction_modern_named_columns.csv",
+                         package = "baydem")
+
+expect_error(
+  rc_meas <- import_rc_data(file_name,
+                            phi_m_col="fraction_modern",
+                            sig_m_col="fraction_modern_error"),
+  NA
+)
+
+phi_m <- c(.80,.75,.74,.82)
+sig_m <- c(.001,.002,.002,.001)
+rc_meas_direct <- list(phi_m=phi_m,
+                       sig_m=sig_m,
+                       trc_m=-8033 * log(phi_m),
+                       sig_trc_m=8033 * sig_m / phi_m)
+
+expect_equal(
+  rc_meas,
+  rc_meas_direct
+)
+
+# Specifying an invalid set of inputs
+expect_error(
+  rc_meas <- import_rc_data(file_name,
+                            trc_m_col="this_should_fail",
+                            phi_m_col="fraction_modern",
+                            sig_m_col="fraction_modern_error"),
+  "Unsupported input pattern for specifying data columns"
+)
+
+# Specifying phi_m and sig_m with column numbers
+expect_error(
+  rc_meas <- import_rc_data(file_name,
+                            phi_m_col=1,
+                            sig_m_col=2),
+  NA
+)
+
+expect_equal(
+  rc_meas,
+  rc_meas_direct
+)
+
+# Specifying trc_m and sig_trc_m with named columns
+file_name <- system.file("extdata",
+                         "rc_years_BP_named_columns.csv",
+                         package = "baydem")
+
+expect_error(
+  rc_meas <- import_rc_data(file_name,
+                            trc_m_col="rc_years_BP",
+                            sig_trc_m_col="rc_years_BP_error"),
+  NA
+)
+
+trc_m     <- c(900,800,850)
+sig_trc_m <- c( 20,400, 70)
+phi_m <- exp(-trc_m/8033)
+sig_m <- phi_m * sig_trc_m / 8033
+rc_meas_direct <- list(phi_m=phi_m,
+                       sig_m=sig_m,
+                       trc_m=trc_m,
+                       sig_trc_m=sig_trc_m)
+
+expect_equal(
+  rc_meas,
+  rc_meas_direct
+)
+
+# Specifying trc_m and sig_trc_m with column numbers and skipping the column
+# names but specying header=F (to test the functioning of ...)
+expect_error(
+  rc_meas <- import_rc_data(file_name,
+                            trc_m_col=1,
+                            sig_trc_m_col=2,
+                            skip=1,
+                            header=F),
+  NA
+)
+
+expect_equal(
+  rc_meas,
+  rc_meas_direct
+)
+
+# Specifying no columns, for which it is assumed that the first and second
+# columns are, respectively, trc_m and sig_trc_m.
+
+expect_error(
+  rc_meas <- import_rc_data(file_name),
+  NA
+)
+
+expect_equal(
+  rc_meas,
+  rc_meas_direct
+)
+
+# (9b) set_rc_meas
+
+# Call data_dir to get the temporary directory to use in testing
+data_dir <- tempdir()
+
+analysis_name <- "test_analysis"
+path_to_analysis_file <- file.path(data_dir,paste0(analysis_name,".rds"))
+
+# If the analysis file exists, delete it
+if (file.exists(path_to_analysis_file)) {
+  file.remove(path_to_analysis_file)
+}
+
+expect_error(
+  set_rc_meas(data_dir,analysis_name,rc_meas),
+  NA
+)
+
+# Make sure the file was created and the stored variable is correct
+expect_equal(
+  file.exists(path_to_analysis_file),
+  T
+)
+
+expect_equal(
+  readRDS(path_to_analysis_file),
+  list(rc_meas=rc_meas)
+)
+
+# Make sure that we cannot set rc_meas for an analysis that already exists
+expect_error(
+  set_rc_meas(data_dir,analysis_name,rc_meas),
+  "A save file for analysis_name already exists in data_dir"
+)
+
+# (9b) set_density_model
+
+# First check the error messages. The order they are checked is not the same
+# order they would be encountered in reading through the source code.
+
+empty_density_model <- list()
+bad_analysis_name <- "not_yet_defined"
+expect_error(
+  set_density_model(data_dir,bad_analysis_name,density_model),
+  "A save file for analysis_name does not exist in data_dir"
+)
+
+expect_error(
+  set_density_model(data_dir,analysis_name,empty_density_model),
+  "type must be a named field in the list density_model"
+)
+
+invalid_density_model <- list(type="invalid_type")
+expect_error(
+  set_density_model(data_dir,analysis_name,invalid_density_model),
+  "Unsupported type for density_model"
+)
+
+# no tau_min
+invalid_density_model <- list(type="trunc_gauss_mix",
+                              tau_max=1300,
+                              K=4)
+expect_error(
+  set_density_model(data_dir,analysis_name,invalid_density_model),
+  "tau_min must be a field in density_model for trunc_gauss_mix"
+)
+
+# no tau_max
+invalid_density_model <- list(type="trunc_gauss_mix",
+                              tau_min=600,
+                              K=4)
+expect_error(
+  set_density_model(data_dir,analysis_name,invalid_density_model),
+  "tau_max must be a field in density_model for trunc_gauss_mix"
+)
+
+# no K
+invalid_density_model <- list(type="trunc_gauss_mix",
+                              tau_min=600,
+                              tau_max=1300)
+expect_error(
+  set_density_model(data_dir,analysis_name,invalid_density_model),
+  "K must be a field in density_model for trunc_gauss_mix"
+)
+
+# tau_max less than tau_min
+invalid_density_model <- list(type="trunc_gauss_mix",
+                              tau_min=1300,
+                              tau_max=600,
+                              K=4)
+expect_error(
+  set_density_model(data_dir,analysis_name,invalid_density_model),
+  "tau_min must be less than tau_max"
+)
+
+# Make a correct call to update the saved .rds file, check the result,  and make
+# sure that an error is thrown if an attempt is made to reset the density_model.
+density_model <- list(type="trunc_gauss_mix",
+                              tau_min=600,
+                              tau_max=1300,
+                              K=4)
+expect_error(
+  set_density_model(data_dir,analysis_name,density_model),
+  NA
+)
+
+expect_equal(
+  readRDS(path_to_analysis_file),
+  list(rc_meas=rc_meas,density_model=density_model)
+)
+
+expect_error(
+  set_density_model(data_dir,analysis_name,density_model),
+  "density model has already been defined for this analysis"
+)
