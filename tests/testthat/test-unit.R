@@ -932,10 +932,11 @@ expect_equal(
 )
 
 # ------------------------------------------------------------------------------
-# (9) Do unit tests for task management functions
+# (9) Do unit tests for data io (input/output) functions
 #
 # coverage: import_rc_data
 #           set_rc_meas
+#           calc_tau_range
 # ------------------------------------------------------------------------------
 
 # (9a) import_rc_data
@@ -1046,6 +1047,8 @@ expect_equal(
 # Call data_dir to get the temporary directory to use in testing
 data_dir <- tempdir()
 
+rc_meas <- sim$data$rc_meas
+
 analysis_name <- "test_analysis"
 path_to_analysis_file <- file.path(data_dir,paste0(analysis_name,".rds"))
 
@@ -1155,4 +1158,61 @@ expect_equal(
 expect_error(
   set_density_model(data_dir,analysis_name,density_model),
   "density model has already been defined for this analysis"
+)
+
+# (9c) calc_tau_range
+
+# The tau range should be the same across test runs since all relative number
+# seeds are set above
+expect_error(
+  tau_range <- calc_tau_range(rc_meas),
+  NA
+)
+
+expect_equal(
+  tau_range,
+  list(tau_min=603,tau_max=1265)
+)
+
+# Using dtau=1 should have no effect
+expect_error(
+  tau_range <- calc_tau_range(rc_meas,dtau=1),
+  NA
+)
+
+expect_equal(
+  tau_range,
+  list(tau_min=603,tau_max=1265)
+)
+
+# A warning should be thrown if dtau is not an integer
+expect_warning(
+  tau_range <- calc_tau_range(rc_meas,dtau=1.5),
+  "dtau is being ignored because it is not an integer"
+)
+
+expect_equal(
+  tau_range,
+  list(tau_min=603,tau_max=1265)
+)
+
+# Check that the range is extended if dtau=5 and dtau=7
+expect_error(
+  tau_range <- calc_tau_range(rc_meas,dtau=5),
+  NA
+)
+
+expect_equal(
+  tau_range,
+  list(tau_min=600,tau_max=1265)
+)
+
+expect_error(
+  tau_range <- calc_tau_range(rc_meas,dtau=7),
+  NA
+)
+
+expect_equal(
+  tau_range,
+  list(tau_min=602,tau_max=1267)
 )

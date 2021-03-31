@@ -187,3 +187,54 @@ set_density_model <- function(data_dir,analysis_name,density_model) {
     stop("Unsupported type for density_model")
   }
 }
+
+
+#' Calculate a calendar date range that spans the input radiocarbon measurements
+#'
+#' To determine the calendar dates, first Bchron::BchronCalibrate is called to
+#' calibrate the individual dates, which yields a date range for each. The
+#' maximum range across dates is identified (BchronCalibrate adopts a spacing of
+#' one year), then (if necessary) the range is slighty extended to multiples of
+#' dtau. If intcal20 is being used, dtau should likely be 5, since that is the
+#' spacing at which the calibration curve is specified. If dtau is not an
+#' integer, it is ignored and a warning is thrown. If dtau is 1 (the default),
+#' no rounding is done since that is already the spacing returned by Bchron.
+#'
+#' @param rc_meas The radiocarbon measurements (see import_rc_data for the
+#'   expected format)
+#' @param calibration_curve The name of the calibration curve to use (default:
+#'   intcal20)
+#' @param dtau An integer to round to in extending the calendar range on either
+#'   end (default: 1, which has no effect)
+#'
+#' @return A list containing the minimum and maximum calendar dates, tau_min and
+#'   tau_max
+#'
+#' @export
+
+calc_tau_range <- function(rc_meas,calibration_curve="intcal20",dtau=1) {
+
+  N <- length(rc_meas$trc_m)
+  calibrations <- Bchron::BchronCalibrate(ages=round(rc_meas$trc_m),
+                                          ageSds=round(rc_meas$sig_trc_m),
+                                          calCurves=rep(calibration_curve,N))
+
+  # The following range across calibrations is in years BP
+  total_range <- range(as.vector(unlist(lapply(
+    calibrations,function(calib){range(calib$ageGrid)}))))
+
+  tau_min <- 1950-total_range[2]
+  tau_max <- 1950-total_range[1]
+
+  if (dtau %% 1 == 0) {
+    # The spacing is already 1, so only do the rounding if dtau is not 1
+    if(dtau != 1) {
+      tau_min <- tau_min - ( tau_min %% dtau)
+      tau_max <- tau_max + (-tau_max %% dtau)
+    }
+  } else {
+    warning("dtau is being ignored because it is not an integer")
+  }
+
+  return(list(tau_min=tau_min,tau_max=tau_max))
+}
