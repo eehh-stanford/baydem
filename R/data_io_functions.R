@@ -93,9 +93,21 @@ import_rc_data <- function(file_name,
 #'
 #' The typical set of steps for an analysis is:
 #'
-#' (1) set_rc_meas  Set the radiocarbon measurements
-#' (2) set_model    Set the parametric model to be used for fitting and Bayesian
-#'                  inference
+#' (2) import_rc_data
+#'     Import the radiocarbon measurements from file (or simulate them)
+#'
+#' (2) set_rc_meas
+#'     Set the radiocarbon measurements
+#'
+#' (3) calc_tau_range
+#'     Determine the range of calendar dates that span the radiocarbon
+#'     measurements
+#'
+#' (4) set_density_model
+#'     Set the parametric model to be used for fitting and Bayesian inference.
+#'     Currently, only a truncated Gaussian mixture is supported, which requires
+#'     setting the calendar date range for truncation (likely using the result
+#'     from step (3), thought it can be explicitly set)
 #'
 #' @param data_dir The directory in which to store analysis data
 #' @param analysis_name A unique name for a given analysis in data_dir
@@ -114,6 +126,56 @@ set_rc_meas <- function(data_dir,analysis_name,rc_meas) {
 
   analysis <- list(rc_meas=rc_meas)
   saveRDS(analysis,data_file)
+}
+
+#' Calculate a calendar date range that spans the input radiocarbon measurements
+#'
+#' To determine the calendar dates, first Bchron::BchronCalibrate is called to
+#' calibrate the individual dates, which yields a date range for each. The
+#' maximum range across dates is identified (BchronCalibrate adopts a spacing of
+#' one year), then (if necessary) the range is slighty extended to multiples of
+#' dtau. If intcal20 is being used, dtau should likely be 5, since that is the
+#' spacing at which the calibration curve is specified. If dtau is not an
+#' integer, it is ignored and a warning is thrown. If dtau is 1 (the default),
+#' no rounding is done since that is already the spacing returned by Bchron.
+#'
+#' @param rc_meas The radiocarbon measurements (see import_rc_data for the
+#'   expected format)
+#' @param calibration_curve The name of the calibration curve to use (default:
+#'   intcal20)
+#' @param dtau An integer to round to in extending the calendar range on either
+#'   end (default: 1, which has no effect)
+#'
+#' @return A list containing the minimum and maximum calendar dates, tau_min and
+#'   tau_max
+#'
+#' @export
+
+calc_tau_range <- function(rc_meas,calibration_curve="intcal20",dtau=1) {
+
+  N <- length(rc_meas$trc_m)
+  calibrations <- Bchron::BchronCalibrate(ages=round(rc_meas$trc_m),
+                                          ageSds=round(rc_meas$sig_trc_m),
+                                          calCurves=rep(calibration_curve,N))
+
+  # The following range across calibrations is in years BP
+  total_range <- range(as.vector(unlist(lapply(
+    calibrations,function(calib){range(calib$ageGrid)}))))
+
+  tau_min <- 1950-total_range[2]
+  tau_max <- 1950-total_range[1]
+
+  if (dtau %% 1 == 0) {
+    # The spacing is already 1, so only do the rounding if dtau is not 1
+    if(dtau != 1) {
+      tau_min <- tau_min - ( tau_min %% dtau)
+      tau_max <- tau_max + (-tau_max %% dtau)
+    }
+  } else {
+    warning("dtau is being ignored because it is not an integer")
+  }
+
+  return(list(tau_min=tau_min,tau_max=tau_max))
 }
 
 #' Set the density model (density_model) for an analysis
@@ -188,53 +250,101 @@ set_density_model <- function(data_dir,analysis_name,density_model) {
   }
 }
 
-
-#' Calculate a calendar date range that spans the input radiocarbon measurements
+#' Set the radiocarbon calibration curve for an analysis
 #'
-#' To determine the calendar dates, first Bchron::BchronCalibrate is called to
-#' calibrate the individual dates, which yields a date range for each. The
-#' maximum range across dates is identified (BchronCalibrate adopts a spacing of
-#' one year), then (if necessary) the range is slighty extended to multiples of
-#' dtau. If intcal20 is being used, dtau should likely be 5, since that is the
-#' spacing at which the calibration curve is specified. If dtau is not an
-#' integer, it is ignored and a warning is thrown. If dtau is 1 (the default),
-#' no rounding is done since that is already the spacing returned by Bchron.
+#' This is one of a set of helper functions for undertaking a typical analysis
+#' of radiocarbon dates. For details on the overall framework for these helper
+#' function, see set_rc_meas.
 #'
-#' @param rc_meas The radiocarbon measurements (see import_rc_data for the
-#'   expected format)
-#' @param calibration_curve The name of the calibration curve to use (default:
-#'   intcal20)
-#' @param dtau An integer to round to in extending the calendar range on either
-#'   end (default: 1, which has no effect)
-#'
-#' @return A list containing the minimum and maximum calendar dates, tau_min and
-#'   tau_max
+#' @param data_dir The directory in which to store analysis data
+#' @param analysis_name A unique name for a given analysis in data_dir
+#' @param calibration_curve Either the name of a calibration curve or a data
+#'   frame specifying the calibration curve (see load_calib_curve format and
+#'   choices).
 #'
 #' @export
 
-calc_tau_range <- function(rc_meas,calibration_curve="intcal20",dtau=1) {
+set_calib_curve <- function(data_dir,analysis_name,calibration_curve) {
+  data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
 
-  N <- length(rc_meas$trc_m)
-  calibrations <- Bchron::BchronCalibrate(ages=round(rc_meas$trc_m),
-                                          ageSds=round(rc_meas$sig_trc_m),
-                                          calCurves=rep(calibration_curve,N))
-
-  # The following range across calibrations is in years BP
-  total_range <- range(as.vector(unlist(lapply(
-    calibrations,function(calib){range(calib$ageGrid)}))))
-
-  tau_min <- 1950-total_range[2]
-  tau_max <- 1950-total_range[1]
-
-  if (dtau %% 1 == 0) {
-    # The spacing is already 1, so only do the rounding if dtau is not 1
-    if(dtau != 1) {
-      tau_min <- tau_min - ( tau_min %% dtau)
-      tau_max <- tau_max + (-tau_max %% dtau)
-    }
-  } else {
-    warning("dtau is being ignored because it is not an integer")
+  if (!file.exists(data_file)) {
+    stop("A save file for analysis_name does not exist in data_dir")
   }
 
-  return(list(tau_min=tau_min,tau_max=tau_max))
+  analysis <- readRDS(data_file)
+
+  if ("calib_df" %in% names(analysis)) {
+    stop("A calibration curve has already been defined for this analysis")
+  }
+
+  if (is(calibration_curve,"data.frame")) {
+    analysis$calib_df <- calibration_curve
+  } else {
+    # Otherwise, calibration_curve should be the name of a calibration curve
+    # that load_calib_curve recognizes.
+    analysis$calib_df <- load_calib_curve(calibration_curve)
+  }
+  saveRDS(analysis,data_file)
+}
+
+# TODO: make and link to the vignette for a bespoke approach
+#' Do maximum likelihood fits given a set of radiocarbon measurements (rc_meas)
+#' and a specification of the density model (density_model)
+#'
+#' This is one of a set of helper functions for undertaking a typical analysis
+#' of radiocarbon dates. For details on the overall framework for these helper
+#' function, see set_rc_meas.
+#'
+#' @param data_dir The directory in which to store analysis data
+#' @param analysis_name A unique name for a given analysis in data_dir
+#' @param dtau The spacing in years to use for the sampling grid
+#' @param ... Additional arguments to pass to the optimization function (see
+#'  fit_trunc_gauss_mix)
+#'
+#' @export
+
+# TODO: set_calibration_curve
+do_max_lik_fits <- function(data_dir,analysis_name,dtau=5,...) {
+  data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
+
+  if (!file.exists(data_file)) {
+    stop("A save file for analysis_name does not exist in data_dir")
+  }
+
+  analysis <- readRDS(data_file)
+
+  if (!("rc_meas" %in% names(analysis))) {
+    stop("Radiocarbon measurements have not specified for this analysis")
+  }
+
+  if (!("density_model" %in% names(analysis))) {
+    stop("A density model has not been specified for this analysis")
+  }
+
+  if (!("calib_df" %in% names(analysis))) {
+    stop("A calibration curve has not been specified for this analysis")
+  }
+
+  if ("max_lik_fits" %in% names(analysis)) {
+    stop("Maximum likelihood fits have already been defined for this analysis")
+  }
+
+  if (analysis$density_model$type == "trunc_gauss_mix") {
+
+    max_lik_fits <- list()
+    for(m_K in 1:length(analysis$density_model$K)) {
+      max_lik_fits[[m_K]] <- fit_trunc_gauss_mix(analysis$density_model$K[m_K],
+                                                 analysis$rc_meas$phi_m,
+                                                 analysis$rc_meas$sig_m,
+                                                 analysis$density_model$tau_min,
+                                                 analysis$density_model$tau_max,
+                                                 dtau,
+                                                 analysis$calib_df,
+                                                 ...)
+    }
+    analysis$max_lik_fits <- max_lik_fits
+    saveRDS(analysis,data_file)
+  } else {
+    stop("Unsupported type for density_model")
+  }
 }

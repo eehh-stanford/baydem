@@ -34,7 +34,19 @@ file already exists in data_dir for that analysis name, an error is thrown.
 
 The typical set of steps for an analysis is:
 
-(1) set_rc_meas  Set the radiocarbon measurements
-(2) set_model    Set the parametric model to be used for fitting and Bayesian
-inference
+(2) import_rc_data
+Import the radiocarbon measurements from file (or simulate them)
+
+(2) set_rc_meas
+Set the radiocarbon measurements
+
+(3) calc_tau_range
+Determine the range of calendar dates that span the radiocarbon
+measurements
+
+(4) set_density_model
+Set the parametric model to be used for fitting and Bayesian inference.
+Currently, only a truncated Gaussian mixture is supported, which requires
+setting the calendar date range for truncation (likely using the result
+from step (3), thought it can be explicitly set)
 }

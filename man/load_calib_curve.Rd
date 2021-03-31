@@ -7,7 +7,8 @@
 load_calib_curve(calib_curve)
 }
 \arguments{
-\item{calib_curve}{Name of calibration curve}
+\item{calib_curve}{Name of calibration curve. One of: "intcal20", "marine20",
+"shcal20", "intcal13", "marine13", or "shcal13"}
 }
 \value{
 The calibration dataframe, with columns year_BP, uncal_year_BP, and

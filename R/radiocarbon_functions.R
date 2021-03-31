@@ -165,7 +165,8 @@ calc_trapez_weights <- function(tau) {
 #' @description Parse and return the radiocarbon calibration curve stored in
 #'   data
 #'
-#' @param calib_curve Name of calibration curve
+#' @param calib_curve Name of calibration curve. One of: "intcal20", "marine20",
+#'   "shcal20", "intcal13", "marine13", or "shcal13"
 #'
 #' @return The calibration dataframe, with columns year_BP, uncal_year_BP, and
 #'   uncal_year_BP_error

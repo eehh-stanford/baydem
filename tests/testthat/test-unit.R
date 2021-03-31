@@ -937,6 +937,9 @@ expect_equal(
 # coverage: import_rc_data
 #           set_rc_meas
 #           calc_tau_range
+#           set_density_model
+#           set_calib_curve
+#           do_max_lik_fits
 # ------------------------------------------------------------------------------
 
 # (9a) import_rc_data
@@ -1079,7 +1082,63 @@ expect_error(
   "A save file for analysis_name already exists in data_dir"
 )
 
-# (9b) set_density_model
+# (9c) calc_tau_range
+
+# The tau range should be the same across test runs since all relative number
+# seeds are set above
+expect_error(
+  tau_range <- calc_tau_range(rc_meas),
+  NA
+)
+
+expect_equal(
+  tau_range,
+  list(tau_min=603,tau_max=1265)
+)
+
+# Using dtau=1 should have no effect
+expect_error(
+  tau_range <- calc_tau_range(rc_meas,dtau=1),
+  NA
+)
+
+expect_equal(
+  tau_range,
+  list(tau_min=603,tau_max=1265)
+)
+
+# A warning should be thrown if dtau is not an integer
+expect_warning(
+  tau_range <- calc_tau_range(rc_meas,dtau=1.5),
+  "dtau is being ignored because it is not an integer"
+)
+
+expect_equal(
+  tau_range,
+  list(tau_min=603,tau_max=1265)
+)
+
+# Check that the range is extended if dtau=5 and dtau=7
+expect_error(
+  tau_range <- calc_tau_range(rc_meas,dtau=5),
+  NA
+)
+
+expect_equal(
+  tau_range,
+  list(tau_min=600,tau_max=1265)
+)
+
+expect_error(
+  tau_range <- calc_tau_range(rc_meas,dtau=7),
+  NA
+)
+
+expect_equal(
+  tau_range,
+  list(tau_min=602,tau_max=1267)
+)
+# (9d) set_density_model
 
 # First check the error messages. The order they are checked is not the same
 # order they would be encountered in reading through the source code.
@@ -1157,62 +1216,101 @@ expect_equal(
 
 expect_error(
   set_density_model(data_dir,analysis_name,density_model),
-  "density model has already been defined for this analysis"
+  "A density model has already been defined for this analysis"
 )
 
-# (9c) calc_tau_range
-
-# The tau range should be the same across test runs since all relative number
-# seeds are set above
+# (9e) set_calib_curve
 expect_error(
-  tau_range <- calc_tau_range(rc_meas),
-  NA
-)
-
-expect_equal(
-  tau_range,
-  list(tau_min=603,tau_max=1265)
-)
-
-# Using dtau=1 should have no effect
-expect_error(
-  tau_range <- calc_tau_range(rc_meas,dtau=1),
-  NA
-)
-
-expect_equal(
-  tau_range,
-  list(tau_min=603,tau_max=1265)
-)
-
-# A warning should be thrown if dtau is not an integer
-expect_warning(
-  tau_range <- calc_tau_range(rc_meas,dtau=1.5),
-  "dtau is being ignored because it is not an integer"
-)
-
-expect_equal(
-  tau_range,
-  list(tau_min=603,tau_max=1265)
-)
-
-# Check that the range is extended if dtau=5 and dtau=7
-expect_error(
-  tau_range <- calc_tau_range(rc_meas,dtau=5),
-  NA
-)
-
-expect_equal(
-  tau_range,
-  list(tau_min=600,tau_max=1265)
+  set_calib_curve(data_dir,bad_analysis_name),
+  "A save file for analysis_name does not exist in data_dir"
 )
 
 expect_error(
-  tau_range <- calc_tau_range(rc_meas,dtau=7),
+  set_calib_curve(data_dir,analysis_name,"intcal20"),
   NA
 )
 
+analysis <- readRDS(path_to_analysis_file)
 expect_equal(
-  tau_range,
-  list(tau_min=602,tau_max=1267)
+  names(analysis),
+  c("rc_meas","density_model","calib_df")
 )
+
+calib_df <- load_calib_curve("intcal20")
+expect_equal(
+  analysis$calib_df,
+  calib_df
+)
+
+# Directly delete calib_df and ensure from the .rds save file and check that it
+# can also be set with a dataframe as input
+
+analysis["calib_df"] <- NULL
+saveRDS(analysis,path_to_analysis_file)
+expect_error(
+  set_calib_curve(data_dir,analysis_name,calib_df),
+  NA
+)
+
+analysis <- readRDS(path_to_analysis_file)
+expect_equal(
+  names(analysis),
+  c("rc_meas","density_model","calib_df")
+)
+
+calib_df <- load_calib_curve("intcal20")
+expect_equal(
+  analysis$calib_df,
+  calib_df
+)
+
+# (9f) do_max_lik_fits
+expect_error(
+  do_max_lik_fits(data_dir,bad_analysis_name),
+  "A save file for analysis_name does not exist in data_dir"
+)
+
+bad_analysis_name <- "bad"
+path_to_bad_analysis_file <- file.path(data_dir,
+                                       paste0(bad_analysis_name,".rds"))
+saveRDS(list(),path_to_bad_analysis_file)
+expect_error(
+  do_max_lik_fits(data_dir,bad_analysis_name),
+  "Radiocarbon measurements have not specified for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas),path_to_bad_analysis_file)
+expect_error(
+  do_max_lik_fits(data_dir,bad_analysis_name),
+  "A density model has not been specified for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas,density_model=density_model),
+        path_to_bad_analysis_file)
+expect_error(
+  do_max_lik_fits(data_dir,bad_analysis_name),
+  "A calibration curve has not been specified for this analysis"
+)
+invalid_density_model <- list(type="invalid_type")
+saveRDS(list(rc_meas=rc_meas,
+             density_model=invalid_density_model,
+             calib_df=calib_df),
+        path_to_bad_analysis_file)
+expect_error(
+  do_max_lik_fits(data_dir,bad_analysis_name),
+  "Unsupported type for density_model"
+)
+
+file.remove(path_to_bad_analysis_file)
+
+expect_error(
+  do_max_lik_fits(data_dir,analysis_name,num_restarts=4,maxfeval=200),
+  NA
+)
+
+expect_error(
+  do_max_lik_fits(data_dir,analysis_name),
+  "Maximum likelihood fits have already been defined for this analysis"
+)
+
+file.remove(path_to_analysis_file)
