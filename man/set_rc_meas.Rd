@@ -37,7 +37,7 @@ The typical set of steps for an analysis is:
 (2) import_rc_data
 Import the radiocarbon measurements from file (or simulate them)
 
-(2) set_rc_meas
+(2) set_rc_meas \link{or set_sim}
 Set the radiocarbon measurements
 
 (3) calc_tau_range

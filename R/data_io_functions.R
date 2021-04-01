@@ -96,7 +96,7 @@ import_rc_data <- function(file_name,
 #' (2) import_rc_data
 #'     Import the radiocarbon measurements from file (or simulate them)
 #'
-#' (2) set_rc_meas
+#' (2) set_rc_meas [or set_sim]
 #'     Set the radiocarbon measurements
 #'
 #' (3) calc_tau_range
@@ -125,6 +125,36 @@ set_rc_meas <- function(data_dir,analysis_name,rc_meas) {
   # TODO: Consider doing error checking on rc_meas
 
   analysis <- list(rc_meas=rc_meas)
+  saveRDS(analysis,data_file)
+}
+
+
+#' Use the results of a simulation to set the radiocarbon measurements (rc_meas)
+#' for an analysis (and store the settings used to do the simulation)
+#'
+#' This is one of a set of helper functions for undertaking a typical analysis
+#' of radiocarbon dates. As the analysis proceeds, results are stored in a save
+#' file called analysis_name.rds in the folder data_dir. Where results are
+#' non-determistic, random number seeds are set and stored to ensure that, even
+#' if processing is interupted, results are fully reproducible.
+#'
+#' @param data_dir The directory in which to store analysis data
+#' @param analysis_name A unique name for a given analysis in data_dir
+#' @param sim The simulation object (see simulate_rc_data)
+#'
+#' @export
+set_sim <- function(data_dir,analysis_name,sim) {
+  data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
+
+  if (file.exists(data_file)) {
+    stop("A save file for analysis_name already exists in data_dir")
+  }
+
+  calib_df <- load_calib_curve(sim$sim_spec$calib_curve)
+
+  # rc_meas are stored twice for convenience since they are also contained in
+  # the input simulation object
+  analysis <- list(rc_meas=sim$data$rc_meas,calib_df=calib_df,sim=sim)
   saveRDS(analysis,data_file)
 }
 

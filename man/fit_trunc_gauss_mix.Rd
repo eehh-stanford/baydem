@@ -15,7 +15,8 @@ fit_trunc_gauss_mix(
   calib_df,
   num_restarts = 100,
   maxfeval = (K - 1) * 10000,
-  num_cores = NA
+  num_cores = NA,
+  input_seed = NA
 )
 }
 \arguments{

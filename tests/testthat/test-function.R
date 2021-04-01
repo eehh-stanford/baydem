@@ -4,11 +4,11 @@
 # Use multiple cores to speed up processing. Always reserve two cores that are
 # not used. Only use multiple cores if at least four can be used.
 cores_to_use <- parallel::detectCores() - 2
-if (cores_to_use < 4) {
-  cores_to_use <- NA
-} else if(cores_to_use > 10) {
-  cores_to_use <- 10
-}
+#if (cores_to_use < 4) {
+#  cores_to_use <- NA
+#} else if(cores_to_use > 10) {
+#  cores_to_use <- 10
+#}
 
 # ------------------------------------------------------------------------------
 # (1) Do functional tests for maximum likelihood fitting

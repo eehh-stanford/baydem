@@ -272,10 +272,12 @@ expect_equal(
   Inf
 )
 
-# (2c) temper_trunc_gauss_mix
-# Check that temper_trunc_gauss_mix does not throw an error (and also that the
+# (2c) fit_trunc_gauss_mix
+# Check that fit_trunc_gauss_mix does not throw an error (and also that the
 # output has the right fields). Do this for both not using and using multiple
-# cores.
+# cores. Also check the behavior and reproducibility when setting the random
+# number seed(s).
+
 expect_error(
   max_lik_fit <-
     fit_trunc_gauss_mix(
@@ -292,9 +294,98 @@ expect_error(
 
 expect_equal(
   names(max_lik_fit),
-  c("th","neg_log_lik","tau","f","bic","aic","hjkb_fit_list")
+  c("th","neg_log_lik","tau","f","bic","aic","hjkb_fit_list",
+    "input_seed","base_seed","seed_vect")
 )
 
+expect_error(
+  max_lik_fit_a <-
+    fit_trunc_gauss_mix(
+                           2,
+                           sim$data$rc_meas$phi_m,
+                           sim$data$rc_meas$sig_m,
+                           600,
+                           1300,
+                           1,
+                           calib_df,
+                           num_restarts=3,
+                           input_seed=10),
+  NA
+)
+
+expect_error(
+  max_lik_fit_b <-
+    fit_trunc_gauss_mix(
+                           2,
+                           sim$data$rc_meas$phi_m,
+                           sim$data$rc_meas$sig_m,
+                           600,
+                           1300,
+                           1,
+                           calib_df,
+                           num_restarts=3,
+                           input_seed=10),
+  NA
+)
+
+expect_equal(
+  max_lik_fit_a,
+  max_lik_fit_b
+)
+
+expect_error(
+  max_lik_fit_a <-
+    fit_trunc_gauss_mix(
+                           2,
+                           sim$data$rc_meas$phi_m,
+                           sim$data$rc_meas$sig_m,
+                           600,
+                           1300,
+                           1,
+                           calib_df,
+                           num_restarts=3,
+                           input_seed=10:13),
+  NA
+)
+
+expect_error(
+  max_lik_fit_b <-
+    fit_trunc_gauss_mix(
+                           2,
+                           sim$data$rc_meas$phi_m,
+                           sim$data$rc_meas$sig_m,
+                           600,
+                           1300,
+                           1,
+                           calib_df,
+                           num_restarts=3,
+                           input_seed=10:13),
+  NA
+)
+
+expect_equal(
+  max_lik_fit_a,
+  max_lik_fit_b
+)
+
+expect_error(
+  max_lik_fit <-
+    fit_trunc_gauss_mix(
+                        2,
+                        sim$data$rc_meas$phi_m,
+                        sim$data$rc_meas$sig_m,
+                        600,
+                        1300,
+                        1,
+                        calib_df,
+                        num_restarts=3,
+                        input_seed=10:12),
+  paste0("input_seed must be NA, a single integer, or a vector of ",
+         "integers with length 1 + num_restarts"),
+  fixed = TRUE
+)
+
+# Multiple cores
 expect_error(
   max_lik_fit <-
     fit_trunc_gauss_mix(2,
@@ -304,13 +395,107 @@ expect_error(
                         1300,
                         1,
                         calib_df,
-                        num_restarts=3),
+                        num_restarts=3,
+                        num_cores=2),
   NA
 )
 
 expect_equal(
   names(max_lik_fit),
-  c("th","neg_log_lik","tau","f","bic","aic","hjkb_fit_list")
+  c("th","neg_log_lik","tau","f","bic","aic","hjkb_fit_list",
+    "input_seed","base_seed","seed_vect")
+)
+
+expect_error(
+  max_lik_fit_a <-
+    fit_trunc_gauss_mix(
+                           2,
+                           sim$data$rc_meas$phi_m,
+                           sim$data$rc_meas$sig_m,
+                           600,
+                           1300,
+                           1,
+                           calib_df,
+                           num_restarts=3,
+                           num_cores=2,
+                           input_seed=10),
+  NA
+)
+
+expect_error(
+  max_lik_fit_b <-
+    fit_trunc_gauss_mix(
+                           2,
+                           sim$data$rc_meas$phi_m,
+                           sim$data$rc_meas$sig_m,
+                           600,
+                           1300,
+                           1,
+                           calib_df,
+                           num_restarts=3,
+                           num_cores=2,
+                           input_seed=10),
+  NA
+)
+
+expect_equal(
+  max_lik_fit_a,
+  max_lik_fit_b
+)
+
+expect_error(
+  max_lik_fit_a <-
+    fit_trunc_gauss_mix(
+                           2,
+                           sim$data$rc_meas$phi_m,
+                           sim$data$rc_meas$sig_m,
+                           600,
+                           1300,
+                           1,
+                           calib_df,
+                           num_restarts=3,
+                           num_cores=2,
+                           input_seed=10:13),
+  NA
+)
+
+expect_error(
+  max_lik_fit_b <-
+    fit_trunc_gauss_mix(
+                           2,
+                           sim$data$rc_meas$phi_m,
+                           sim$data$rc_meas$sig_m,
+                           600,
+                           1300,
+                           1,
+                           calib_df,
+                           num_restarts=3,
+                           num_cores=2,
+                           input_seed=10:13),
+  NA
+)
+
+expect_equal(
+  max_lik_fit_a,
+  max_lik_fit_b
+)
+
+expect_error(
+  max_lik_fit <-
+    fit_trunc_gauss_mix(
+                        2,
+                        sim$data$rc_meas$phi_m,
+                        sim$data$rc_meas$sig_m,
+                        600,
+                        1300,
+                        1,
+                        calib_df,
+                        num_restarts=3,
+                        num_cores=2,
+                        input_seed=10:12),
+  paste0("input_seed must be NA, a single integer, or a vector of ",
+         "integers with length 1 + num_restarts"),
+  fixed = TRUE
 )
 
 # ------------------------------------------------------------------------------
@@ -934,12 +1119,13 @@ expect_equal(
 # ------------------------------------------------------------------------------
 # (9) Do unit tests for data io (input/output) functions
 #
-# coverage: import_rc_data
-#           set_rc_meas
-#           calc_tau_range
-#           set_density_model
-#           set_calib_curve
-#           do_max_lik_fits
+# coverage: import_rc_data    (9a)
+#           set_rc_meas       (9b)
+#           set_sim           (9c)
+#           calc_tau_range    (9d)
+#           set_density_model (9e)
+#           set_calib_curve   (9f)
+#           do_max_lik_fits   (9g)
 # ------------------------------------------------------------------------------
 
 # (9a) import_rc_data
@@ -1082,7 +1268,42 @@ expect_error(
   "A save file for analysis_name already exists in data_dir"
 )
 
-# (9c) calc_tau_range
+# (9c) set_sim
+
+# Call data_dir to get the temporary directory to use in testing
+
+sim_analysis_name <- "sim"
+path_to_sim_analysis_file <-
+  file.path(data_dir,paste0(sim_analysis_name,".rds"))
+
+# If the analysis file exists, delete it
+if (file.exists(path_to_sim_analysis_file)) {
+  file.remove(path_to_sim_analysis_file)
+}
+
+expect_error(
+  set_sim(data_dir,sim_analysis_name,sim),
+  NA
+)
+
+# Make sure the file was created and the stored variable is correct
+expect_equal(
+  file.exists(path_to_sim_analysis_file),
+  T
+)
+
+expect_equal(
+  readRDS(path_to_sim_analysis_file),
+  list(rc_meas=sim$data$rc_meas,calib_df=calib_df,sim=sim)
+)
+
+# Make sure that we cannot set a simulation for an analysis that already exists
+expect_error(
+  set_sim(data_dir,sim_analysis_name,sim),
+  "A save file for analysis_name already exists in data_dir"
+)
+
+# (9d) calc_tau_range
 
 # The tau range should be the same across test runs since all relative number
 # seeds are set above
@@ -1138,7 +1359,7 @@ expect_equal(
   tau_range,
   list(tau_min=602,tau_max=1267)
 )
-# (9d) set_density_model
+# (9e) set_density_model
 
 # First check the error messages. The order they are checked is not the same
 # order they would be encountered in reading through the source code.
@@ -1219,7 +1440,7 @@ expect_error(
   "A density model has already been defined for this analysis"
 )
 
-# (9e) set_calib_curve
+# (9f) set_calib_curve
 expect_error(
   set_calib_curve(data_dir,bad_analysis_name),
   "A save file for analysis_name does not exist in data_dir"
@@ -1264,7 +1485,7 @@ expect_equal(
   calib_df
 )
 
-# (9f) do_max_lik_fits
+# (9g) do_max_lik_fits
 expect_error(
   do_max_lik_fits(data_dir,bad_analysis_name),
   "A save file for analysis_name does not exist in data_dir"

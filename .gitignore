@@ -19,3 +19,5 @@ R/.DS_Store
 *.swo
 
 .idea
+
+tests/testthat/Rplots.pdf

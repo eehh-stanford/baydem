@@ -21,6 +21,8 @@ Depends:
     R (>= 3.1.0)
 Imports:
     base,
+    Bchron,
+    dfoptim,
     distr,
     dplyr,
     evd,

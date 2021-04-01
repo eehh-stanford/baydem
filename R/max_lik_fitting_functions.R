@@ -62,7 +62,8 @@ fit_trunc_gauss_mix <- function(K,
                                 calib_df,
                                 num_restarts=100,
                                 maxfeval=(K-1)*10000,
-                                num_cores=NA) {
+                                num_cores=NA,
+                                input_seed=NA) {
 
   # Create the sampling grid, tau
   tau <- seq(tau_min,tau_max,dtau)
@@ -70,12 +71,43 @@ fit_trunc_gauss_mix <- function(K,
   # Calculate the measurement matrix, M
   M <- calc_meas_matrix(tau, phi_m, sig_m, calib_df)
 
+  # A total of 1 + num_restarts seeds are need to ensure reproducibility with
+  # the parallel procesing: One seed is needed to randomly draw the restart
+  # parameter vector and a seed is needed for the hjkb optimization for each
+  # restart. Therefore, the input_seed should be one of three things:
+  #
+  # (1) NA              No input seed set. A base seed is randomly chosen and
+  #                     flow proceeds as with option (2)
+  # (2) Single integer  A single integer is provided as the seed. Use this to
+  #                     set the random number seed generator and sample a vector
+  #                     of 1 + num_restarts integers; flow then proceeds as with
+  #                     option (3).
+  # (3) Vector of       A vector of integers of length 1 + num_restarts is
+  #     integers        provided. Use these directly.
+
+  if (length(input_seed) == 1) {
+    if (is.na(input_seed)) {
+      base_seed <- sample.int(1000000,1)
+    } else {
+      base_seed <- input_seed
+    }
+    set.seed(base_seed)
+    seed_vect <- sample.int(1000000,1+num_restarts)
+  } else if(length(input_seed) == 1 + num_restarts) {
+    base_seed <- NA
+    seed_vect <- input_seed
+  } else {
+    stop(paste0("input_seed must be NA, a single integer, or a vector of ",
+                "integers with length 1 + num_restarts"))
+  }
+
   # Iterate over restarts. To generate the starting vectors, assume the
   # following:
   # (1) pi, the mixture proportions, are drawn from a Dirichlet distribution.
   # (2) mu, the means, are restricted to the interval tau_min to tau_max.
   # (3) s, the standard deviations, are restricted to the interval 10*dtau to
   #     tau_max-tau_min
+  set.seed(seed_vect[1])
   TH0_reduced <- matrix(NA,3*K-1,num_restarts)
   for(m in 1:num_restarts) {
     th0 <- c(MCMCpack::rdirichlet(1,rep(1,K)),
@@ -119,6 +151,7 @@ fit_trunc_gauss_mix <- function(K,
     # A list in which to store the fits for the restarts
     hjkb_fit_list <- list()
     for(m in 1:num_restarts) {
+      set.seed(seed_vect[1 + m])
       hjkb_fit_list[[m]] <- dfoptim::hjkb(TH0_reduced[,m],
                                           neg_log_lik_rewrap,
                                           M=M,
@@ -132,6 +165,7 @@ fit_trunc_gauss_mix <- function(K,
    doParallel::registerDoParallel(num_cores)
     hjkb_fit_list <-
       foreach(m=1:num_restarts,.packages=c('baydem')) %dopar% {
+        set.seed(seed_vect[1 + m])
         dfoptim::hjkb(TH0_reduced[,m],
                       neg_log_lik_rewrap,
                       M=M,
@@ -141,6 +175,7 @@ fit_trunc_gauss_mix <- function(K,
                       control=control_list)
       }
   }
+  doParallel::stopImplicitCluster()
 
   # Identify the best solution across restarts and get the corresponding best
   # parameter vector and negative log-likelihood value.
@@ -168,7 +203,8 @@ fit_trunc_gauss_mix <- function(K,
   # bic         The Bayesian information criterion
   # aic         The Akaike information criterion
   return(list(th=th_best,neg_log_lik=neg_log_lik_best,tau=tau,f=f,
-              bic=bic,aic=aic,hjkb_fit_list=hjkb_fit_list))
+              bic=bic,aic=aic,hjkb_fit_list=hjkb_fit_list,
+              input_seed=input_seed,base_seed=base_seed,seed_vect=seed_vect))
 }
 
 #' Calculate the negative log-likelihood of a truncuated Gaussian mixture fit
