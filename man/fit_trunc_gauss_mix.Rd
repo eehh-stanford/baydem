@@ -41,12 +41,21 @@ fit_trunc_gauss_mix(
 
 \item{num_cores}{The number of cores to use for parallelization (default: NA,
 do not parallelize)}
+
+\item{input_seed}{Either a single integer or a vector of integers of length
+1 + num_restarts that is used to ensure reproducilibity (default: NA, a
+the base seed will be generated and saved).}
 }
 \value{
 A list containing the best fit parameter vector (th), the
 corresponding value of the negative log-likelihood (neg_log_lik), tau (the
-sampling grid), and f (the density of the best fit paramater vector
-evaluated at the points in the sampling grid)
+sampling grid), f (the density of the best fit paramater vector evaluated
+at the points in the sampling grid), bic (the Bayesian information
+Criterion value), aic (the Akaike information criterion), hjkb_fit_list (
+a list containing the fits for each restart), input_seed (the value of
+input parameter input_seed), base_seed (the value of the base_seed, which
+is NA if input_seed is a vector), and seed_vect (the vector of integers
+of length 1 + num_restarts; see the function Description).
 }
 \description{
 The radiocarbon data are specified by phi_m, the vector of fraction modern
@@ -79,4 +88,19 @@ The bounded Hooke-Jeeves algorithm in the dfoptim R package (dfoptim::hjkb)
 is used to do the optimization. The Hooke-Jeeves algorithm is perhaps the
 best known varient of derivative free pattern-searches. Using multiple
 restarts helps identify the global optimum (rather than a local optimum).
+
+To ensure reproducibility, the input_seed can be specified in one of two
+ways. (1) input_seed is a single integer; if so, set the base_seed equal to
+equal to input_seed (see below for how base_seed is used). (2) A vector of
+integers of length 1 + num_restarts is specified; no base seed is needed if a
+vector is provided. If no input_seed is provided (input_seed = NA), the base
+seed is randomly generated and stored. (1) If a base_seed is used, the
+command set.seed(base_seed) is run, then a vector of integers is drawn to
+populate seed_vect. (2) If a vector is given for input_seed, seed_vect is set
+equal to it. The first entry in seed_vect is used with set.seed() prior to
+drawing the starting parameter vectors for the restarts. The subsequent
+entries are used with set.seed() prior to calling the bounded Hooke-Jeeves
+optimization algorithm for each restart. These additional seeds are necessary
+to ensure reproducibility is achieved when multiple cores are used to do the
+optimizations in a parallel for loop.
 }

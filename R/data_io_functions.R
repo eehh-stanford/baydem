@@ -325,16 +325,24 @@ set_calib_curve <- function(data_dir,analysis_name,calibration_curve) {
 #' of radiocarbon dates. For details on the overall framework for these helper
 #' function, see set_rc_meas.
 #'
+#'
+#' To ensure reproducibility, the input_seed can be provided. The behavior and
+#' expectations are identical to the same parameter used in fit_trunc_gauss_mix,
+#' except that if a vector is specified it should be the same length as the
+#' vector K in analysis$density_model$K. That is, input_seed should be either
+#' (1) a single integer or (2) a vector of length analysis$density_model$K.
+#'
 #' @param data_dir The directory in which to store analysis data
 #' @param analysis_name A unique name for a given analysis in data_dir
 #' @param dtau The spacing in years to use for the sampling grid
+#' @param input_seed An integer seed that will be used to set the seed for calls
+#'   to the maximum likelihood fits.
 #' @param ... Additional arguments to pass to the optimization function (see
 #'  fit_trunc_gauss_mix)
 #'
 #' @export
 
-# TODO: set_calibration_curve
-do_max_lik_fits <- function(data_dir,analysis_name,dtau=5,...) {
+do_max_lik_fits <- function(data_dir,analysis_name,dtau=5,input_seed=NA,...) {
   data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
 
   if (!file.exists(data_file)) {
@@ -359,10 +367,27 @@ do_max_lik_fits <- function(data_dir,analysis_name,dtau=5,...) {
     stop("Maximum likelihood fits have already been defined for this analysis")
   }
 
+  if (length(input_seed) == 1) {
+    if (is.na(input_seed)) {
+      base_seed <- sample.int(1000000,1)
+    } else {
+      base_seed <- input_seed
+    }
+    set.seed(base_seed)
+    seed_vect <- sample.int(1000000,length(analysis$density_model$K))
+  } else if(length(input_seed) == 1 + length(analysis$density_model$K)) {
+    base_seed <- NA
+    seed_vect <- input_seed
+  } else {
+    stop(paste0("input_seed must be NA, a single integer, or a vector of ",
+                "integers with length analysis$density_model$K"))
+  }
+
   if (analysis$density_model$type == "trunc_gauss_mix") {
 
     max_lik_fits <- list()
     for(m_K in 1:length(analysis$density_model$K)) {
+      set.seed(seed_vect[m_K])
       max_lik_fits[[m_K]] <- fit_trunc_gauss_mix(analysis$density_model$K[m_K],
                                                  analysis$rc_meas$phi_m,
                                                  analysis$rc_meas$sig_m,
@@ -373,6 +398,9 @@ do_max_lik_fits <- function(data_dir,analysis_name,dtau=5,...) {
                                                  ...)
     }
     analysis$max_lik_fits <- max_lik_fits
+    analysis$max_lik_fits_seeds <- list(input_seed=input_seed,
+                                        base_seed=base_seed,
+                                        seed_vect=seed_vect)
     saveRDS(analysis,data_file)
   } else {
     stop("Unsupported type for density_model")

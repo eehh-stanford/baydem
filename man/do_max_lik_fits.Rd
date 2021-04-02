@@ -5,7 +5,7 @@
 \title{Do maximum likelihood fits given a set of radiocarbon measurements (rc_meas)
 and a specification of the density model (density_model)}
 \usage{
-do_max_lik_fits(data_dir, analysis_name, dtau = 5, ...)
+do_max_lik_fits(data_dir, analysis_name, dtau = 5, input_seed = NA, ...)
 }
 \arguments{
 \item{data_dir}{The directory in which to store analysis data}
@@ -14,6 +14,9 @@ do_max_lik_fits(data_dir, analysis_name, dtau = 5, ...)
 
 \item{dtau}{The spacing in years to use for the sampling grid}
 
+\item{input_seed}{An integer seed that will be used to set the seed for calls
+to the maximum likelihood fits.}
+
 \item{...}{Additional arguments to pass to the optimization function (see
 fit_trunc_gauss_mix)}
 }
@@ -21,4 +24,11 @@ fit_trunc_gauss_mix)}
 This is one of a set of helper functions for undertaking a typical analysis
 of radiocarbon dates. For details on the overall framework for these helper
 function, see set_rc_meas.
+}
+\details{
+To ensure reproducibility, the input_seed can be provided. The behavior and
+expectations are identical to the same parameter used in fit_trunc_gauss_mix,
+except that if a vector is specified it should be the same length as the
+vector K in analysis$density_model$K. That is, input_seed should be either
+(1) a single integer or (2) a vector of length analysis$density_model$K.
 }

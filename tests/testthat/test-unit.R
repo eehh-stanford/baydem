@@ -1534,4 +1534,49 @@ expect_error(
   "Maximum likelihood fits have already been defined for this analysis"
 )
 
+# Check reproducbility with and without multiple cores
+analysis0 <- readRDS(path_to_analysis_file)
+input_seed <- analysis0$max_lik_fits_seeds$base_seed
+analysis <- analysis0
+# Undo the maximum likelihood fitting
+analysis$max_lik_fits       <- NULL
+analysis$max_lik_fits_seeds <- NULL
+saveRDS(analysis,path_to_analysis_file)
+
+expect_error(
+  do_max_lik_fits(data_dir,analysis_name,num_restarts=4,maxfeval=200,
+                  input_seed=input_seed),
+  NA
+)
+
+# analysis0 and new_analysis should be identical except that
+# analysis0$max_lik_fits_seeds$input_seed is NA. Check that it is indeed NA,
+# set it to base_seed, and make sure that the resulting lists are identical.
+expect_equal(
+  is.na(analysis0$max_lik_fits_seeds$input_seed),
+  TRUE
+)
+
+analysis0_modified <- analysis0
+analysis0_modified$max_lik_fits_seeds$input_seed <- input_seed
+expect_equal(
+  readRDS(path_to_analysis_file),
+  analysis0_modified
+)
+
+# Rewrite the file without the maximum likelihood fits, then check the
+# reproducibility when using multiple cores.
+saveRDS(analysis,path_to_analysis_file)
+
+expect_error(
+  do_max_lik_fits(data_dir,analysis_name,num_restarts=4,maxfeval=200,
+                  input_seed=input_seed,num_cores=2),
+  NA
+)
+
+expect_equal(
+  readRDS(path_to_analysis_file),
+  analysis0_modified
+)
+
 file.remove(path_to_analysis_file)
