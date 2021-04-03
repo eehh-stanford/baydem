@@ -5,16 +5,24 @@
 \title{For each sample, calculate the time it takes for the density to
 decrease by half from the peak}
 \usage{
-calc_half_life_from_peak(soln, prop_change = 0.5, anal = NA, peak_range = NA)
+calc_half_life_from_peak(
+  bayesian_soln,
+  density_model,
+  rc_meas = list(),
+  calib_df = list(),
+  prop_change = 0.5,
+  bayesian_summary = NA,
+  peak_range = NA
+)
 }
 \arguments{
-\item{soln}{The result of a call to do_inference}
+\item{bayesian_soln}{The result of a call to do_bayesian_inference}
 
 \item{prop_change}{(Default 0.5) The relative decrease in density to use for
 the duration calculation}
 
-\item{anal}{(Optional) The result of a call to analyze_soln. If not provided,
-it is calculated}
+\item{bayesian_summary}{(Optional) The result of a call to summarize_bayesian_inference.
+If not provided, it is calculated}
 
 \item{peak_range}{(default: \code{c(tau_min, tau_max)}) peak_range can be given so
 that the peak density used is on the range peak_range}

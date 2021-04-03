@@ -501,58 +501,52 @@ expect_error(
 # ------------------------------------------------------------------------------
 # (3) Do unit tests for functions related to the Bayesian inference
 #
-# coverage: do_inference
-#           analyze_soln
+# coverage: do_bayesian_inference
+#           summarize_bayesian_inference
 # ------------------------------------------------------------------------------
 
-# hyperparameters for inference
+
+# (3a) do_bayesian_inference
+# Define the density model
+density_model <- list(type="trunc_gauss_mix",
+                      tau_min=600,
+                      tau_max=1300,
+                      K=2)
+
+# Define the hyperparameters
 hp <-
   list(
-    # Class of fit (Gaussian mixture)
-    fit_type = "gauss_mix",
     # Parameter for the dirichlet draw of the mixture probabilities
     alpha_d = 1,
     # The gamma distribution shape parameter for sigma
     alpha_s = 3,
     # The gamma distribution rate parameter for sigma, yielding a mode of 300
     alpha_r = (3 - 1) / 300,
-    # Minimum calendar date (years BC/AD)
-    tau_min = tau_min,
-    # Maximum calendar date (years BC/AD)
-    tau_max = tau_max,
     # Spacing for the measurement matrix (years)
-    dtau = 5,
-    # Number of mixtures
-    K = 2
+    dtau = 5
   )
 
-# Define a problem object to be input for the inference
-prob <- list(
-  phi_m = sim$data$rc_meas$phi_m,
-  sig_m = sim$data$rc_meas$sig_m,
-  hp = hp,
-  calib_df = calib_df,
-  control = list(
-    samps_per_chain = 2000,
-    warmup = 1000,
-    stan_control = list(adapt_delta = .99)
-  )
+input_control <- list(samps_per_chain=2000,warmup=1000,
+                      stan_control=list(adapt_delta=.99))
+expect_error(
+  soln <- do_bayesian_inference(
+    sim$data$rc_meas,
+    density_model,
+    hp,
+    calib_df,
+    control=input_control
+  ),
+  NA
 )
 
-# (3a) do_inference
-expect_error(
-  soln <- do_inference(prob),
-  NA
+expect_is(
+  soln,
+  "bd_bayesian_soln"
 )
 
 expect_equal(
   names(soln),
-  c("prob","fit","control")
-)
-
-expect_equal(
-  soln$prob,
-  prob
+  c("fit","control","init_seed","stan_seed","optional_inputs")
 )
 
 expect_is(
@@ -562,19 +556,37 @@ expect_is(
 
 expect_equal(
   names(soln$control),
-  c("num_chains","samps_per_chain","warmup","stan_control","init_list")
-)
-
-# (3b) analyze_soln
-expect_error(
-  anal <- analyze_soln(soln),
-  NA
+  c("num_chains","samps_per_chain","warmup","stan_control")
 )
 
 expect_equal(
-  names(anal),
+  soln$optional_inputs,
+  list(th0=NA,init_seed=NA,stan_seed=NA,control=input_control)
+)
+
+# (3b) summarize_bayesian_inference
+expect_error(
+  summary <- summarize_bayesian_inference(soln,
+                                          rc_meas,
+                                          density_model,
+                                          calib_df),
+  NA
+)
+
+expect_is(
+  summary,
+  "bd_bayesian_summary"
+)
+
+expect_equal(
+  names(summary),
   c("tau","f_spdf","Qdens","Qrate","probs",
-    "rate_prop","rate_ind","growth_state","dtau","summ_list")
+    "rate_prop","rate_ind","growth_state","summ_list")
+)
+
+expect_equal(
+  dim(summary$Qdens),
+  c(3,length(seq(density_model$tau_min,density_model$tau_max,by=5)))
 )
 
 # ------------------------------------------------------------------------------
@@ -589,41 +601,41 @@ expect_equal(
 
 # (4a) make_blank_density_plot
 expect_error(
-  make_blank_density_plot(anal),
+  make_blank_density_plot(summary),
   NA
 )
 
 # (4b) plot_50_percent_quantile
 expect_error(
-  plot_50_percent_quantile(anal, add = T),
+  plot_50_percent_quantile(summary, add = T),
   NA
 )
 
 # (4c) add_shaded_quantiles
 expect_error(
-  add_shaded_quantiles(anal),
+  add_shaded_quantiles(summary),
   NA
 )
 
 # (4d) plot_known_sim_density
 #      plot_summed_density
 expect_error(
-  plot_known_sim_density(anal, add=T),
+  plot_known_sim_density(summary, add=T),
   NA
 )
 
 expect_error(
-  plot_summed_density(anal, add=T),
+  plot_summed_density(summary, add=T),
   NA
 )
 
 expect_error(
-  plot_known_sim_density(anal),
+  plot_known_sim_density(summary),
   NA
 )
 
 expect_error(
-  plot_summed_density(anal),
+  plot_summed_density(summary),
   NA
 )
 
@@ -662,7 +674,7 @@ expect_equal(
 )
 
 # (5b) calc_gauss_mix_pdf
-tau <- seq(hp$tau_min,hp$tau_max,by=hp$dtau)
+tau <- seq(density_model$tau_min,density_model$tau_max,by=hp$dtau)
 
 # density is the default type
 expect_error(
@@ -812,7 +824,10 @@ expect_equal(
 
 # (5e) calc_half_life_from_peak
 expect_error(
-  half_life1 <- calc_half_life_from_peak(soln),
+  half_life1 <- calc_half_life_from_peak(soln,
+                                         density_model,
+                                         rc_meas=rc_meas,
+                                         calib_df=calib_df),
   NA
 )
 
@@ -827,7 +842,11 @@ expect_equal(
 )
 
 expect_error(
-  half_life2 <- calc_half_life_from_peak(soln, prop_change = .25),
+  half_life2 <- calc_half_life_from_peak(soln,
+                                         density_model,
+                                         rc_meas=rc_meas,
+                                         calib_df=calib_df,
+                                         prop_chang=.25),
   NA
 )
 
@@ -855,7 +874,12 @@ expect_equal(
 # functions (which are only checked indirectly).
 
 expect_error(
-  rel_dens1 <- calc_relative_density(soln, "peak", 1100),
+  rel_dens1 <- calc_relative_density(soln,
+                                     density_model,
+                                     "peak",
+                                     1100,
+                                     rc_meas=rc_meas,
+                                     calib_df=calib_df),
   NA
 )
 
@@ -870,7 +894,12 @@ expect_equal(
 )
 
 expect_error(
-  rel_dens2 <- calc_relative_density(soln, 900, c(700, 750)),
+  rel_dens2 <- calc_relative_density(soln,
+                                     density_model,
+                                     900,
+                                     c(700, 750),
+                                     rc_meas=rc_meas,
+                                     calib_df=calib_df),
   NA
 )
 
@@ -886,7 +915,9 @@ expect_equal(
 
 # (5g) summarize_trunc_gauss_mix_sample
 expect_error(
-  summ <- summarize_trunc_gauss_mix_sample(TH[50, ], hp$tau_min, hp$tau_max),
+  summ <- summarize_trunc_gauss_mix_sample(TH[50, ],
+                                           density_model$tau_min,
+                                           density_model$tau_max),
   NA
 )
 
@@ -911,14 +942,17 @@ expect_equal(
 #        tau regularly spaced
 #        with calibration uncertainty
 expect_error(
-  M6a <- calc_meas_matrix(tau, prob$phi_m, prob$sig_m,
-                          calib_df, add_calib_unc=T),
+  M6a <- calc_meas_matrix(tau,
+                          rc_meas$phi_m,
+                          rc_meas$sig_m,
+                          calib_df,
+                          add_calib_unc=T),
   NA
 )
 
 expect_equal(
   dim(M6a),
-  c(length(prob$phi_m), length(tau)),
+  c(length(rc_meas$phi_m), length(tau)),
 )
 
 expect_equal(
@@ -930,14 +964,17 @@ expect_equal(
 #        tau regularly spaced
 #        without calibration uncertainty
 expect_error(
-  M6b <- calc_meas_matrix(tau, prob$phi_m, prob$sig_m,
-                          calib_df, add_calib_unc=F),
+  M6b <- calc_meas_matrix(tau,
+                          rc_meas$phi_m,
+                          rc_meas$sig_m,
+                          calib_df,
+                          add_calib_unc=F),
   NA
 )
 
 expect_equal(
   dim(M6b),
-  c(length(prob$phi_m), length(tau)),
+  c(length(rc_meas$phi_m), length(tau)),
 )
 
 expect_equal(
@@ -952,16 +989,19 @@ tau_irreg <- c(800, 805, 810, 825)
 
 # an error is expected if useTrapez is not set to TRUE
 expect_error(
-  calc_meas_matrix(tau_irreg, prob$phi_m, prob$sig_m,
-                   calib_df, add_calib_unc=T),
+  calc_meas_matrix(tau_irreg,
+                   rc_meas$phi_m,
+                   rc_meas$sig_m,
+                   calib_df,
+                   add_calib_unc=T),
   "tau is irregularly spaced but useTrapez is FALSE"
 )
 
 expect_error(
   M6c <- calc_meas_matrix(
     tau_irreg,
-    prob$phi_m,
-    prob$sig_m,
+    rc_meas$phi_m,
+    rc_meas$sig_m,
     calib_df,
     add_calib_unc=T,
     use_trapez=T),
@@ -970,7 +1010,7 @@ expect_error(
 
 expect_equal(
   dim(M6c),
-  c(length(prob$phi_m), length(tau_irreg)),
+  c(length(rc_meas$phi_m),length(tau_irreg)),
 )
 
 expect_equal(
@@ -984,16 +1024,19 @@ expect_equal(
 
 # an error is expected if useTrapez is not set to TRUE
 expect_error(
-  calc_meas_matrix(tau_irreg, prob$phi_m, prob$sig_m,
-                   calib_df, add_calib_unc=F),
+  calc_meas_matrix(tau_irreg,
+                   rc_meas$phi_m,
+                   rc_meas$sig_m,
+                   calib_df,
+                   add_calib_unc=F),
   "tau is irregularly spaced but useTrapez is FALSE"
 )
 
 expect_error(
   M6d <- calc_meas_matrix(
     tau_irreg,
-    prob$phi_m,
-    prob$sig_m,
+    rc_meas$phi_m,
+    rc_meas$sig_m,
     calib_df,
     add_calib_unc=F,
     use_trapez=T),
@@ -1002,7 +1045,7 @@ expect_error(
 
 expect_equal(
   dim(M6d),
-  c(length(prob$phi_m), length(tau_irreg)),
+  c(length(rc_meas$phi_m),length(tau_irreg)),
 )
 
 expect_equal(

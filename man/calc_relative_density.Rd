@@ -5,20 +5,29 @@
 \title{Calculate the relative density at two dates (or a range of dates / the
 peak)}
 \usage{
-calc_relative_density(soln, spec1, spec2, ind = NA, anal = NA)
+calc_relative_density(
+  bayesian_soln,
+  density_model,
+  spec1,
+  spec2,
+  rc_meas = list(),
+  calib_df = list(),
+  ind = NA,
+  bayesian_summary = NA
+)
 }
 \arguments{
-\item{soln}{The result of a call to do_inference}
+\item{bayesian_soln}{The result of a call to do_bayesian_inference}
 
 \item{spec1}{The specification for the first density (see details)}
 
 \item{spec2}{The specification for the second density (see details)}
 
 \item{ind}{(Optional) Indices at which to do the calculation. By default,
-all the samples in anal are used.}
+all the samples in bayesian_summary are used.}
 
-\item{anal}{(Optional) The result of a call to analyze_soln. This is only
-needed if either spec1 or spec2 is 'peak'}
+\item{bayesian_summary}{(Optional) The result of a call to summarize_bayesian_inference.
+This is only needed if either spec1 or spec2 is 'peak'}
 }
 \value{
 A vector of relative densities (f_spec1 / f_spec2)
@@ -35,10 +44,10 @@ density on an interval. For a simple date, spec1/spec2 should be scalar
 real numbers. For a date range, spec1/spec2 should be real vectors with a
 length of 2. For the peak, spec1/spec2 should be the string 'peak'.
 
-By default, this calculation is done for all the Bayesian samples in soln,
-which is the result of a call to do_inference. Optionally, a subset can be
-specified via the input ind, which should be a vector of integer indices at
-which to do the calculation. To save computation if either spec1 or spec2 is
-'peak', the result of a call to analyze_soln for which do_summary was TRUE
-can be input.
+By default, this calculation is done for all the Bayesian samples in bayesian_soln,
+which is the result of a call to do_bayesian_inference. Optionally, a subset
+can be specified via the input ind, which should be a vector of integer
+indices at which to do the calculation. To save computation if either spec1
+or spec2 is 'peak', the result of a call to summarize_bayesian_inference for
+which do_summary was TRUE can be input.
 }
