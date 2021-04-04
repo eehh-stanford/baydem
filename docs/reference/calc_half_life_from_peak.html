@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>The raw data for constructing the Marine13 calibration curve — marine13_raw • baydem</title>
+<title>For each sample, calculate the time it takes for the density to decrease by
+half from the peak (or by another use-provided ratio) — calc_half_life_from_peak • baydem</title>
 
 
 <!-- jquery -->
@@ -39,9 +40,10 @@
 
 
 
-<meta property="og:title" content="The raw data for constructing the Marine13 calibration curve — marine13_raw" />
-<meta property="og:description" content="A base::list of tibble::tibble objects containing the data for calculating the
-Marine13 marine radiocarbon calibration curve." />
+<meta property="og:title" content="For each sample, calculate the time it takes for the density to decrease by
+half from the peak (or by another use-provided ratio) — calc_half_life_from_peak" />
+<meta property="og:description" content="For each sample, calculate the time it takes for the density to decrease by
+half from the peak (or by another use-provided ratio)" />
 
 
 
@@ -109,38 +111,89 @@ Marine13 marine radiocarbon calibration curve." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>The raw data for constructing the Marine13 calibration curve</h1>
-    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/bd_data.R'><code>R/bd_data.R</code></a></small>
-    <div class="hidden name"><code>marine13_raw.Rd</code></div>
+    <h1>For each sample, calculate the time it takes for the density to decrease by
+half from the peak (or by another use-provided ratio)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/bayesian_inference_functions.R'><code>R/bayesian_inference_functions.R</code></a></small>
+    <div class="hidden name"><code>calc_half_life_from_peak.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A <code><a href='https://rdrr.io/r/base/list.html'>base::list</a></code> of <code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble::tibble</a></code> objects containing the data for calculating the
-Marine13 marine radiocarbon calibration curve.</p>
+    <p>For each sample, calculate the time it takes for the density to decrease by
+half from the peak (or by another use-provided ratio)</p>
     </div>
 
-    <pre class="usage"><span class='va'>marine13_raw</span></pre>
+    <pre class="usage"><span class='fu'>calc_half_life_from_peak</span><span class='op'>(</span>
+  <span class='va'>bayesian_soln</span>,
+  <span class='va'>density_model</span>,
+  rc_meas <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  calib_df <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  prop_change <span class='op'>=</span> <span class='fl'>0.5</span>,
+  bayesian_summary <span class='op'>=</span> <span class='cn'>NA</span>,
+  peak_range <span class='op'>=</span> <span class='cn'>NA</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>bayesian_soln</th>
+      <td><p>The solution, a list-like object of class
+bd_bayesian_soln (see do_bayesian_inference).</p></td>
+    </tr>
+    <tr>
+      <th>density_model</th>
+      <td><p>The density model (see set_density_model).</p></td>
+    </tr>
+    <tr>
+      <th>rc_meas</th>
+      <td><p>The radiocarbon measurements (see import_rc_data; optional:
+if not provided, bayesian_summary must be provided).</p></td>
+    </tr>
+    <tr>
+      <th>calib_df</th>
+      <td><p>The calibration data frame (see load_calib_curve; optional:
+if not provided, bayesian_summary must be provided).</p></td>
+    </tr>
+    <tr>
+      <th>prop_change</th>
+      <td><p>The relative decrease in density to use for the duration
+calculation (default: 0.5).</p></td>
+    </tr>
+    <tr>
+      <th>bayesian_summary</th>
+      <td><p>The result of a call to summarize_bayesian_inference.
+(optional; if not provided, it is calculated, which requires that rc_meas
+and calib_df be provided).</p></td>
+    </tr>
+    <tr>
+      <th>peak_range</th>
+      <td><p>A range over which to search for the peak of the density
+function (default: NA, which means that tau_min to tau_max is used for the
+range).</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code>list</code> of length 5.</p>
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
-
-    <p>http://intcal.qub.ac.uk/marine/query/query.php</p>
+    <p>A vector of "half-lives" (proportional change set by prop_change)</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>These data are as available from the IntCal webservice
-hosted at Queen's University, Belfast. Details on the structure of the data can be found at
-<a href='http://intcal.qub.ac.uk/marine/query/'>http://intcal.qub.ac.uk/marine/query/</a>.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+    <p>For each sample, calculate the time it takes for the density to decrease by
+half from the peak. Optionally, a different proportion can be used than the
+default prop_change = 0.5. For example, with prop_change = 0.1 the time it
+takes for the density to decrease by 10% is used. If the relative density is
+not reached, the half life for the sample is set to NA. If there is no
+interior peak in the range peak_range, which is tau_min to tau_max by
+default, the half life is set to NA.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p>Reimer PJ, Bard E, Bayliss A, Beck JW, Blackwell PG, Bronk Ramsey C, Buck CE,
-Cheng H, Edwards RL, Friedrich M, Grootes PM, Guilderson TP, Haflidason H,
-Hajdas I, Hatté C, Heaton TJ, Hogg AG, Hughen KA, Kaiser KF, Kromer B,
-Manning SW, Niu M, Reimer RW, Richards DA, Scott EM, Southon JR, Turney CSM,
-van der Plicht J. IntCal13 and MARINE13 radiocarbon age calibration curves 0-50000 years calBP.
-<em>Radiocarbon</em> 55(4). DOI: <a href='https://doi.org/10.2458/azu_js_rc.55.16947'>10.2458/azu_js_rc.55.16947</a></p>
+    <div class='dont-index'>
+<ul>
+<li><p><code><a href='import_rc_data.html'>import_rc_data()</a></code> for the format of <code>rc_meas</code></p></li>
+<li><p><code><a href='set_density_model.html'>set_density_model()</a></code> for the format of <code>density_model</code></p></li>
+<li><p><code><a href='load_calib_curve.html'>load_calib_curve()</a></code> for the format of <code>calib_df</code></p></li>
+</ul>
+</div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

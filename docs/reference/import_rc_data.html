@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MIT License • baydem</title>
+<title>Import radiocarbon data from a .csv file — import_rc_data • baydem</title>
 
 
 <!-- jquery -->
@@ -18,8 +18,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
-<link rel="stylesheet" href="bootstrap-toc.css">
-<script src="bootstrap-toc.js"></script>
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
@@ -33,13 +33,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
-<link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script>
+<link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script>
 
 
 
 
-<meta property="og:title" content="MIT License" />
+<meta property="og:title" content="Import radiocarbon data from a .csv file — import_rc_data" />
+<meta property="og:description" content="Use read.csv to load the file specified by the input file_name (file_name can
+also be the full path to the file). The inputs phi_m_col, sig_m_col,
+trc_m_col, and sig_trc_m_col specify which columns contain the radiocarbon
+data. All are optional, but only three patterns of inputs are valid:
+(1) If none of the column specifiers are given, it is assumed that the first
+column in the .csv file contains trc_m and the second column contains
+sig_trc_m.
+(2) If trc_m_col and sig_trc_m_col are given, phi_m_col and sig_m_col
+must not be given.
+(3) If phi_m_col and sig_m_col are given, trc_m_col and sig_trc_m_col must
+not be given." />
 
 
 
@@ -58,7 +69,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-title-body">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -70,7 +81,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">baydem</a>
+        <a class="navbar-link" href="../index.html">baydem</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
@@ -78,13 +89,13 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">
+  <a href="../index.html">
     <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
-  <a href="reference/index.html">Reference</a>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -105,29 +116,80 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>MIT License</h1>
+    <h1>Import radiocarbon data from a .csv file</h1>
+    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/data_io_functions.R'><code>R/data_io_functions.R</code></a></small>
+    <div class="hidden name"><code>import_rc_data.Rd</code></div>
     </div>
 
-<div id="mit-license" class="section level1">
+    <div class="ref-description">
+    <p>Use read.csv to load the file specified by the input file_name (file_name can
+also be the full path to the file). The inputs phi_m_col, sig_m_col,
+trc_m_col, and sig_trc_m_col specify which columns contain the radiocarbon
+data. All are optional, but only three patterns of inputs are valid:</p>
+<p>(1) If none of the column specifiers are given, it is assumed that the first
+column in the .csv file contains trc_m and the second column contains
+sig_trc_m.
+(2) If trc_m_col and sig_trc_m_col are given, phi_m_col and sig_m_col
+must not be given.
+(3) If phi_m_col and sig_m_col are given, trc_m_col and sig_trc_m_col must
+not be given.</p>
+    </div>
 
-<p>Copyright (c) 2020 Michael Holton Price</p>
-<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
-<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
-<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
-</div>
+    <pre class="usage"><span class='fu'>import_rc_data</span><span class='op'>(</span>
+  <span class='va'>file_name</span>,
+  trc_m_col <span class='op'>=</span> <span class='cn'>NA</span>,
+  sig_trc_m_col <span class='op'>=</span> <span class='cn'>NA</span>,
+  phi_m_col <span class='op'>=</span> <span class='cn'>NA</span>,
+  sig_m_col <span class='op'>=</span> <span class='cn'>NA</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>file_name</th>
+      <td><p>The file name of the input .csv file (or full path to the
+file if not located in the current directory)</p></td>
+    </tr>
+    <tr>
+      <th>trc_m_col</th>
+      <td><p>The column containing the radiocarbon years values
+(optional, but see details).</p></td>
+    </tr>
+    <tr>
+      <th>phi_m_col</th>
+      <td><p>The column containing the fraction modern values (optional,
+but see details).</p></td>
+    </tr>
+    <tr>
+      <th>sig_m_col</th>
+      <td><p>The column containing the error for the radiocarbon year
+values (optional, but see details)</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional arguments to pass to read.csv (e.g., skip=2 would skip
+the first two lines when reading the .csv file)</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A list with four named entries, each a vector equal to the number of
+samples: phi_m, the fraction modern values; sig_m, the error for phi_m;
+trc_m, a vector of uncalibrated radiocarbon years; and sig_trc_m, the error
+for trc_m.</p>
 
   </div>
-
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
-
 
 
       <footer>

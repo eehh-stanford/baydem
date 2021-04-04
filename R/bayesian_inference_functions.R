@@ -49,7 +49,8 @@
 #'   \item{\code{final_stan_seed}}
 #'     {The final \code{stan_seed} value; i.e., never NA.}
 #'   \item{\code{final_control}}
-#'     {The final control parameters used; i.e., if a parameter is not provided,
+#'     {The final control parameters used; i.e., if a parameter is not
+#'      provided.}
 #'   \item{\code{optional_inputs}}
 #'     {A record of the actual input values for the optional inputs, which are
 #'      \code{th0}, \code{init_seed}, \code{stan_seed}, and \code{control}.}

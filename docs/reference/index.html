@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -53,7 +57,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-index">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -75,7 +79,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -85,8 +89,8 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/eehh-stanford/baydem">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/eehh-stanford/baydem/">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -121,156 +125,133 @@
           <p class="section-desc"></p>
         </th>
       </tr>
+      
+      
+    </tbody><tbody>
+      
+      
       <tr>
         
         <td>
-          <p><code><a href="bd_add_shaded_quantiles.html">bd_add_shaded_quantiles()</a></code> </p>
+          <p><code><a href="add_shaded_quantiles.html">add_shaded_quantiles()</a></code> </p>
         </td>
         <td><p>Add a shaded region showing the min/max quantiles</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_analyze_soln.html">bd_analyze_soln()</a></code> </p>
+          <p><code><a href="assess_calib_curve_equif.html">assess_calib_curve_equif()</a></code> </p>
         </td>
-        <td><p>Analyze the result of a call to <code>bd_do_inference</code></p></td>
+        <td><p>Assess the equifinality or time spans in the input radiocarbon
+calibration curve</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_assess_calib_curve_equif.html">bd_assess_calib_curve_equif()</a></code> </p>
-        </td>
-        <td><p>Assess the equifinality or time spans in the input radiocarbon calibration curve</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bd_calc_calib_curve_equif_dates.html">bd_calc_calib_curve_equif_dates()</a></code> </p>
+          <p><code><a href="calc_calib_curve_equif_dates.html">calc_calib_curve_equif_dates()</a></code> </p>
         </td>
         <td><p>Calculate equifinal dates for each point in the calibration curve</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_calc_calib_curve_frac_modern.html">bd_calc_calib_curve_frac_modern()</a></code> </p>
+          <p><code><a href="calc_calib_curve_frac_modern.html">calc_calib_curve_frac_modern()</a></code> </p>
         </td>
-        <td><p>Calculation the calibration curve fraction taumodern for input calendar dates</p></td>
+        <td><p>Calculation the calibration curve fraction modern value for the input
+calendar dates.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_calc_gauss_mix_pdf.html">bd_calc_gauss_mix_pdf()</a></code> </p>
+          <p><code><a href="calc_gauss_mix_pdf.html">calc_gauss_mix_pdf()</a></code> </p>
         </td>
         <td><p>Caculate the density of a possibly truncated Gaussian mixture</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_calc_gauss_mix_pdf_mat.html">bd_calc_gauss_mix_pdf_mat()</a></code> </p>
+          <p><code><a href="calc_gauss_mix_pdf_mat.html">calc_gauss_mix_pdf_mat()</a></code> </p>
         </td>
-        <td><p>Calculate the density of a possibly truncated Gaussian mixture for a matrix of samples</p></td>
+        <td><p>Calculate the density of a possibly truncated Gaussian mixture for a matrix
+of samples</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_calc_half_life_from_peak.html">bd_calc_half_life_from_peak()</a></code> </p>
+          <p><code><a href="calc_half_life_from_peak.html">calc_half_life_from_peak()</a></code> </p>
         </td>
-        <td><p>For each sample, calculate the time it takes for the density to decrease by half from the peak</p></td>
+        <td><p>For each sample, calculate the time it takes for the density to decrease by
+half from the peak (or by another use-provided ratio)</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_calc_meas_matrix.html">bd_calc_meas_matrix()</a></code> </p>
+          <p><code><a href="calc_meas_matrix.html">calc_meas_matrix()</a></code> </p>
         </td>
         <td><p>Calculate the measurement matrix given N observations and G grid points</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_calc_quantiles.html">bd_calc_quantiles()</a></code> </p>
+          <p><code><a href="calc_quantiles.html">calc_quantiles()</a></code> </p>
         </td>
         <td><p>Calculate the quantiles for an input matrix X</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_calc_relative_density.html">bd_calc_relative_density()</a></code> </p>
+          <p><code><a href="calc_relative_density.html">calc_relative_density()</a></code> </p>
         </td>
         <td><p>Calculate the relative density at two dates (or a range of dates / the peak)</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_calc_trapez_weights.html">bd_calc_trapez_weights()</a></code> </p>
+          <p><code><a href="calc_tau_range.html">calc_tau_range()</a></code> </p>
+        </td>
+        <td><p>Calculate a calendar date range that spans the input radiocarbon measurements</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="calc_trapez_weights.html">calc_trapez_weights()</a></code> </p>
         </td>
         <td><p>Calculate integration weights assuming the midpoint rule</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_do_inference.html">bd_do_inference()</a></code> </p>
+          <p><code><a href="calc_trunc_gauss_mix_neg_log_lik.html">calc_trunc_gauss_mix_neg_log_lik()</a></code> </p>
         </td>
-        <td><p>Do Demographic Bayesian Inference</p></td>
+        <td><p>Calculate the negative log-likelihood of a truncuated Gaussian mixture fit</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_draw_rc_meas_using_date.html">bd_draw_rc_meas_using_date()</a></code> </p>
+          <p><code><a href="do_bayesian_inference.html">do_bayesian_inference()</a></code> </p>
+        </td>
+        <td><p>Sample from the posterior of a density model for a set of radiocarbon
+measurements</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="do_max_lik_fits.html">do_max_lik_fits()</a></code> </p>
+        </td>
+        <td><p>Do maximum likelihood fits given a set of radiocarbon measurements (rc_meas)
+and a specification of the density model (density_model)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="draw_rc_meas_using_date.html">draw_rc_meas_using_date()</a></code> </p>
         </td>
         <td><p>Simulate radiocarbon measurements from input calendar dates</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_extract_param.html">bd_extract_param()</a></code> </p>
+          <p><code><a href="extract_param.html">extract_param()</a></code> </p>
         </td>
-        <td><p>Extract the Bayesian samples for a Gaussian mixture model generated by bd_do_inference</p></td>
+        <td><p>Extract the Bayesian samples for a Gaussian mixture model generated by
+<code>do_bayesian_inference</code></p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_load_calib_curve.html">bd_load_calib_curve()</a></code> </p>
+          <p><code><a href="fit_trunc_gauss_mix.html">fit_trunc_gauss_mix()</a></code> </p>
         </td>
-        <td><p>Load Calibration Curve</p></td>
+        <td><p>Fit a truncated Gaussian mixture to radiocarbon data using the Hooke-Jeeves
+algorithm with multiple restarts</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="bd_make_blank_density_plot.html">bd_make_blank_density_plot()</a></code> </p>
+          <p><code><a href="import_rc_data.html">import_rc_data()</a></code> </p>
         </td>
-        <td><p>Prepare a blank plot for showing densities</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bd_phi2tau.html">bd_phi2tau()</a></code> </p>
-        </td>
-        <td><p>Find calendar date from fraction modern value given known bounding indices</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bd_plot_50_percent_quantile.html">bd_plot_50_percent_quantile()</a></code> </p>
-        </td>
-        <td><p>Plot the 50 percent quantile curve</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bd_plot_known_sim_density.html">bd_plot_known_sim_density()</a></code> </p>
-        </td>
-        <td><p>Plot the known simulation density</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bd_plot_summed_density.html">bd_plot_summed_density()</a></code> </p>
-        </td>
-        <td><p>Plot the summed probability density function (SPDF)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bd_sample_gauss_mix.html">bd_sample_gauss_mix()</a></code> </p>
-        </td>
-        <td><p>Sample from a possibly truncated Gaussian mixture</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bd_sample_trunc_exp.html">bd_sample_trunc_exp()</a></code> </p>
-        </td>
-        <td><p>Sample from a truncated exponential distribution</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bd_summarize_trunc_gauss_mix_sample.html">bd_summarize_trunc_gauss_mix_sample()</a></code> </p>
-        </td>
-        <td><p>Identify growth periods and the peak value for a truncated Gaussian mixture</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="bd_vis_calib_curve.html">bd_vis_calib_curve()</a></code> </p>
-        </td>
-        <td><p>Visualize the calibration curve with equifinal and non-equifinal time spans</p></td>
+        <td><p>Import radiocarbon data from a .csv file</p></td>
       </tr><tr>
         
         <td>
@@ -286,6 +267,36 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="intcal20.html">intcal20</a></code> </p>
+        </td>
+        <td><p>The IntCal20 calibration curve</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="intcal20_raw.html">intcal20_raw</a></code> </p>
+        </td>
+        <td><p>The raw data for constructing the IntCal20 calibration curve</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="is_th_reduced_valid.html">is_th_reduced_valid()</a></code> </p>
+        </td>
+        <td><p>A helper function to determine if the reduced form parameter vector is valid</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="load_calib_curve.html">load_calib_curve()</a></code> </p>
+        </td>
+        <td><p>Load Calibration Curve</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="make_blank_density_plot.html">make_blank_density_plot()</a></code> </p>
+        </td>
+        <td><p>Prepare a blank plot for showing densities</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="marine13.html">marine13</a></code> </p>
         </td>
         <td><p>The Marine13 calibration curve</p></td>
@@ -298,6 +309,74 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="marine20.html">marine20</a></code> </p>
+        </td>
+        <td><p>The Marine20 calibration curve</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="phi2tau.html">phi2tau()</a></code> </p>
+        </td>
+        <td><p>Find the calendar date from the fraction modern value given known bounding
+indices</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="plot_50_percent_quantile.html">plot_50_percent_quantile()</a></code> </p>
+        </td>
+        <td><p>Plot the 50 percent quantile curve</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="plot_known_sim_density.html">plot_known_sim_density()</a></code> </p>
+        </td>
+        <td><p>Plot the known simulation density</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="plot_summed_density.html">plot_summed_density()</a></code> </p>
+        </td>
+        <td><p>Plot the summed probability density function (SPDF)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sample_gauss_mix.html">sample_gauss_mix()</a></code> </p>
+        </td>
+        <td><p>Sample from a possibly truncated Gaussian mixture</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sample_trunc_exp.html">sample_trunc_exp()</a></code> </p>
+        </td>
+        <td><p>Sample from a truncated exponential distribution</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="set_calib_curve.html">set_calib_curve()</a></code> </p>
+        </td>
+        <td><p>Set the radiocarbon calibration curve for an analysis</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="set_density_model.html">set_density_model()</a></code> </p>
+        </td>
+        <td><p>Set the density model (density_model) for an analysis</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="set_rc_meas.html">set_rc_meas()</a></code> </p>
+        </td>
+        <td><p>Set the radiocarbon measurements (rc_meas) for an analysis</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="set_sim.html">set_sim()</a></code> </p>
+        </td>
+        <td><p>Use the results of a simulation to set the radiocarbon measurements (rc_meas)
+for an analysis (and store the settings used to do the simulation)</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="shcal13.html">shcal13</a></code> </p>
         </td>
         <td><p>The SHCal13 Southern Hemisphere atmospheric radiocarbon calibration curve</p></td>
@@ -307,16 +386,52 @@
           <p><code><a href="shcal13_raw.html">shcal13_raw</a></code> </p>
         </td>
         <td><p>The raw data for constructing the SHCal13 Southern Hemisphere atmospheric calibration curve</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="shcal20.html">shcal20</a></code> </p>
+        </td>
+        <td><p>The SHCal20 Southern Hemisphere atmospheric radiocarbon calibration curve</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="shcal20_raw.html">shcal20_raw</a></code> </p>
+        </td>
+        <td><p>The raw data for constructing the SHCal20 Southern Hemisphere atmospheric calibration curve</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="simulate_rc_data.html">simulate_rc_data()</a></code> </p>
+        </td>
+        <td><p>Create simulated radiocarbon data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="summarize_bayesian_inference.html">summarize_bayesian_inference()</a></code> </p>
+        </td>
+        <td><p>Calculate some key summary measures using the result of a call to
+<code>do_bayesian_inference</code></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="summarize_trunc_gauss_mix_sample.html">summarize_trunc_gauss_mix_sample()</a></code> </p>
+        </td>
+        <td><p>Identify growth periods and the peak value for a truncated Gaussian mixture</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="vis_calib_curve.html">vis_calib_curve()</a></code> </p>
+        </td>
+        <td><p>Visualize the calibration curve with equifinal and non-equifinal time spans</p></td>
       </tr>
     </tbody>
     </table>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
-    </ul>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -327,7 +442,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

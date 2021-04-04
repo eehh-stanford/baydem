@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>The raw data for constructing the Marine13 calibration curve — marine13_raw • baydem</title>
+<title>Calculate the measurement matrix given N observations and G grid points — calc_meas_matrix • baydem</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,23 @@
 
 
 
-<meta property="og:title" content="The raw data for constructing the Marine13 calibration curve — marine13_raw" />
-<meta property="og:description" content="A base::list of tibble::tibble objects containing the data for calculating the
-Marine13 marine radiocarbon calibration curve." />
+<meta property="og:title" content="Calculate the measurement matrix given N observations and G grid points — calc_meas_matrix" />
+<meta property="og:description" content="tau is a vector of calendar dates indexed from g = 1,2,...,G. phi_m is a
+vector of n = 1,2,...,N radiocarbon determinations (fraction modern) with
+associated uncertainties sig_m. Calculate the measurement matrix M, which
+has dimensions N x G and for which each element is M_ig = p(phi_m,i|tau_g).
+The total uncertainty of the measurement comes from measurement error (SIG_M,
+calculated using the measurement error for each measurement) and the
+calibration curve error (SIG_c, calculated using the uncertainty for the
+calibration curve at each grid point). These uncertainties (and the
+associated measurements) should already be &quot;projected&quot; to 1950 equivalents.
+By default the measurement matrix, M, is multiplied by dtau so that M * f is
+an approximation to the integral over p(t|th) * p(phi|t) using a Riemann sum
+with the density calculated at the points tau and the width for each point
+being dtau. Alternatively, the trapezoidal rule can be used (for details see
+calc_trapez_weights). If the spacing of tau is irregular, the trapezoidal
+rule must be used. An error is thrown if tau is irregularly spaced and the
+trapezoidal rule is not used" />
 
 
 
@@ -109,38 +123,72 @@ Marine13 marine radiocarbon calibration curve." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>The raw data for constructing the Marine13 calibration curve</h1>
-    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/bd_data.R'><code>R/bd_data.R</code></a></small>
-    <div class="hidden name"><code>marine13_raw.Rd</code></div>
+    <h1>Calculate the measurement matrix given N observations and G grid points</h1>
+    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/radiocarbon_functions.R'><code>R/radiocarbon_functions.R</code></a></small>
+    <div class="hidden name"><code>calc_meas_matrix.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A <code><a href='https://rdrr.io/r/base/list.html'>base::list</a></code> of <code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble::tibble</a></code> objects containing the data for calculating the
-Marine13 marine radiocarbon calibration curve.</p>
+    <p>tau is a vector of calendar dates indexed from g = 1,2,...,G. phi_m is a
+vector of n = 1,2,...,N radiocarbon determinations (fraction modern) with
+associated uncertainties sig_m. Calculate the measurement matrix M, which
+has dimensions N x G and for which each element is M_ig = p(phi_m,i|tau_g).
+The total uncertainty of the measurement comes from measurement error (SIG_M,
+calculated using the measurement error for each measurement) and the
+calibration curve error (SIG_c, calculated using the uncertainty for the
+calibration curve at each grid point). These uncertainties (and the
+associated measurements) should already be "projected" to 1950 equivalents.
+By default the measurement matrix, M, is multiplied by dtau so that M * f is
+an approximation to the integral over p(t|th) * p(phi|t) using a Riemann sum
+with the density calculated at the points tau and the width for each point
+being dtau. Alternatively, the trapezoidal rule can be used (for details see
+calc_trapez_weights). If the spacing of tau is irregular, the trapezoidal
+rule must be used. An error is thrown if tau is irregularly spaced and the
+trapezoidal rule is not used</p>
     </div>
 
-    <pre class="usage"><span class='va'>marine13_raw</span></pre>
+    <pre class="usage"><span class='fu'>calc_meas_matrix</span><span class='op'>(</span>
+  <span class='va'>tau</span>,
+  <span class='va'>phi_m</span>,
+  <span class='va'>sig_m</span>,
+  <span class='va'>calib_df</span>,
+  add_calib_unc <span class='op'>=</span> <span class='cn'>T</span>,
+  use_trapez <span class='op'>=</span> <span class='cn'>F</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>tau</th>
+      <td><p>A vector of calendar dates indexed by g</p></td>
+    </tr>
+    <tr>
+      <th>phi_m</th>
+      <td><p>A vector of fraction moderns indexed by i</p></td>
+    </tr>
+    <tr>
+      <th>sig_m</th>
+      <td><p>A vector of standard deviations for phi_m indexed by i</p></td>
+    </tr>
+    <tr>
+      <th>calib_df</th>
+      <td><p>Calibration curve (see load_calib_curve)</p></td>
+    </tr>
+    <tr>
+      <th>add_calib_unc</th>
+      <td><p>Whether to add calibration uncertainty (default: <code>TRUE</code>)</p></td>
+    </tr>
+    <tr>
+      <th>use_trapez</th>
+      <td><p>Whether to use the trapezoidal rule for integration
+(default: <code>FALSE</code>)</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code>list</code> of length 5.</p>
-    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
-
-    <p>http://intcal.qub.ac.uk/marine/query/query.php</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>These data are as available from the IntCal webservice
-hosted at Queen's University, Belfast. Details on the structure of the data can be found at
-<a href='http://intcal.qub.ac.uk/marine/query/'>http://intcal.qub.ac.uk/marine/query/</a>.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>Reimer PJ, Bard E, Bayliss A, Beck JW, Blackwell PG, Bronk Ramsey C, Buck CE,
-Cheng H, Edwards RL, Friedrich M, Grootes PM, Guilderson TP, Haflidason H,
-Hajdas I, Hatté C, Heaton TJ, Hogg AG, Hughen KA, Kaiser KF, Kromer B,
-Manning SW, Niu M, Reimer RW, Richards DA, Scott EM, Southon JR, Turney CSM,
-van der Plicht J. IntCal13 and MARINE13 radiocarbon age calibration curves 0-50000 years calBP.
-<em>Radiocarbon</em> 55(4). DOI: <a href='https://doi.org/10.2458/azu_js_rc.55.16947'>10.2458/azu_js_rc.55.16947</a></p>
+    <p>The measurement matrix, which has dimensions N x G</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
