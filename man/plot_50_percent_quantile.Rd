@@ -4,23 +4,23 @@
 \alias{plot_50_percent_quantile}
 \title{Plot the 50 percent quantile curve}
 \usage{
-plot_50_percent_quantile(an, add = F, ...)
+plot_50_percent_quantile(bayesian_summary, add = F, ...)
 }
 \arguments{
-\item{an}{A list-like object of class \code{baydem::bd_analysis} with
-information on the quantiles of the density function and growth rate}
+\item{bayesian_summary}{A list-like object of class
+\code{bd_bayesian_summary} with information on the quantiles of the density
+function and growth rate (see \code{summarize_bayesian_inference}).}
 
-\item{add}{(default: \code{FALSE}) Whether to make a new plot or add to the active
-plot}
+\item{add}{Whether to make a new plot or add to the active plot (default:
+FALSE).}
 
 \item{...}{Additional parameters to pass to plot / lines}
 }
 \description{
-Plot the 50\% quantile curve
+The input, bayesian_summary, is the result of a call to
+\code{summarize_bayesian_inference}. By default, a new plot is made, but
+if \code{add = TRUE} the curve is added to the active plot.
 }
-\details{
-The input, an, is the result of a call to analyze_soln. It is a
-list-like object of class bayDem_analysis with information on the quantiles
-of the density function and growth rate. By default, a new plot is made, but
-if add = TRUE the curve is added to the active plot.
+\seealso{
+\code{\link[=summarize_bayesian_inference]{summarize_bayesian_inference()}}
 }

@@ -40,8 +40,7 @@ Use read.csv to load the file specified by the input file_name (file_name can
 also be the full path to the file). The inputs phi_m_col, sig_m_col,
 trc_m_col, and sig_trc_m_col specify which columns contain the radiocarbon
 data. All are optional, but only three patterns of inputs are valid:
-}
-\details{
+
 (1) If none of the column specifiers are given, it is assumed that the first
 column in the .csv file contains trc_m and the second column contains
 sig_trc_m.

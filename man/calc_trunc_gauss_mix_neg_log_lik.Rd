@@ -9,7 +9,7 @@ calc_trunc_gauss_mix_neg_log_lik(th_reduced, M, tau, s_min = 0)
 \arguments{
 \item{th_reduced}{The paramater vector without the first mixture weight}
 
-\item{M}{The measurement matrix}
+\item{M}{The measurement matrix (see calc_meas_matrix)}
 
 \item{tau}{The sampling grid}
 
@@ -23,4 +23,7 @@ The negative log-likelihood
 The input parameter vector is the parameter vector without the first mixture
 weight. The minimum and maximum calendar dates are assumed to be the minumum
 and maximum values of the sampling grid, tau.
+}
+\seealso{
+\code{\link[=calc_meas_matrix]{calc_meas_matrix()}}
 }

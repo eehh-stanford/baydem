@@ -2,7 +2,7 @@
 % Please edit documentation in R/radiocarbon_functions.R
 \name{phi2tau}
 \alias{phi2tau}
-\title{Find calendar date from fraction modern value given known bounding
+\title{Find the calendar date from the fraction modern value given known bounding
 indices}
 \usage{
 phi2tau(tau_curve, phi_curve, phi_known, ii_lo, ii_hi)
@@ -22,13 +22,12 @@ phi2tau(tau_curve, phi_curve, phi_known, ii_lo, ii_hi)
 The calendar date corresponding to the input phi_known
 }
 \description{
-Find calendar date from fraction modern value given known bounding
-indices
-}
-\details{
 tau_curve and phi_curve give the calendar date and fraction modern of the
 radiocarbon calibration curve. It is known that the calendar date lies
-lies between \code{tau_curve[ii_lo]} and \code{tau_curve[ii_hi]}. Interpolate to find
-the calendar date corresponding to the input phi_known. This function is
-called by assess_calib_curve_equif.
+between \code{tau_curve[ii_lo]} and \code{tau_curve[ii_hi]}. Interpolate to find the
+calendar date corresponding to the input phi_known. This function is called
+by \code{assess_calib_curve_equif}.
+}
+\seealso{
+\code{\link[=assess_calib_curve_equif]{assess_calib_curve_equif()}}
 }

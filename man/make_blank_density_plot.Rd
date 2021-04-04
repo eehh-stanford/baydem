@@ -5,7 +5,7 @@
 \title{Prepare a blank plot for showing densities}
 \usage{
 make_blank_density_plot(
-  an,
+  bayesian_summary,
   xlim = NA,
   ylim = NA,
   xlab = "Calendar Date [AD]",
@@ -14,27 +14,27 @@ make_blank_density_plot(
 )
 }
 \arguments{
-\item{an}{A list-like object of class \code{baydem::bd_analysis} with
-information on the quantiles of the density function and growth rate}
+\item{bayesian_summary}{A list-like object of class
+\code{bd_bayesian_summary} with information on the quantiles of the density
+function and growth rate (see \code{summarize_bayesian_inference}).}
 
-\item{xlim}{Numeric vector of length 2, giving the x coordinate range}
+\item{xlim}{Numeric vector of length 2, giving the x coordinate range.}
 
-\item{ylim}{Numeric vector of length 2, giving the y coordinate range}
+\item{ylim}{Numeric vector of length 2, giving the y coordinate range.}
 
-\item{xlab}{x-axis label}
+\item{xlab}{x-axis label.}
 
-\item{ylab}{y-axis label}
+\item{ylab}{y-axis label.}
 
-\item{...}{Additional parameters to pass to plot}
+\item{...}{Additional parameters to pass to plot.}
 }
 \description{
-Prepare a blank plot for showing densities
-}
-\details{
-The input, an, is the result of a call to analyze_soln. It is a
-list-like object of class bayDem_analysis with information on the quantiles
-of the density function and growth rate. Prepare a blank plot for adding
-density information, e.g. by calling plot_50_percent_quantile and
-add_shaded_quantiles.R. If the axis labels and limits are not specified,
+The input, bayesian_summary, is the result of a call to
+\code{summarize_bayesian_inference}. Prepare a blank plot for adding density
+information, e.g. by calling \code{plot_50_percent_quantile} and
+\code{add_shaded_quantiles}. If the axis labels and limits are not specified,
 sensible defaults are used.
+}
+\seealso{
+\code{\link[=summarize_bayesian_inference]{summarize_bayesian_inference()}}
 }

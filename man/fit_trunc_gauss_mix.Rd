@@ -47,15 +47,33 @@ do not parallelize)}
 the base seed will be generated and saved).}
 }
 \value{
-A list containing the best fit parameter vector (th), the
-corresponding value of the negative log-likelihood (neg_log_lik), tau (the
-sampling grid), f (the density of the best fit paramater vector evaluated
-at the points in the sampling grid), bic (the Bayesian information
-Criterion value), aic (the Akaike information criterion), hjkb_fit_list (
-a list containing the fits for each restart), input_seed (the value of
-input parameter input_seed), base_seed (the value of the base_seed, which
-is NA if input_seed is a vector), and seed_vect (the vector of integers
-of length 1 + num_restarts; see the function Description).
+A list containing:
+\itemize{
+\item{\code{th}}
+{The best fit parameter vector}
+\item{\code{neg_log_lik}}
+{The value of the negative log-likelihood for the best fit parameter
+vector.}
+\item{\code{tau}}
+{The sampling grid used for the Riemann sum in the likelihood
+calculation.}
+\item{\code{tau}}
+{The probability density given \code{th} evaluated at the points in
+\code{tau}.}
+\item{\code{aic}}
+{The Akaike information criterion value.}
+\item{\code{bic}}
+{the Bayesian information criterion value.}
+\item{\code{hjkb_fit_list}}
+{A list containing the fits for each restart.}
+\item{\code{input_seed}}
+{The value of the input parameter seed.}
+\item{\code{base_seed}}
+{The value of the base seed, which is NA if \code{input_seed} is a
+vector.}
+\item{\code{seed_vect}}
+{The vector of seed integers with length 1 + \code{num_restarts}.}
+}
 }
 \description{
 The radiocarbon data are specified by phi_m, the vector of fraction modern
@@ -64,8 +82,7 @@ by i). The likelihood involves an integral over calendar dates that is
 calculated using a Riemann integral at the points in the "sampling grid",
 tau, which ranges from tau_min to tau_max and has a spacing of dtau (tau is
 indexed by the variable g).
-}
-\details{
+
 Constraints on parameters: The parameter vector, theta (th), has the ordering
 th = (pi_1,...,pi_K,mu_1,..mu_K,s_1,...s_K), where K is the number of
 mixture components and pi_k / mu_k / s_k are, respectively, the weighting /

@@ -526,7 +526,9 @@ hp <-
     dtau = 5
   )
 
-input_control <- list(samps_per_chain=2000,warmup=1000,
+input_control <- list(num_chains=2,
+                      samps_per_chain=2000,
+                      warmup=1000,
                       stan_control=list(adapt_delta=.99))
 expect_error(
   soln <- do_bayesian_inference(
@@ -546,7 +548,12 @@ expect_is(
 
 expect_equal(
   names(soln),
-  c("fit","control","init_seed","stan_seed","optional_inputs")
+  c("fit",
+    "final_th0",
+    "final_init_seed",
+    "final_stan_seed",
+    "final_control",
+    "optional_inputs")
 )
 
 expect_is(
@@ -555,13 +562,77 @@ expect_is(
 )
 
 expect_equal(
-  names(soln$control),
+  names(soln$final_control),
   c("num_chains","samps_per_chain","warmup","stan_control")
 )
 
 expect_equal(
   soln$optional_inputs,
   list(th0=NA,init_seed=NA,stan_seed=NA,control=input_control)
+)
+
+# Check that the simulation is reproducible when init_seed and stan_seed are
+# used
+expect_error(
+  soln2 <- do_bayesian_inference(
+    sim$data$rc_meas,
+    density_model,
+    hp,
+    calib_df,
+    init_seed=soln$final_init_seed,
+    stan_seed=soln$final_stan_seed,
+    control=input_control
+  ),
+  NA
+)
+
+expect_equal(
+  soln$final_th0,
+  soln2$final_th0,
+)
+
+expect_equal(
+  extract_param(soln$fit),
+  extract_param(soln2$fit)
+)
+
+# Check that the inference succeeds if th0 is directly set
+expect_error(
+  soln <- do_bayesian_inference(
+    sim$data$rc_meas,
+    density_model,
+    hp,
+    calib_df,
+    th0=th_sim,
+    control=input_control
+  ),
+  NA
+)
+
+# Check that an error is thrown if th0 and init_seed are both provided
+expect_error(
+  do_bayesian_inference(
+    sim$data$rc_meas,
+    density_model,
+    hp,
+    calib_df,
+    init_seed=1000,
+    th0=th_sim,
+    control=input_control
+  ),
+  "init_seed should not be provided if th0 is provided"
+)
+
+# Check that an error is thrown if an invalid parameter is passed in control
+expect_error(
+  do_bayesian_inference(
+    sim$data$rc_meas,
+    density_model,
+    hp,
+    calib_df,
+    control=list(invalid=NA)
+  ),
+  "Unsupported named parameter in control = invalid"
 )
 
 # (3b) summarize_bayesian_inference
@@ -588,6 +659,8 @@ expect_equal(
   dim(summary$Qdens),
   c(3,length(seq(density_model$tau_min,density_model$tau_max,by=5)))
 )
+
+
 
 # ------------------------------------------------------------------------------
 # (4) Do unit tests for plotting functions
@@ -671,6 +744,11 @@ expect_error(
 expect_equal(
   dim(TH),
   c(total_samples,6)
+)
+
+expect_error(
+  extract_param(10),
+  paste("Expected fit to be class stanfit, but it is", class(10))
 )
 
 # (5b) calc_gauss_mix_pdf
@@ -823,6 +901,8 @@ expect_equal(
 )
 
 # (5e) calc_half_life_from_peak
+
+# Check when rc_meas and calib_df are provided
 expect_error(
   half_life1 <- calc_half_life_from_peak(soln,
                                          density_model,
@@ -865,6 +945,61 @@ expect_equal(
   TRUE
 )
 
+# Check when bayesian_summary provided
+expect_error(
+  half_life1 <- calc_half_life_from_peak(soln,
+                                         density_model,
+                                         bayesian_summary=summary),
+  NA
+)
+
+expect_equal(
+  length(half_life1),
+  total_samples
+)
+
+expect_equal(
+  any(is.na(half_life1)),
+  FALSE
+)
+
+expect_error(
+  half_life2 <- calc_half_life_from_peak(soln,
+                                         density_model,
+                                         bayesian_summary=summary,
+                                         prop_chang=.25),
+  NA
+)
+
+expect_equal(
+  length(half_life2),
+  total_samples
+)
+
+expect_equal(
+  any(is.na(half_life2)),
+  FALSE
+)
+
+expect_equal(
+  all(half_life1 < half_life2),
+  TRUE
+)
+
+# Check errors related to the two ways the input(s) can be specified
+expect_error(
+  half_life1 <- calc_half_life_from_peak(soln,
+                                         density_model),
+  "rc_meas must be provided if bayesian_summary is not provided"
+)
+
+expect_error(
+  half_life1 <- calc_half_life_from_peak(soln,
+                                         density_model,
+                                         rc_meas=rc_meas),
+  "calib_df must be provided if bayesian_summary is not provided"
+)
+
 # (5f) calc_relative_density
 #        unpack_spec           [indirect]
 #        calc_point_density [indirect]
@@ -873,43 +1008,84 @@ expect_equal(
 # Check two calls to calc_relative_density to check all four helper
 # functions (which are only checked indirectly).
 
+# Check calculation with peak when rc_meas and calib_df are provided
 expect_error(
-  rel_dens1 <- calc_relative_density(soln,
-                                     density_model,
-                                     "peak",
-                                     1100,
-                                     rc_meas=rc_meas,
-                                     calib_df=calib_df),
+  rel_dens <- calc_relative_density(soln,
+                                    density_model,
+                                    "peak",
+                                    1100,
+                                    rc_meas=rc_meas,
+                                    calib_df=calib_df),
   NA
 )
 
 expect_equal(
-  length(rel_dens1),
+  length(rel_dens),
   total_samples
 )
 
 expect_equal(
-  any(is.na(rel_dens1)),
+  any(is.na(rel_dens)),
   FALSE
 )
 
+# Check calculation with peak when bayesian_summary is provided
 expect_error(
-  rel_dens2 <- calc_relative_density(soln,
-                                     density_model,
-                                     900,
-                                     c(700, 750),
-                                     rc_meas=rc_meas,
-                                     calib_df=calib_df),
+  rel_dens <- calc_relative_density(soln,
+                                    density_model,
+                                    "peak",
+                                    1100,
+                                    bayesian_summary=summary),
   NA
 )
 
 expect_equal(
-  length(rel_dens2),
+  length(rel_dens),
   total_samples
 )
 
 expect_equal(
-  any(is.na(rel_dens2)),
+  any(is.na(rel_dens)),
+  FALSE
+)
+
+# Check errors related to the two ways the input(s) can be specified
+# Check calculation with peak when bayesian_summary is provided
+expect_error(
+  calc_relative_density(soln,
+                        density_model,
+                        "peak",
+                        1100),
+  "rc_meas must be provided if bayesian_summary is not provided"
+)
+
+expect_error(
+  calc_relative_density(soln,
+                        density_model,
+                        "peak",
+                        1100,
+                        rc_meas=rc_meas),
+  "calib_df must be provided if bayesian_summary is not provided"
+)
+
+# Check calculation without peak when rc_meas and calib_df are provided
+expect_error(
+  rel_dens <- calc_relative_density(soln,
+                                    density_model,
+                                    900,
+                                    c(700, 750),
+                                    rc_meas=rc_meas,
+                                    calib_df=calib_df),
+  NA
+)
+
+expect_equal(
+  length(rel_dens),
+  total_samples
+)
+
+expect_equal(
+  any(is.na(rel_dens)),
   FALSE
 )
 
@@ -1312,9 +1488,6 @@ expect_error(
 )
 
 # (9c) set_sim
-
-# Call data_dir to get the temporary directory to use in testing
-
 sim_analysis_name <- "sim"
 path_to_sim_analysis_file <-
   file.path(data_dir,paste0(sim_analysis_name,".rds"))
@@ -1348,8 +1521,8 @@ expect_error(
 
 # (9d) calc_tau_range
 
-# The tau range should be the same across test runs since all relative number
-# seeds are set above
+# The tau range should be the same across test runs since all relative random
+# number seeds are set above
 expect_error(
   tau_range <- calc_tau_range(rc_meas),
   NA

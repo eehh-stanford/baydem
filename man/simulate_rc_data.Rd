@@ -6,6 +6,12 @@
 \usage{
 simulate_rc_data(sim_spec)
 }
+\arguments{
+\item{sim_spec}{A simulation specification (see Description)}
+}
+\value{
+A list consisting of the input sim_spac and data (see Description)
+}
 \description{
 The input is a multi-tiered list specifying all aspects of the simulation. In
 particular, sim_spec (for simulation specification) consists of three
@@ -22,8 +28,7 @@ mixture. Currently, one specification of the error_spec (a list) is
 supported: unif_fm = a uniform draw for the error of the fraction modern
 value. For unif_fm, error_spec must contain the fields min and max (the
 minimum and maximum values for the uniform draw).
-}
-\details{
+
 The output is a list with the fields dates and rc_meas. Dates is a length N
 vector of dates (on non-simulated data, cannot be directly known). rc_meas
 is a list consisting of four length N vectors: phi_m, the fracture modern,

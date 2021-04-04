@@ -1,6 +1,8 @@
+#' @title
 #' Fit a truncated Gaussian mixture to radiocarbon data using the Hooke-Jeeves
 #' algorithm with multiple restarts
 #'
+#' @description
 #' The radiocarbon data are specified by phi_m, the vector of fraction modern
 #' values, and sig_m, the vector of associated standard deviations (both indexed
 #' by i). The likelihood involves an integral over calendar dates that is
@@ -62,20 +64,39 @@
 #'   1 + num_restarts that is used to ensure reproducilibity (default: NA, a
 #'   the base seed will be generated and saved).
 #'
-#' @return A list containing the best fit parameter vector (th), the
-#'   corresponding value of the negative log-likelihood (neg_log_lik), tau (the
-#'   sampling grid), f (the density of the best fit paramater vector evaluated
-#'   at the points in the sampling grid), bic (the Bayesian information
-#'   Criterion value), aic (the Akaike information criterion), hjkb_fit_list (
-#'   a list containing the fits for each restart), input_seed (the value of
-#'   input parameter input_seed), base_seed (the value of the base_seed, which
-#'   is NA if input_seed is a vector), and seed_vect (the vector of integers
-#'   of length 1 + num_restarts; see the function Description).
+#' @return
+#' A list containing:
+#' \itemize{
+#'   \item{\code{th}}
+#'     {The best fit parameter vector}
+#'   \item{\code{neg_log_lik}}
+#'     {The value of the negative log-likelihood for the best fit parameter
+#'      vector.}
+#'   \item{\code{tau}}
+#'     {The sampling grid used for the Riemann sum in the likelihood
+#'      calculation.}
+#'   \item{\code{tau}}
+#'     {The probability density given \code{th} evaluated at the points in
+#'      \code{tau}.}
+#'   \item{\code{aic}}
+#'     {The Akaike information criterion value.}
+#'   \item{\code{bic}}
+#'     {the Bayesian information criterion value.}
+#'   \item{\code{hjkb_fit_list}}
+#'     {A list containing the fits for each restart.}
+#'   \item{\code{input_seed}}
+#'     {The value of the input parameter seed.}
+#'   \item{\code{base_seed}}
+#'     {The value of the base seed, which is NA if \code{input_seed} is a
+#'      vector.}
+#'   \item{\code{seed_vect}}
+#'     {The vector of seed integers with length 1 + \code{num_restarts}.}
+#' }
 #'
 #' @import doParallel
 #' @import foreach
+#'
 #' @export
-
 fit_trunc_gauss_mix <- function(K,
                                 phi_m,
                                 sig_m,
@@ -230,19 +251,24 @@ fit_trunc_gauss_mix <- function(K,
               input_seed=input_seed,base_seed=base_seed,seed_vect=seed_vect))
 }
 
+#' @title
 #' Calculate the negative log-likelihood of a truncuated Gaussian mixture fit
 #'
+#' @description
 #' The input parameter vector is the parameter vector without the first mixture
 #' weight. The minimum and maximum calendar dates are assumed to be the minumum
 #' and maximum values of the sampling grid, tau.
 #'
 #' @param th_reduced The paramater vector without the first mixture weight
-#' @param M The measurement matrix
+#' @param M The measurement matrix (see calc_meas_matrix)
 #' @param tau The sampling grid
 #' @param s_min A minimum value for the mixture standard deviations
 #'   (default: 0)
 #'
 #' @return The negative log-likelihood
+#'
+#'
+#' @seealso [calc_meas_matrix()]
 #'
 #' @export
 calc_trunc_gauss_mix_neg_log_lik <- function(th_reduced,M,tau,s_min=0) {
@@ -265,8 +291,10 @@ calc_trunc_gauss_mix_neg_log_lik <- function(th_reduced,M,tau,s_min=0) {
   return(-sum(log(h)))
 }
 
+#' @title
 #' A helper function to determine if the reduced form parameter vector is valid
 #'
+#' @description
 #' The paramater vector is invalid if:
 #'
 #' (a) Any mixture weight does not lie between 0 and 1

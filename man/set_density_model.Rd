@@ -37,3 +37,6 @@ than a single integer (a vector should be specified if model
 selection on the number of mixtures will subsequently be done)
 and can be a vector
 }
+\seealso{
+\code{\link[=set_sim]{set_sim()}} for an overview of the "standard pipeline"
+}

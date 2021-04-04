@@ -17,8 +17,7 @@ TRUE or FALSE
 }
 \description{
 The paramater vector is invalid if:
-}
-\details{
+
 (a) Any mixture weight does not lie between 0 and 1
 (b) mu is not ordered from small to large values
 (c) A standard deviation is lower than s_min

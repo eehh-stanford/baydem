@@ -19,12 +19,9 @@ sample_gauss_mix(N, th, tau_min = NA, tau_max = NA)
 N samples from the Gaussian mixture
 }
 \description{
-Sample from a possibly truncated Gaussian mixture
-}
-\details{
-\code{N} is the number of samples to draw and \code{th} specifies the Gaussian
-mixture with the ordering (pi_1,...,pi_K,mu_1,...,mu_K,s_1,...,s_K), where
-\code{K} is the number of mixture components. Optionally, the samples are drawn on
-the truncated interval \code{tau_min} to \code{tau_max}. Because of limitations in the
+\code{N} is the number of samples to draw and \code{th} specifies the Gaussian mixture
+with the ordering (pi_1,...,pi_K,mu_1,...,mu_K,s_1,...,s_K), where \code{K} is the
+number of mixture components. Optionally, the samples are drawn on the
+truncated interval \code{tau_min} to \code{tau_max}. Because of limitations in the
 package \code{distr}, the maximum number of mixture components suppored is K=4.
 }

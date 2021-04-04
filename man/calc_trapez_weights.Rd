@@ -14,12 +14,10 @@ irregularly}
 A vector of integration weights the same length as tau
 }
 \description{
-tau is a vector of locations where a function to be integrated
-is evaluated (the function values, f, are not input). Let
-tau_g be the locations of integration and f_g the corresponding
-function values for g=1, 2, ... G. Assuming trapezoidal
-integration at the midpoints between elements of tau, the
-weights to use for integration are
-dtau_g = (tau_(g+1) - tau_(g-1)) / 2, where the conventions
-tau_0 = tau_1 and tau_(G+1) = tau_G are used.
+tau is a vector of locations where a function to be integrated is evaluated
+(the function values, f, are not input). Let tau_g be the locations of
+integration and f_g the corresponding function values for g=1, 2, ... G.
+Assuming trapezoidal integration at the midpoints between elements of tau,
+the weights to use for integration are dtau_g = (tau_(g+1) - tau_(g-1)) / 2,
+where the conventions tau_0 = tau_1 and tau_(G+1) = tau_G are used.
 }

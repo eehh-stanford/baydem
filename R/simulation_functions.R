@@ -1,5 +1,7 @@
+#' @title
 #' Create simulated radiocarbon data
 #'
+#' @description
 #' The input is a multi-tiered list specifying all aspects of the simulation. In
 #' particular, sim_spec (for simulation specification) consists of three
 #' required fields and one optional field: model_spec (model specification),
@@ -50,6 +52,11 @@
 #'                              years (BP)
 #'         sig_trc_m           A vector of simulated uncertainties for trc_m
 #'
+#'
+#' @param sim_spec A simulation specification (see Description)
+#'
+#' @returns A list consisting of the input sim_spac and data (see Description)
+#'
 #' @export
 simulate_rc_data <- function(sim_spec) {
   # Right now, two model types are supported for the target density:
@@ -92,12 +99,14 @@ simulate_rc_data <- function(sim_spec) {
   return(list(sim_spec=sim_spec,data=list(dates=dates,rc_meas=rc_meas)))
 }
 
-#' @title Sample from a possibly truncated Gaussian mixture
+#' @title
+#' Sample from a possibly truncated Gaussian mixture
 #'
-#' @details `N` is the number of samples to draw and `th` specifies the Gaussian
-#' mixture with the ordering (pi_1,...,pi_K,mu_1,...,mu_K,s_1,...,s_K), where
-#' `K` is the number of mixture components. Optionally, the samples are drawn on
-#' the truncated interval `tau_min` to `tau_max`. Because of limitations in the
+#' @description
+#' `N` is the number of samples to draw and `th` specifies the Gaussian mixture
+#' with the ordering (pi_1,...,pi_K,mu_1,...,mu_K,s_1,...,s_K), where `K` is the
+#' number of mixture components. Optionally, the samples are drawn on the
+#' truncated interval `tau_min` to `tau_max`. Because of limitations in the
 #' package `distr`, the maximum number of mixture components suppored is K=4.
 #'
 #' @param N Number of samples
@@ -154,8 +163,10 @@ sample_gauss_mix <- function(N, th, tau_min = NA, tau_max = NA) {
   return(samp)
 }
 
+#' @title
 #' Simulate radiocarbon measurements from input calendar dates
 #'
+#' @description
 #' Given input calendar dates t_e, simulate the radiocarbon measurement process
 #' to yield a fraction modern and uncertainty. error_spec is a list with named
 #' type and additional fields specifying the parameters. Currently only type
@@ -169,14 +180,13 @@ sample_gauss_mix <- function(N, th, tau_min = NA, tau_max = NA) {
 #' @param calib_df The calibration dataframe, with columns year_BP,
 #' uncal_year_BP, and uncal_year_BP_error
 #' @param error_spec A list with entries type and parameter values specifying
-#' how to add uncertainty to the simualted measurement. Currently, only type =
+#' how to add uncertainty to the simulated measurement. Currently, only type =
 #'  "unif_fm" is supported, for which the parameters min and max must be in
 #'  error_spec.
-#' @param is_AD (Optional; default F) Whether t_e is cal_BP or AD
-
+#' @param is_AD Whether t_e is cal_BP or AD (optional; default: `FALSE`)
+#'
 #' @export
 draw_rc_meas_using_date <- function(t_e, calib_df, error_spec, is_AD = F) {
-
   # Check that the errorSpec is of a know type
   if (error_spec$type != "unif_fm") {
     error_message <- paste0("Unrecognized error type = ", error_spec$type)

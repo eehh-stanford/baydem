@@ -13,7 +13,11 @@ set_calib_curve(data_dir, analysis_name, calibration_curve)
 
 \item{calibration_curve}{Either the name of a calibration curve or a data
 frame specifying the calibration curve (see load_calib_curve format and
-choices).}
+choices).
+\itemize{
+\item \code{\link[=set_sim]{set_sim()}} for an overview of the "standard pipeline"
+\item \code{\link[=load_calib_curve]{load_calib_curve()}} for the format of \code{calib_df}
+}}
 }
 \description{
 This is one of a set of helper functions for undertaking a typical analysis

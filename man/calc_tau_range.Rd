@@ -30,3 +30,9 @@ spacing at which the calibration curve is specified. If dtau is not an
 integer, it is ignored and a warning is thrown. If dtau is 1 (the default),
 no rounding is done since that is already the spacing returned by Bchron.
 }
+\seealso{
+\itemize{
+\item \code{\link[=set_sim]{set_sim()}} for an overview of the "standard pipeline"
+\item \code{\link[=import_rc_data]{import_rc_data()}} for the format of \code{rc_meas}'
+}
+}

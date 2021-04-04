@@ -1,5 +1,7 @@
+#' @title
 #' Import radiocarbon data from a .csv file
 #'
+#' @description
 #' Use read.csv to load the file specified by the input file_name (file_name can
 #' also be the full path to the file). The inputs phi_m_col, sig_m_col,
 #' trc_m_col, and sig_trc_m_col specify which columns contain the radiocarbon
@@ -13,12 +15,12 @@
 #' (3) If phi_m_col and sig_m_col are given, trc_m_col and sig_trc_m_col must
 #'     not be given.
 #'
-#' @param sig_m_col The column containing the error for the fraction modern
-#'   values (optional, but see details)
-#' @param trc_m_col The column containing the radiocarbon years values
-#'   (optional, but see details).
 #' @param file_name The file name of the input .csv file (or full path to the
 #'   file if not located in the current directory)
+#' @param trc_m_col The column containing the radiocarbon years values
+#'   (optional, but see details).
+#' @param sig_m_col The column containing the error for the fraction modern
+#'   values (optional, but see details)
 #' @param phi_m_col The column containing the fraction modern values (optional,
 #'   but see details).
 #' @param sig_m_col The column containing the error for the radiocarbon year
@@ -73,8 +75,10 @@ import_rc_data <- function(file_name,
   return (list(phi_m=phi_m,sig_m=sig_m,trc_m=trc_m,sig_trc_m=sig_trc_m))
 }
 
+#' @title
 #' Set the radiocarbon measurements (rc_meas) for an analysis
 #'
+#' @description
 #' This is one of a set of helper functions for undertaking a typical analysis
 #' of radiocarbon dates. As the analysis proceeds, results are stored in a save
 #' file called analysis_name.rds in the folder data_dir. Where results are
@@ -114,6 +118,8 @@ import_rc_data <- function(file_name,
 #' @param rc_meas The radiocarbon measurements to use for this analysis (the
 #'   format of rc_meas is as output by import_rc_data)
 #'
+#' @seealso [import_rc_data()] for the format of \code{rc_meas}'
+#'
 #' @export
 set_rc_meas <- function(data_dir,analysis_name,rc_meas) {
   data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
@@ -128,10 +134,11 @@ set_rc_meas <- function(data_dir,analysis_name,rc_meas) {
   saveRDS(analysis,data_file)
 }
 
-
+#' @title
 #' Use the results of a simulation to set the radiocarbon measurements (rc_meas)
 #' for an analysis (and store the settings used to do the simulation)
 #'
+#' @description
 #' This is one of a set of helper functions for undertaking a typical analysis
 #' of radiocarbon dates. As the analysis proceeds, results are stored in a save
 #' file called analysis_name.rds in the folder data_dir. Where results are
@@ -141,6 +148,8 @@ set_rc_meas <- function(data_dir,analysis_name,rc_meas) {
 #' @param data_dir The directory in which to store analysis data
 #' @param analysis_name A unique name for a given analysis in data_dir
 #' @param sim The simulation object (see simulate_rc_data)
+#'
+#' @seealso [set_sim()] for an overview of the "standard pipeline"
 #'
 #' @export
 set_sim <- function(data_dir,analysis_name,sim) {
@@ -158,8 +167,10 @@ set_sim <- function(data_dir,analysis_name,sim) {
   saveRDS(analysis,data_file)
 }
 
+#' @title
 #' Calculate a calendar date range that spans the input radiocarbon measurements
 #'
+#' @description
 #' To determine the calendar dates, first Bchron::BchronCalibrate is called to
 #' calibrate the individual dates, which yields a date range for each. The
 #' maximum range across dates is identified (BchronCalibrate adopts a spacing of
@@ -179,8 +190,11 @@ set_sim <- function(data_dir,analysis_name,sim) {
 #' @return A list containing the minimum and maximum calendar dates, tau_min and
 #'   tau_max
 #'
+#' @seealso
+#' * [set_sim()] for an overview of the "standard pipeline"
+#' * [import_rc_data()] for the format of \code{rc_meas}'
+#'
 #' @export
-
 calc_tau_range <- function(rc_meas,calibration_curve="intcal20",dtau=1) {
 
   N <- length(rc_meas$trc_m)
@@ -235,6 +249,8 @@ calc_tau_range <- function(rc_meas,calibration_curve="intcal20",dtau=1) {
 #' @param data_dir The directory in which to store analysis data
 #' @param analysis_name A unique name for a given analysis in data_dir
 #' @param density_model A list object specifying the density model
+#'
+#' @seealso [set_sim()] for an overview of the "standard pipeline"
 #'
 #' @export
 
@@ -292,8 +308,10 @@ set_density_model <- function(data_dir,analysis_name,density_model) {
 #'   frame specifying the calibration curve (see load_calib_curve format and
 #'   choices).
 #'
+#' * [set_sim()] for an overview of the "standard pipeline"
+#' * [load_calib_curve()] for the format of \code{calib_df}
+#'
 #' @export
-
 set_calib_curve <- function(data_dir,analysis_name,calibration_curve) {
   data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
 
@@ -340,8 +358,10 @@ set_calib_curve <- function(data_dir,analysis_name,calibration_curve) {
 #' @param ... Additional arguments to pass to the optimization function (see
 #'  fit_trunc_gauss_mix)
 #'
+#' * [set_sim()] for an overview of the "standard pipeline"
+#' * [fit_trunc_gauss_mix()]
+#'
 #' @export
-
 do_max_lik_fits <- function(data_dir,analysis_name,dtau=5,input_seed=NA,...) {
   data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
 

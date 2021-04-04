@@ -2,8 +2,7 @@
 % Please edit documentation in R/bayesian_inference_functions.R
 \name{summarize_trunc_gauss_mix_sample}
 \alias{summarize_trunc_gauss_mix_sample}
-\title{Identify growth periods and the peak value for a truncated Gaussian
-mixture}
+\title{Identify growth periods and the peak value for a truncated Gaussian mixture}
 \usage{
 summarize_trunc_gauss_mix_sample(th, tau_min, tau_max, N = 1000)
 }
@@ -14,12 +13,27 @@ summarize_trunc_gauss_mix_sample(th, tau_min, tau_max, N = 1000)
 
 \item{tau_max}{The upper truncation value}
 
-\item{N}{(Default 1000) The number of points use for identifying slope
-changes}
+\item{N}{The number of points use for identifying slope changes
+(default: 1000)}
 }
 \value{
-A list consisting of t_lo / t_hi (specifying the time periods),
-ind_peak, t_peak, f_peak, and pattern (see Description)
+A list consisting of:
+\itemize{
+\item{\code{periods}}
+{A data-frame where the columns t_lo/t_hi indicate the starting and
+ending calendars dates of periods and slope is negative if the growth
+rate is negative over that time period and positive if it is positive.}
+\item{\code{ind_peak}}
+{The index of the period in the data-frame \code{periods} with the peak
+value of the density.}
+\item{\code{t_peak}}
+{The calendar date of the peak value of the density.}
+\item{\code{f_peak}}
+{The value of the density function at the peak calendar date.}
+\item{\code{pattern}}
+{A unique pattern that summaries the periods of growth/decary and
+relative locaiton of the peak (see Description).}
+}
 }
 \description{
 The input vector th parameterizes a Gaussian mixture, and tau_min / tau_max
@@ -38,9 +52,9 @@ step.
 
 (4) Calculate the density at the critical points to identify the peak value,
 f_peak, and corresponding calendar date, t_peak, as well as the index of
-of the peak in t_crit, ind_peak.
+the peak in t_crit, ind_peak.
 
-(5) For each time period (the length(t_peak)-1 durations defined by y_peak)
+(5) For each time period (the length(t_peak)-1 durations defined by t_peak)
 determine the sign of the density function, f(t), and create a character
 vector, slope, that has the value 'pos' if f(t) is positive and 'neg' if
 f(t) is negative.

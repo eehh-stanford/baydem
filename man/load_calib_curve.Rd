@@ -15,6 +15,5 @@ The calibration dataframe, with columns year_BP, uncal_year_BP, and
 uncal_year_BP_error
 }
 \description{
-Parse and return the radiocarbon calibration curve stored in
-data
+Parse and return the radiocarbon calibration curve stored in data.
 }

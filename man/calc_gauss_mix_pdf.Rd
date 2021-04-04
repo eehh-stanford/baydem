@@ -23,12 +23,12 @@ density, or rate}
 The output vector with length G
 }
 \description{
-\code{calc_gauss_mix_pdf} calculates the probability density
-for a possibly truncated Gaussian mixture. The density, f', and rate, f'/f,
-can also be calculated by specifying the input \code{type}, which is
-'density' by default, but can also be 'cumulative', 'derivative', or 'rate'.
-The parameter vector th has the ordering (pi_k, mu_k, s_k), where
-pi_k, mu_k, and s_k are the weight, mean, and standard deviation of the k-th
-mixture. There are K total mixtures. The truncation boundaries tau_min and
-tau_max are optional.
+\code{calc_gauss_mix_pdf} calculates the probability density for a possibly
+truncated Gaussian mixture. The density, f', and rate, f'/f, can also be
+calculated by specifying the input \code{type}, which is 'density' by
+default, but can also be 'cumulative', 'derivative', or 'rate'. The parameter
+vector th has the ordering (pi_k, mu_k, s_k), where pi_k, mu_k, and s_k are
+the weight, mean, and standard deviation of the k-th mixture. There are K
+total mixtures. The truncation boundaries tau_min and tau_max are optional.
+If provided, the density is normalized to integrate to 1 on that interval.
 }

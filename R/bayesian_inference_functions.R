@@ -1,41 +1,66 @@
-#' @title Sample from the posterior of a density model for a set of radiocarbon
+#' @title
+#' Sample from the posterior of a density model for a set of radiocarbon
 #' measurements
 #'
-#' @description This is the core function that implements the Bayesian
-#' inference. Currently, the only supported density model is a truncated
-#' Gaussian mixture.
+#' @description
+#' This is the core function that implements the Bayesian inference. Currently,
+#' the only supported density model is a truncated Gaussian mixture. Currently,
+#' the only supported density model is a truncated Gaussian mixture. If a
+#' starting parameter vector (\code{th0}) is not provided, it is set via a
+#' maximum likelihood fit; the same vector is used for all sampling chains.
+#' Named elements of the variable control must consist of one of the following
+#' four options (defaults in parantheses):
 #'
-#' @details The input consists of the radiocarbon measurements (rc_meas), the
-#' density model (density_model), hyperparameters that specify the prior
-#' distribution as well as the spacing of the sampling grid (hp), and optional
-#' control variables. stan is called via the rstan package to sample from the
-#' posterior. The output is the variable bayesian_soln, which is a list
-#' TODO: continue editing documentation from here once edits are complete
-#' which is a list with the fields prob (the input) and fit (the result of the
-#' stan fit).
+#' \itemize{
+#'   \item{\code{num_chains}}
+#'     {Number of chains (4)}
+#'   \item{\code{samps_per_chain}}
+#'     {Number of samples per chain (2000)}
+#'   \item{\code{warmup}}
+#'     {Number of warmup samples (\code{samps_per_chain/2})}
+#'   \item{\code{stan_control}}
+#'     {Additional control parameters to pass to stan (\code{list()})}
+#' }
 #'
-#' prob can also have an optional field control that specifies the
-#' following control parameters for the Bayesian inference (defaults in
-#' parentheses):
+#' @param rc_meas The radiocarbon measurements (see import_rc_data).
+#' @param density_model The density model (see set_density_model).
+#' @param hp Hyperparameters for the priors and to specify the spacing of the
+#'   Riemann sum that approximates the integral for the likelihood.
+#' @param calib_df The calibration data frame (see load_calib_curve).
+#' @param th0 An optional parameter vector to initialize the Stan chains. If not
+#'   provided, it is calculated using a maximum likelihood fit.
+#' @param init_seed An optional random number seed for determining the starting
+#'   parameter vector using a maximum likelihood fit. If not provided, it is
+#'   drawn. It should not be provided if th0 is provided.
+#' @param stan_seed An optional random number seed for the call to Stan. If not
+#'   provided, it is drawn.
 #'
-#'   num_chains      -- Number of chains (4)
-#'   samps_per_chain -- Number of samples per chain (2000)
-#'   warmup          -- Number of warmup samples(default is samps_per_chain/2)
-#'   init_seed        -- An optional random number seed for initializing the
-#'                      chains
-#'   stan_seed        -- An optional random number seed for the call to Stan
-#'   init_list        -- The initializations for each chain. The default is to
-#'                      set this using a mixture fit of the summed density
+#' @return
+#' \code{bayesian_soln}, a list-like object of class bd_bayesian_soln with the
+#' following fields:
+#' \itemize{
+#'   \item{\code{fit}}
+#'     {The result of the call to stan}
+#'   \item{\code{final_th0}}
+#'     {The final \code{th0} value; i.e., never NA.}
+#'   \item{\code{final_init_seed}}
+#'     {The final init_seed value; i.e., never NA unless \code{th0} is
+#'      provided.}
+#'   \item{\code{final_stan_seed}}
+#'     {The final \code{stan_seed} value; i.e., never NA.}
+#'   \item{\code{final_control}}
+#'     {The final control parameters used; i.e., if a parameter is not provided,
+#'   \item{\code{optional_inputs}}
+#'     {A record of the actual input values for the optional inputs, which are
+#'      \code{th0}, \code{init_seed}, \code{stan_seed}, and \code{control}.}
+#' }
 #'
-#' @param prob List with the fields `phi_m` (vector of fraction modern values
-#'   for the radiocarbon measurements, `sig_m` (measurement errors for phi_m),
-#'   `hp` (list of hyperparameters), and `calibDf`.
-#' @param control Control parameters (see details)
-#'
-#' @return bayesian_soln, a list with three fields: prob (the input), fit (the result of
-#'   the call to stan), and control (the control parameters used)
-#'
+#' @seealso
+#' * [import_rc_data()] for the format of \code{rc_meas}
+#' * [set_density_model()] for the format of \code{density_model}
+#' * [load_calib_curve()] for the format of \code{calib_df}
 #' @export
+
 do_bayesian_inference <- function(rc_meas,
                                   density_model,
                                   hp,
@@ -45,6 +70,14 @@ do_bayesian_inference <- function(rc_meas,
                                   stan_seed=NA,
                                   control=list()) {
 
+  for (param_name in names(control)) {
+    if (!(param_name %in% c("num_chains",
+                            "samps_per_chain",
+                            "warmup",
+                            "stan_control"))) {
+      stop(paste0("Unsupported named parameter in control = ",param_name))
+    }
+  }
   # Save the the optional inputs, which are stored in the return value
   optional_inputs <- list(th0=th0,
                           init_seed=init_seed,
@@ -70,10 +103,10 @@ do_bayesian_inference <- function(rc_meas,
   }
 
   # Unpack and/or define the control parameters
-  have_num_chains      <- "num_chains"           %in% control
-  have_samps_per_chain <- "have_samps_per_chain" %in% control
-  have_warmup          <- "have_warmup"          %in% control
-  have_stan_control    <- "have_stan_control"    %in% control
+  have_num_chains      <- "num_chains"      %in% control
+  have_samps_per_chain <- "samps_per_chain" %in% control
+  have_warmup          <- "warmup"          %in% control
+  have_stan_control    <- "stan_control"    %in% control
 
   if (have_num_chains) {
     num_chains <- control$num_chains
@@ -99,7 +132,7 @@ do_bayesian_inference <- function(rc_meas,
     stan_control <- NA
   }
 
-  control_final <- list(
+  final_control <- list(
     num_chains = num_chains,
     samps_per_chain = samps_per_chain,
     warmup = warmup,
@@ -114,12 +147,12 @@ do_bayesian_inference <- function(rc_meas,
     tau <- seq(tau_min, tau_max, by = hp$dtau)
     M <- calc_meas_matrix(tau, rc_meas$phi_m, rc_meas$sig_m, calib_df)
 
+    K <- density_model$K
     if (all(is.na(th0))) {
       # Then an initialization vector has not been provided. Do a maximum
       # likelihood fit to get a starting parameter. Use init_seed for this to
       # allow reproducibility.
       dtau <- hp$dtau
-      K <- density_model$K
       max_lik_fit <- fit_trunc_gauss_mix(K,
                                          rc_meas$phi_m,
                                          rc_meas$sig_m,
@@ -178,30 +211,30 @@ do_bayesian_inference <- function(rc_meas,
   }
 
   bayesian_soln <- list(fit=fit,
-                        control=control_final,
-                        init_seed=init_seed,
-                        stan_seed=stan_seed,
+                        final_th0=th0,
+                        final_init_seed=init_seed,
+                        final_stan_seed=stan_seed,
+                        final_control=final_control,
                         optional_inputs=optional_inputs)
   class(bayesian_soln) <- "bd_bayesian_soln"
 
-  # If a save file was input, save the result to file. This is especially
-  # useful for parallel batch runs
   return(bayesian_soln)
 }
 
-#' @title Calculate some key summary measures using the result of a call to
+#' @title
+#' Calculate some key summary measures using the result of a call to
 #' \code{do_bayesian_inference}
 #'
-#' @description \code{do_bayesian_inference} calls Stan to do Bayesian inference
-#' by generating a sample of parameters from the posterior of theta (or th).
-#' do_bayesian_inference analyzes the result of that inference. Notably,
+#' @description
+#' \code{do_bayesian_inference} calls Stan to do Bayesian inference by
+#' generating a sample of parameters from the posterior of theta (or \code{th}).
+#' \code{do_bayesian_inference} analyzes the result of that inference. Notably,
 #' it calculates the quantiles of the density function and the growth rate.
 #'
-#' @details `bayesian_soln` is the result of a call to \code{do_bayesian_inference}.
-#' It contains both the resulting samples and the parameters used in the
-#' inference, such as the hyperparameters (see \code{do_bayseian_inference} for
-#' further details). The primary thing \code{summarize_bayesian_inference} does
-#' is calculate quantiles of both the parameterized density and growth rate. For
+#' @details \code{bayesian_soln} is the result of a call to
+#' \code{do_bayesian_inference}. It contains posterior samples for the density
+#' model. The primary thing \code{summarize_bayesian_inference} does is
+#' calculate quantiles of both the parameterized density and growth rate. For
 #' example, for a calendar date tau_g each sample yields a density and growth
 #' rate. The quantile is the value of the density or growth rate such that a
 #' given proportion of samples are smaller than that value. The probabilities
@@ -224,21 +257,29 @@ do_bayesian_inference <- function(rc_meas,
 #' default, `rate_prop` is NA and no calendar dates are classified as missing.
 #'
 #' By default, a summary is done for each sample by calling summarize_sample.
-#' This is not done if doSummary is FALSE.
+#' This is not done if do_summary is FALSE.
 #'
-#' @param bayesian_soln The solution, a list-like object of class bd_bayesian_soln (see
-#'   \code{do_bayesian_inference})
-#' @param tau (optional) The calendar dates at which to evaluate densities. If
-#'   tau is not input, tau is built from the hyperparameters.
-#' @param th_sim (optional) The known parameters used to create simulation data
-#' @param lev (default: 0.025) The level to use for the quantile bands
-#' @param rate_prop (optional) The cumulative density needed to define rate
-#'   growth bands
-#' @param do_sample_summaries (default: `TRUE`) Whether to calculate some
-#'   summary summarize for each sampled curve.
+#' @param bayesian_soln The solution, a list-like object of class
+#'   bd_bayesian_soln (see do_bayesian_inference).
+#' @param rc_meas The radiocarbon measurements (see import_rc_data).
+#' @param density_model The density model (see set_density_model).
+#' @param calib_df The calibration data frame (see load_calib_curve).
+#' @param dtau The spacing of the sampling grid (default: 5).
+#' @param th_sim The known parameters used to create simulation data (default:
+#'   NA, not provided).
+#' @param lev The level to use for the quantile bands (default: 0.025).
+#' @param rate_prop The cumulative density needed to define rate growth bands
+#'   (default: NA, not used).
+#' @param do_sample_summaries Whether to calculate some summary information for
+#'   each sampled curve (Default: TRUE).
 #'
 #' @return A list with information on the quantiles of the density function and
 #'   growth rate (and sample summaries)
+#'
+#' @seealso
+#' * [import_rc_data()] for the format of \code{rc_meas}
+#' * [set_density_model()] for the format of \code{density_model}
+#' * [load_calib_curve()] for the format of \code{calib_df}
 #'
 #' @export
 
@@ -374,8 +415,9 @@ summarize_bayesian_inference <- function(bayesian_soln,
   return(out)
 }
 
-#' @title Extract the Bayesian samples for a Gaussian mixture model generated by
-#' do_bayesian_inference
+#' @title
+#' Extract the Bayesian samples for a Gaussian mixture model generated by
+#' \code{do_bayesian_inference}
 #'
 #' @description
 #' The input fit is the result of a call to stan by
@@ -386,7 +428,8 @@ summarize_bayesian_inference <- function(bayesian_soln,
 #'
 #' @param fit The fit from stan, of class stanfit
 #'
-#' @return A matrix or list of samples
+#' @return A matrix of samples with dimensions S by (3*K), where S is the number
+#'   of non-warmup samples
 #' @export
 
 extract_param <- function(fit) {
@@ -401,8 +444,8 @@ extract_param <- function(fit) {
   return(TH)
 }
 
-#' @title Identify growth periods and the peak value for a truncated Gaussian
-#' mixture
+#' @title
+#' Identify growth periods and the peak value for a truncated Gaussian mixture
 #'
 #' @description
 #' The input vector th parameterizes a Gaussian mixture, and tau_min / tau_max
@@ -421,9 +464,9 @@ extract_param <- function(fit) {
 #'
 #' (4) Calculate the density at the critical points to identify the peak value,
 #'     f_peak, and corresponding calendar date, t_peak, as well as the index of
-#'     of the peak in t_crit, ind_peak.
+#'     the peak in t_crit, ind_peak.
 #'
-#' (5) For each time period (the length(t_peak)-1 durations defined by y_peak)
+#' (5) For each time period (the length(t_peak)-1 durations defined by t_peak)
 #'     determine the sign of the density function, f(t), and create a character
 #'     vector, slope, that has the value 'pos' if f(t) is positive and 'neg' if
 #'     f(t) is negative.
@@ -437,11 +480,26 @@ extract_param <- function(fit) {
 #' @param  th The Gaussian mixture parameterization
 #' @param  tau_min The lower truncation value
 #' @param  tau_max The upper truncation value
-#' @param  N (Default 1000) The number of points use for identifying slope
-#'   changes
+#' @param  N The number of points use for identifying slope changes
+#'   (default: 1000)
 #'
-#' @return A list consisting of t_lo / t_hi (specifying the time periods),
-#'   ind_peak, t_peak, f_peak, and pattern (see Description)
+#' @return A list consisting of:
+#' \itemize{
+#'   \item{\code{periods}}
+#'     {A data-frame where the columns t_lo/t_hi indicate the starting and
+#'      ending calendars dates of periods and slope is negative if the growth
+#'      rate is negative over that time period and positive if it is positive.}
+#'   \item{\code{ind_peak}}
+#'     {The index of the period in the data-frame \code{periods} with the peak
+#'      value of the density.}
+#'   \item{\code{t_peak}}
+#'     {The calendar date of the peak value of the density.}
+#'   \item{\code{f_peak}}
+#'     {The value of the density function at the peak calendar date.}
+#'   \item{\code{pattern}}
+#'     {A unique pattern that summaries the periods of growth/decary and
+#'      relative locaiton of the peak (see Description).}
+#' }
 #'
 #' @export
 summarize_trunc_gauss_mix_sample <- function(th,
@@ -508,11 +566,13 @@ summarize_trunc_gauss_mix_sample <- function(th,
               pattern = pattern))
 }
 
-#' @title Calculate the quantiles for an input matrix X
+#' @title
+#' Calculate the quantiles for an input matrix X
 #'
-#' @description The input matrix X has dimensions S x G, where S is the number
-#'              of samples and G the number of grid points at which X was
-#'              evaluated. Calculate quantiles for each grid point, g = 1,2,..G.
+#' @description
+#' The input matrix X has dimensions S x G, where S is the number of samples and
+#' G the number of grid points at which X was evaluated. Calculate quantiles for
+#' each grid point, g = 1,2,..G.
 #'
 #' @param X The matrix for which quantiles are calculated, with dimension S x G
 #' @param probs The probability values at which to calculate the quantiles
@@ -533,8 +593,9 @@ calc_quantiles <- function(X, probs = c(.025, .5, .975)) {
   return(Q)
 }
 
-#' @title For each sample, calculate the time it takes for the density to
-#' decrease by half from the peak
+#' @title
+#' For each sample, calculate the time it takes for the density to decrease by
+#' half from the peak (or by another use-provided ratio)
 #'
 #' @details
 #' For each sample, calculate the time it takes for the density to decrease by
@@ -545,15 +606,28 @@ calc_quantiles <- function(X, probs = c(.025, .5, .975)) {
 #' interior peak in the range peak_range, which is tau_min to tau_max by
 #' default, the half life is set to NA.
 #'
-#' @param bayesian_soln The result of a call to do_bayesian_inference
-#' @param prop_change (Default 0.5) The relative decrease in density to use for
-#'   the duration calculation
-#' @param bayesian_summary (Optional) The result of a call to summarize_bayesian_inference.
-#'   If not provided, it is calculated
-#' @param peak_range (default: `c(tau_min, tau_max)`) peak_range can be given so
-#'   that the peak density used is on the range peak_range
+#' @param bayesian_soln The solution, a list-like object of class
+#'   bd_bayesian_soln (see do_bayesian_inference).
+#' @param density_model The density model (see set_density_model).
+#' @param rc_meas The radiocarbon measurements (see import_rc_data; optional:
+#'   if not provided, bayesian_summary must be provided).
+#' @param calib_df The calibration data frame (see load_calib_curve; optional:
+#'   if not provided, bayesian_summary must be provided).
+#' @param prop_change The relative decrease in density to use for the duration
+#'   calculation (default: 0.5).
+#' @param bayesian_summary The result of a call to summarize_bayesian_inference.
+#'   (optional; if not provided, it is calculated, which requires that rc_meas
+#'   and calib_df be provided).
+#' @param peak_range A range over which to search for the peak of the density
+#'   function (default: NA, which means that tau_min to tau_max is used for the
+#'   range).
 #'
 #' @return A vector of "half-lives" (proportional change set by prop_change)
+#'
+#' @seealso
+#' * [import_rc_data()] for the format of \code{rc_meas}
+#' * [set_density_model()] for the format of \code{density_model}
+#' * [load_calib_curve()] for the format of \code{calib_df}
 #'
 #' @export
 calc_half_life_from_peak <- function(bayesian_soln,
@@ -638,15 +712,10 @@ calc_half_life_from_peak <- function(bayesian_soln,
   return(half_life)
 }
 
-#' @title Calculate the relative density at two dates (or a range of dates / the
-#' peak)
+#' @title
+#' Calculate the relative density at two dates (or a range of dates / the peak)
 #'
 #' @description
-#'
-#' Calculate the relative density at two dates, and/or a range of dates and/or
-#' the peak value (see details).
-#'
-#' @details
 #' Calculate the relative density for two dates or, more generally, for two
 #' different specifications of the density aside from a simple date. The
 #' additional specifications that are supported are the peak value and the mean
@@ -654,23 +723,35 @@ calc_half_life_from_peak <- function(bayesian_soln,
 #' real numbers. For a date range, spec1/spec2 should be real vectors with a
 #' length of 2. For the peak, spec1/spec2 should be the string 'peak'.
 #'
-#' By default, this calculation is done for all the Bayesian samples in bayesian_soln,
-#' which is the result of a call to do_bayesian_inference. Optionally, a subset
-#' can be specified via the input ind, which should be a vector of integer
-#' indices at which to do the calculation. To save computation if either spec1
-#' or spec2 is 'peak', the result of a call to summarize_bayesian_inference for
-#' which do_summary was TRUE can be input.
+#' By default, this calculation is done for all the Bayesian samples in
+#' bayesian_soln which is the result of a call to \code{do_bayesian_inference}.
+#' Optionally, a subset can be specified via the input ind, which should be a
+#' vector of integer indices at which to do the calculation. To save computation
+#' if either spec1 or spec2 is 'peak', the result of a call to
+#' \code{summarize_bayesian_inference} for which \code{do_summary} was TRUE can
+#' be input.
 #'
 #'
 #' @param bayesian_soln The result of a call to do_bayesian_inference
+#' @param density_model The density model (see set_density_model).
 #' @param spec1 The specification for the first density (see details)
 #' @param spec2 The specification for the second density (see details)
-#' @param ind (Optional) Indices at which to do the calculation. By default,
-#'            all the samples in bayesian_summary are used.
-#' @param bayesian_summary (Optional) The result of a call to summarize_bayesian_inference.
-#'   This is only needed if either spec1 or spec2 is 'peak'
+#' @param rc_meas The radiocarbon measurements (see import_rc_data; optional:
+#'   if not provided, bayesian_summary must be provided).
+#' @param calib_df The calibration data frame (see load_calib_curve; optional:
+#'   if not provided, bayesian_summary must be provided).
+#' @param bayesian_summary The result of a call to summarize_bayesian_inference.
+#'   (optional; if not provided, it is calculated, which requires that rc_meas
+#'   and calib_df be provided).
+#' @param ind Indices at which to do the calculation (optional; by default, all
+#'   the samples in bayesian_summary are used).
 #'
 #' @return A vector of relative densities (f_spec1 / f_spec2)
+#'
+#' @seealso
+#' * [import_rc_data()] for the format of \code{rc_meas}
+#' * [set_density_model()] for the format of \code{density_model}
+#' * [load_calib_curve()] for the format of \code{calib_df}
 #'
 #' @export
 calc_relative_density <- function(bayesian_soln,

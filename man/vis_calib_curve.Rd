@@ -2,8 +2,7 @@
 % Please edit documentation in R/plotting_functions.R
 \name{vis_calib_curve}
 \alias{vis_calib_curve}
-\title{Visualize the calibration curve with equifinal and non-equifinal time
-spans}
+\title{Visualize the calibration curve with equifinal and non-equifinal time spans}
 \usage{
 vis_calib_curve(
   tau_min,
@@ -23,21 +22,20 @@ vis_calib_curve(
 \item{calib_df}{The calibration data frame, with columns year_BP,
 uncal_year_BP, and uncal_year_BP_error}
 
-\item{invert_col}{(default: \code{gray90}) The color for shading invertible
-regions}
+\item{invert_col}{The color for shading invertible regions
+(default: \code{gray90})}
 
-\item{point_col}{(default: \code{black}) The color for calibration curve points}
+\item{point_col}{The color for calibration curve points (default: \code{black})}
 
-\item{point_pch}{(default: \code{19}) The symbol for calibration curve points}
+\item{point_pch}{The symbol for calibration curve points (default: \code{19})}
 
 \item{...}{Additional inputs to plots}
 }
 \description{
-Visualize the calibration curve with equifinal and non-equifinal time
-spans
-}
-\details{
 Vizualize the input calibration curve, calib_df, on the interval tau_min to
 tau_max. This involves plotting the curve itself and shading invertible
 (non-equifinal) and non-invertible (equifinal) regions.
+}
+\seealso{
+\code{\link[=load_calib_curve]{load_calib_curve()}} for the format of \code{calib_df}
 }

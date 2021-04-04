@@ -2,8 +2,7 @@
 % Please edit documentation in R/bayesian_inference_functions.R
 \name{calc_relative_density}
 \alias{calc_relative_density}
-\title{Calculate the relative density at two dates (or a range of dates / the
-peak)}
+\title{Calculate the relative density at two dates (or a range of dates / the peak)}
 \usage{
 calc_relative_density(
   bayesian_soln,
@@ -19,24 +18,29 @@ calc_relative_density(
 \arguments{
 \item{bayesian_soln}{The result of a call to do_bayesian_inference}
 
+\item{density_model}{The density model (see set_density_model).}
+
 \item{spec1}{The specification for the first density (see details)}
 
 \item{spec2}{The specification for the second density (see details)}
 
-\item{ind}{(Optional) Indices at which to do the calculation. By default,
-all the samples in bayesian_summary are used.}
+\item{rc_meas}{The radiocarbon measurements (see import_rc_data; optional:
+if not provided, bayesian_summary must be provided).}
 
-\item{bayesian_summary}{(Optional) The result of a call to summarize_bayesian_inference.
-This is only needed if either spec1 or spec2 is 'peak'}
+\item{calib_df}{The calibration data frame (see load_calib_curve; optional:
+if not provided, bayesian_summary must be provided).}
+
+\item{ind}{Indices at which to do the calculation (optional; by default, all
+the samples in bayesian_summary are used).}
+
+\item{bayesian_summary}{The result of a call to summarize_bayesian_inference.
+(optional; if not provided, it is calculated, which requires that rc_meas
+and calib_df be provided).}
 }
 \value{
 A vector of relative densities (f_spec1 / f_spec2)
 }
 \description{
-Calculate the relative density at two dates, and/or a range of dates and/or
-the peak value (see details).
-}
-\details{
 Calculate the relative density for two dates or, more generally, for two
 different specifications of the density aside from a simple date. The
 additional specifications that are supported are the peak value and the mean
@@ -44,10 +48,18 @@ density on an interval. For a simple date, spec1/spec2 should be scalar
 real numbers. For a date range, spec1/spec2 should be real vectors with a
 length of 2. For the peak, spec1/spec2 should be the string 'peak'.
 
-By default, this calculation is done for all the Bayesian samples in bayesian_soln,
-which is the result of a call to do_bayesian_inference. Optionally, a subset
-can be specified via the input ind, which should be a vector of integer
-indices at which to do the calculation. To save computation if either spec1
-or spec2 is 'peak', the result of a call to summarize_bayesian_inference for
-which do_summary was TRUE can be input.
+By default, this calculation is done for all the Bayesian samples in
+bayesian_soln which is the result of a call to \code{do_bayesian_inference}.
+Optionally, a subset can be specified via the input ind, which should be a
+vector of integer indices at which to do the calculation. To save computation
+if either spec1 or spec2 is 'peak', the result of a call to
+\code{summarize_bayesian_inference} for which \code{do_summary} was TRUE can
+be input.
+}
+\seealso{
+\itemize{
+\item \code{\link[=import_rc_data]{import_rc_data()}} for the format of \code{rc_meas}
+\item \code{\link[=set_density_model]{set_density_model()}} for the format of \code{density_model}
+\item \code{\link[=load_calib_curve]{load_calib_curve()}} for the format of \code{calib_df}
+}
 }

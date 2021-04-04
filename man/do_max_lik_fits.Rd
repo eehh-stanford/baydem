@@ -18,7 +18,11 @@ do_max_lik_fits(data_dir, analysis_name, dtau = 5, input_seed = NA, ...)
 to the maximum likelihood fits.}
 
 \item{...}{Additional arguments to pass to the optimization function (see
-fit_trunc_gauss_mix)}
+fit_trunc_gauss_mix)
+\itemize{
+\item \code{\link[=set_sim]{set_sim()}} for an overview of the "standard pipeline"
+\item \code{\link[=fit_trunc_gauss_mix]{fit_trunc_gauss_mix()}}
+}}
 }
 \description{
 This is one of a set of helper functions for undertaking a typical analysis

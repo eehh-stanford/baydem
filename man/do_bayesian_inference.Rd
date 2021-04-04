@@ -17,41 +17,69 @@ do_bayesian_inference(
 )
 }
 \arguments{
-\item{control}{Control parameters (see details)}
+\item{rc_meas}{The radiocarbon measurements (see import_rc_data).}
 
-\item{prob}{List with the fields \code{phi_m} (vector of fraction modern values
-for the radiocarbon measurements, \code{sig_m} (measurement errors for phi_m),
-\code{hp} (list of hyperparameters), and \code{calibDf}.}
+\item{density_model}{The density model (see set_density_model).}
+
+\item{hp}{Hyperparameters for the priors and to specify the spacing of the
+Riemann sum that approximates the integral for the likelihood.}
+
+\item{calib_df}{The calibration data frame (see load_calib_curve).}
+
+\item{th0}{An optional parameter vector to initialize the Stan chains. If not
+provided, it is calculated using a maximum likelihood fit.}
+
+\item{init_seed}{An optional random number seed for determining the starting
+parameter vector using a maximum likelihood fit. If not provided, it is
+drawn. It should not be provided if th0 is provided.}
+
+\item{stan_seed}{An optional random number seed for the call to Stan. If not
+provided, it is drawn.}
 }
 \value{
-bayesian_soln, a list with three fields: prob (the input), fit (the result of
-the call to stan), and control (the control parameters used)
+\code{bayesian_soln}, a list-like object of class bd_bayesian_soln with the
+following fields:
+\itemize{
+\item{\code{fit}}
+{The result of the call to stan}
+\item{\code{final_th0}}
+{The final \code{th0} value; i.e., never NA.}
+\item{\code{final_init_seed}}
+{The final init_seed value; i.e., never NA unless \code{th0} is
+provided.}
+\item{\code{final_stan_seed}}
+{The final \code{stan_seed} value; i.e., never NA.}
+\item{\code{final_control}}
+{The final control parameters used; i.e., if a parameter is not provided,
+\item{\code{optional_inputs}}
+{A record of the actual input values for the optional inputs, which are
+\code{th0}, \code{init_seed}, \code{stan_seed}, and \code{control}.}
+}
 }
 \description{
-This is the core function that implements the Bayesian
-inference. Currently, the only supported density model is a truncated
-Gaussian mixture.
+This is the core function that implements the Bayesian inference. Currently,
+the only supported density model is a truncated Gaussian mixture. Currently,
+the only supported density model is a truncated Gaussian mixture. If a
+starting parameter vector (\code{th0}) is not provided, it is set via a
+maximum likelihood fit; the same vector is used for all sampling chains.
+Named elements of the variable control must consist of one of the following
+four options (defaults in parantheses):
+
+\itemize{
+\item{\code{num_chains}}
+{Number of chains (4)}
+\item{\code{samps_per_chain}}
+{Number of samples per chain (2000)}
+\item{\code{warmup}}
+{Number of warmup samples (\code{samps_per_chain/2})}
+\item{\code{stan_control}}
+{Additional control parameters to pass to stan (\code{list()})}
 }
-\details{
-The input consists of the radiocarbon measurements (rc_meas), the
-density model (density_model), hyperparameters that specify the prior
-distribution as well as the spacing of the sampling grid (hp), and optional
-control variables. stan is called via the rstan package to sample from the
-posterior. The output is the variable bayesian_soln, which is a list
-TODO: continue editing documentation from here once edits are complete
-which is a list with the fields prob (the input) and fit (the result of the
-stan fit).
-
-prob can also have an optional field control that specifies the
-following control parameters for the Bayesian inference (defaults in
-parentheses):
-
-num_chains      -- Number of chains (4)
-samps_per_chain -- Number of samples per chain (2000)
-warmup          -- Number of warmup samples(default is samps_per_chain/2)
-init_seed        -- An optional random number seed for initializing the
-chains
-stan_seed        -- An optional random number seed for the call to Stan
-init_list        -- The initializations for each chain. The default is to
-set this using a mixture fit of the summed density
+}
+\seealso{
+\itemize{
+\item \code{\link[=import_rc_data]{import_rc_data()}} for the format of \code{rc_meas}
+\item \code{\link[=set_density_model]{set_density_model()}} for the format of \code{density_model}
+\item \code{\link[=load_calib_curve]{load_calib_curve()}} for the format of \code{calib_df}
+}
 }

@@ -16,7 +16,7 @@ calc_quantiles(X, probs = c(0.025, 0.5, 0.975))
 The quantiles, a matrix with dimension length(probs) x G
 }
 \description{
-The input matrix X has dimensions S x G, where S is the number
-of samples and G the number of grid points at which X was
-evaluated. Calculate quantiles for each grid point, g = 1,2,..G.
+The input matrix X has dimensions S x G, where S is the number of samples and
+G the number of grid points at which X was evaluated. Calculate quantiles for
+each grid point, g = 1,2,..G.
 }

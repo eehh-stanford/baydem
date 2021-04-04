@@ -2,8 +2,7 @@
 % Please edit documentation in R/radiocarbon_functions.R
 \name{calc_meas_matrix}
 \alias{calc_meas_matrix}
-\title{Calculate the measurement matrix given N observations and G grid
-points}
+\title{Calculate the measurement matrix given N observations and G grid points}
 \usage{
 calc_meas_matrix(
   tau,
@@ -23,29 +22,29 @@ calc_meas_matrix(
 
 \item{calib_df}{Calibration curve (see load_calib_curve)}
 
-\item{add_calib_unc}{(default TRUE) Whether to add calibration uncertainty}
+\item{add_calib_unc}{Whether to add calibration uncertainty (default: \code{TRUE})}
 
-\item{use_trapez}{(default FALSE) Whether to use the trapezoidal rule for
-integration}
+\item{use_trapez}{Whether to use the trapezoidal rule for integration
+(default: \code{FALSE})}
+}
+\value{
+The measurement matrix, which has dimensions N x G
 }
 \description{
-tau is a vector of calendar dates indexed from g = 1,2,...,G.
-phi_m is a vector of n = 1,2,...,N radiocarbon determinations
-(fraction modern) with associated uncertainties sig_m.
-Calculate the measurement matrix M, which  has dimensions N x G
-and for which each element is M_ig = p(phi_m,i|tau_g). The total
-uncertainty of the measurement comes from measurement error
-(SIG_M, calculated using the measurement error for each
-measurement) and the calibration curve error (SIG_c, calculated
-using the uncertainty for the calibration curve at each grid
-point). These uncertainties (and the associated measurements)
-should already be "projected" to 1950 equivalents. By default
-the measurement matrix, M, is multiplied by dtau so that M * f
-is an approximation to the integral over p(t|th) * p(phi|t)
-using a Riemann sum with the density calculated at the points
-tau and the width for each point being dtau. Alternatively,
-the trapezoidal rule can be used (for details see
-calc_trapez_weights). If the spacing of tau is irregular,
-the trapezoidal rule must be used. An error is thrown if tau is
-irregularly spaced and the the trapezoidal rule is not used
+tau is a vector of calendar dates indexed from g = 1,2,...,G. phi_m is a
+vector of n = 1,2,...,N radiocarbon determinations (fraction modern) with
+associated uncertainties sig_m. Calculate the measurement matrix M, which
+has dimensions N x G and for which each element is M_ig = p(phi_m,i|tau_g).
+The total uncertainty of the measurement comes from measurement error (SIG_M,
+calculated using the measurement error for each measurement) and the
+calibration curve error (SIG_c, calculated using the uncertainty for the
+calibration curve at each grid point). These uncertainties (and the
+associated measurements) should already be "projected" to 1950 equivalents.
+By default the measurement matrix, M, is multiplied by dtau so that M * f is
+an approximation to the integral over p(t|th) * p(phi|t) using a Riemann sum
+with the density calculated at the points tau and the width for each point
+being dtau. Alternatively, the trapezoidal rule can be used (for details see
+calc_trapez_weights). If the spacing of tau is irregular, the trapezoidal
+rule must be used. An error is thrown if tau is irregularly spaced and the
+trapezoidal rule is not used
 }

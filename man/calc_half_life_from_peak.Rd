@@ -2,8 +2,8 @@
 % Please edit documentation in R/bayesian_inference_functions.R
 \name{calc_half_life_from_peak}
 \alias{calc_half_life_from_peak}
-\title{For each sample, calculate the time it takes for the density to
-decrease by half from the peak}
+\title{For each sample, calculate the time it takes for the density to decrease by
+half from the peak (or by another use-provided ratio)}
 \usage{
 calc_half_life_from_peak(
   bayesian_soln,
@@ -16,23 +16,34 @@ calc_half_life_from_peak(
 )
 }
 \arguments{
-\item{bayesian_soln}{The result of a call to do_bayesian_inference}
+\item{bayesian_soln}{The solution, a list-like object of class
+bd_bayesian_soln (see do_bayesian_inference).}
 
-\item{prop_change}{(Default 0.5) The relative decrease in density to use for
-the duration calculation}
+\item{density_model}{The density model (see set_density_model).}
 
-\item{bayesian_summary}{(Optional) The result of a call to summarize_bayesian_inference.
-If not provided, it is calculated}
+\item{rc_meas}{The radiocarbon measurements (see import_rc_data; optional:
+if not provided, bayesian_summary must be provided).}
 
-\item{peak_range}{(default: \code{c(tau_min, tau_max)}) peak_range can be given so
-that the peak density used is on the range peak_range}
+\item{calib_df}{The calibration data frame (see load_calib_curve; optional:
+if not provided, bayesian_summary must be provided).}
+
+\item{prop_change}{The relative decrease in density to use for the duration
+calculation (default: 0.5).}
+
+\item{bayesian_summary}{The result of a call to summarize_bayesian_inference.
+(optional; if not provided, it is calculated, which requires that rc_meas
+and calib_df be provided).}
+
+\item{peak_range}{A range over which to search for the peak of the density
+function (default: NA, which means that tau_min to tau_max is used for the
+range).}
 }
 \value{
 A vector of "half-lives" (proportional change set by prop_change)
 }
 \description{
-For each sample, calculate the time it takes for the density to
-decrease by half from the peak
+For each sample, calculate the time it takes for the density to decrease by
+half from the peak (or by another use-provided ratio)
 }
 \details{
 For each sample, calculate the time it takes for the density to decrease by
@@ -42,4 +53,11 @@ takes for the density to decrease by 10\% is used. If the relative density is
 not reached, the half life for the sample is set to NA. If there is no
 interior peak in the range peak_range, which is tau_min to tau_max by
 default, the half life is set to NA.
+}
+\seealso{
+\itemize{
+\item \code{\link[=import_rc_data]{import_rc_data()}} for the format of \code{rc_meas}
+\item \code{\link[=set_density_model]{set_density_model()}} for the format of \code{density_model}
+\item \code{\link[=load_calib_curve]{load_calib_curve()}} for the format of \code{calib_df}
+}
 }

@@ -2,8 +2,8 @@
 % Please edit documentation in R/gaussian_mixture_model_functions.R
 \name{calc_gauss_mix_pdf_mat}
 \alias{calc_gauss_mix_pdf_mat}
-\title{Calculate the density of a possibly truncated Gaussian mixture for a
-matrix of samples}
+\title{Calculate the density of a possibly truncated Gaussian mixture for a matrix
+of samples}
 \usage{
 calc_gauss_mix_pdf_mat(TH, tau, tau_min = NA, tau_max = NA, type = "density")
 }
@@ -23,14 +23,13 @@ cumulative, derivative, or rate}
 The output matrix with dimensions S x G
 }
 \description{
-TH is a matrix of samples of a possibly truncated Gaussian
-mixture with dimensions S x P, where S is the number of samples
-and P is the number of parameters. Repeatedly call
-\code{calc_gauss_mix_pdf} to calculate the density function
-for each sample at the points in the vector tau, which has length
-G. The output density matrix, f_mat, has dimensions S x G.
-\code{calc_gauss_mix_pdf_mat} supports the same optional
-as \code{calc_gauss_mix_pdf}: tau_min / tau_max to specify the
-boundaries of truncation and type to set whether the density,
-cumuluative distribution, derivative, or rate is calculated.
+TH is a matrix of samples of a possibly truncated Gaussian mixture with
+dimensions S x P, where S is the number of samples and P is the number of
+parameters. Repeatedly call \code{calc_gauss_mix_pdf} to calculate the
+density function for each sample at the points in the vector tau, which has
+length G. The output density matrix, f_mat, has dimensions S x G.
+\code{calc_gauss_mix_pdf_mat} supports the same optional inputs as
+\code{calc_gauss_mix_pdf}: tau_min / tau_max to specify the  boundaries of
+truncation and type to set whether the density, cumulative distribution,
+derivative, or rate is calculated.
 }

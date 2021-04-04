@@ -19,8 +19,8 @@ sample_trunc_exp(N, r0, tau_min, tau_max)
 A vector of N samples between tau_min and tau_max
 }
 \description{
-Make N samples from a truncated exponential distribution with
-the density function r0\emph{exp(r0}t). The rate r0 can be positive (growth) or
-negative (decay). The density function is normalized to integrate to 1 on the
-interval tau_min to tau_max.
+Make N samples from a truncated exponential distribution with the density
+function r0\emph{exp(r0}t). The rate r0 can be positive (growth) or negative
+(decay). The density function is normalized to integrate to 1 on the interval
+tau_min to tau_max.
 }

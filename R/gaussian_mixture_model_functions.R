@@ -1,16 +1,17 @@
-#' @title Calculate the density of a possibly truncated Gaussian mixture for a
-#' matrix of samples
+#' @title
+#' Calculate the density of a possibly truncated Gaussian mixture for a matrix
+#' of samples
 #'
-#' @description TH is a matrix of samples of a possibly truncated Gaussian
-#'              mixture with dimensions S x P, where S is the number of samples
-#'              and P is the number of parameters. Repeatedly call
-#'              \code{calc_gauss_mix_pdf} to calculate the density function
-#'              for each sample at the points in the vector tau, which has length
-#'              G. The output density matrix, f_mat, has dimensions S x G.
-#'              \code{calc_gauss_mix_pdf_mat} supports the same optional
-#'              as \code{calc_gauss_mix_pdf}: tau_min / tau_max to specify the
-#'              boundaries of truncation and type to set whether the density,
-#'              cumuluative distribution, derivative, or rate is calculated.
+#' @description
+#' TH is a matrix of samples of a possibly truncated Gaussian mixture with
+#' dimensions S x P, where S is the number of samples and P is the number of
+#' parameters. Repeatedly call \code{calc_gauss_mix_pdf} to calculate the
+#' density function for each sample at the points in the vector tau, which has
+#' length G. The output density matrix, f_mat, has dimensions S x G.
+#' \code{calc_gauss_mix_pdf_mat} supports the same optional inputs as
+#' \code{calc_gauss_mix_pdf}: tau_min / tau_max to specify the  boundaries of
+#' truncation and type to set whether the density, cumulative distribution,
+#' derivative, or rate is calculated.
 #'
 #' @param TH A matrix of samples with dimensions S x P
 #' @param tau A vector of points for the density calculation with length G
@@ -23,7 +24,8 @@
 #'
 #' @export
 
-calc_gauss_mix_pdf_mat <- function(TH, tau, tau_min = NA, tau_max = NA, type = "density") {
+calc_gauss_mix_pdf_mat <- function(TH,tau,
+                                   tau_min=NA,tau_max=NA,type="density") {
   S <- dim(TH)[1] # number of samples
   G <- length(tau) # number of time-values (usually grid points)
   f_mat <- matrix(NA, S, G)
@@ -38,16 +40,18 @@ calc_gauss_mix_pdf_mat <- function(TH, tau, tau_min = NA, tau_max = NA, type = "
   return(f_mat)
 }
 
-#' @title Caculate the density of a possibly truncated Gaussian mixture
+#' @title
+#' Caculate the density of a possibly truncated Gaussian mixture
 #'
-#' @description \code{calc_gauss_mix_pdf} calculates the probability density
-#' for a possibly truncated Gaussian mixture. The density, f', and rate, f'/f,
-#' can also be calculated by specifying the input \code{type}, which is
-#' 'density' by default, but can also be 'cumulative', 'derivative', or 'rate'.
-#' The parameter vector th has the ordering (pi_k, mu_k, s_k), where
-#' pi_k, mu_k, and s_k are the weight, mean, and standard deviation of the k-th
-#' mixture. There are K total mixtures. The truncation boundaries tau_min and
-#' tau_max are optional.
+#' @description
+#' \code{calc_gauss_mix_pdf} calculates the probability density for a possibly
+#' truncated Gaussian mixture. The density, f', and rate, f'/f, can also be
+#' calculated by specifying the input \code{type}, which is 'density' by
+#' default, but can also be 'cumulative', 'derivative', or 'rate'. The parameter
+#' vector th has the ordering (pi_k, mu_k, s_k), where pi_k, mu_k, and s_k are
+#' the weight, mean, and standard deviation of the k-th mixture. There are K
+#' total mixtures. The truncation boundaries tau_min and tau_max are optional.
+#' If provided, the density is normalized to integrate to 1 on that interval.
 #'
 #' @param th A vector-like object that parameterizes the distribution
 #' @param tau Vector of locations at which to calculate the density

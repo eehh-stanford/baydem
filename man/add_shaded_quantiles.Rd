@@ -5,27 +5,30 @@
 \title{Add a shaded region showing the min/max quantiles}
 \usage{
 add_shaded_quantiles(
-  an,
+  bayesian_summary,
   col = grDevices::adjustcolor("grey", alpha.f = 0.5),
   ...
 )
 }
 \arguments{
-\item{an}{A list-like object of class \code{baydem::bd_analysis} with
-information on the quantiles of the density function and growth rate}
+\item{bayesian_summary}{A list-like object of class
+\code{bd_bayesian_summary} with information on the quantiles of the density
+function and growth rate (see \code{summarize_bayesian_inference}).}
 
-\item{col}{The color of the shaded region}
+\item{col}{The color of the shaded region (default:
+\code{grDevices::adjustcolor("grey",alpha.f = 0.5)}.}
 
-\item{...}{Additional parameters to pass to \code{graphics::polygon}}
+\item{...}{Additional parameters to pass to \code{graphics::polygon}.}
 }
 \description{
-Add a shaded region showing the min/max quantiles (usually
-+/-2.5\%) to a plot
+Add a shaded region showing the min/max quantiles (usually +/-2.5\%) to a
+plot. The input, bayesian_summary, is the result of a call to
+\code{summarize_bayesian_inference}, which is a list-like object of class
+bd_bayesian_summary with information on the quantiles of the density function
+and growth rate. Typically, the min/max quantiles are 2.5\% and 97.5\%, but
+this can be changed via the input lev in the call to
+\code{summarize_bayesian_inference}.
 }
-\details{
-The input, an, is the result of a call to analyze_soln. It is a
-list-like object of class bd_analysis with information on the quantiles
-of the density function and growth rate. Typically, the min/max quantiles
-are 2.5\% and 97.5\%, but this can be changed via the input lev in the call to
-analyze_soln.
+\seealso{
+\code{\link[=summarize_bayesian_inference]{summarize_bayesian_inference()}}
 }

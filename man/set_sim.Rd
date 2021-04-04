@@ -21,3 +21,6 @@ file called analysis_name.rds in the folder data_dir. Where results are
 non-determistic, random number seeds are set and stored to ensure that, even
 if processing is interupted, results are fully reproducible.
 }
+\seealso{
+\code{\link[=set_sim]{set_sim()}} for an overview of the "standard pipeline"
+}

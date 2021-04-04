@@ -18,38 +18,43 @@ summarize_bayesian_inference(
 )
 }
 \arguments{
-\item{bayesian_soln}{The solution, a list-like object of class bd_bayesian_soln (see
-\code{do_bayesian_inference})}
+\item{bayesian_soln}{The solution, a list-like object of class
+bd_bayesian_soln (see do_bayesian_inference).}
 
-\item{th_sim}{(optional) The known parameters used to create simulation data}
+\item{rc_meas}{The radiocarbon measurements (see import_rc_data).}
 
-\item{lev}{(default: 0.025) The level to use for the quantile bands}
+\item{density_model}{The density model (see set_density_model).}
 
-\item{rate_prop}{(optional) The cumulative density needed to define rate
-growth bands}
+\item{calib_df}{The calibration data frame (see load_calib_curve).}
 
-\item{do_sample_summaries}{(default: \code{TRUE}) Whether to calculate some
-summary summarize for each sampled curve.}
+\item{dtau}{The spacing of the sampling grid (default: 5).}
 
-\item{tau}{(optional) The calendar dates at which to evaluate densities. If
-tau is not input, tau is built from the hyperparameters.}
+\item{th_sim}{The known parameters used to create simulation data (default:
+NA, not provided).}
+
+\item{lev}{The level to use for the quantile bands (default: 0.025).}
+
+\item{rate_prop}{The cumulative density needed to define rate growth bands
+(default: NA, not used).}
+
+\item{do_sample_summaries}{Whether to calculate some summary information for
+each sampled curve (Default: TRUE).}
 }
 \value{
 A list with information on the quantiles of the density function and
 growth rate (and sample summaries)
 }
 \description{
-\code{do_bayesian_inference} calls Stan to do Bayesian inference
-by generating a sample of parameters from the posterior of theta (or th).
-do_bayesian_inference analyzes the result of that inference. Notably,
+\code{do_bayesian_inference} calls Stan to do Bayesian inference by
+generating a sample of parameters from the posterior of theta (or \code{th}).
+\code{do_bayesian_inference} analyzes the result of that inference. Notably,
 it calculates the quantiles of the density function and the growth rate.
 }
 \details{
-\code{bayesian_soln} is the result of a call to \code{do_bayesian_inference}.
-It contains both the resulting samples and the parameters used in the
-inference, such as the hyperparameters (see \code{do_bayseian_inference} for
-further details). The primary thing \code{summarize_bayesian_inference} does
-is calculate quantiles of both the parameterized density and growth rate. For
+\code{bayesian_soln} is the result of a call to
+\code{do_bayesian_inference}. It contains posterior samples for the density
+model. The primary thing \code{summarize_bayesian_inference} does is
+calculate quantiles of both the parameterized density and growth rate. For
 example, for a calendar date tau_g each sample yields a density and growth
 rate. The quantile is the value of the density or growth rate such that a
 given proportion of samples are smaller than that value. The probabilities
@@ -72,5 +77,12 @@ quantile) below \code{rate_prop} (for the lower boundary) or above \code{1 - rat
 default, \code{rate_prop} is NA and no calendar dates are classified as missing.
 
 By default, a summary is done for each sample by calling summarize_sample.
-This is not done if doSummary is FALSE.
+This is not done if do_summary is FALSE.
+}
+\seealso{
+\itemize{
+\item \code{\link[=import_rc_data]{import_rc_data()}} for the format of \code{rc_meas}
+\item \code{\link[=set_density_model]{set_density_model()}} for the format of \code{density_model}
+\item \code{\link[=load_calib_curve]{load_calib_curve()}} for the format of \code{calib_df}
+}
 }

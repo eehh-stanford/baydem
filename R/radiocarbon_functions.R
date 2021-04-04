@@ -1,23 +1,27 @@
-#' @title Calculation the calibration curve fraction taumodern for input
-#' calendar dates
+#' @title
+#' Calculation the calibration curve fraction modern value for the input
+#' calendar dates.
 #'
-#' @details
+#' @description
 #' The input calibration data frame has three columns: year_BP, uncal_year_BP,
 #' and uncal_year_BP_error. For each input calendar date, tau, use the
 #' calibration curve information to estimate the fraction modern of the
 #' calibration curve. If tau is not specified, calib_df$uncal_year_BP is used as
-#' the dates for the calculation. By default, dates are assumed to be AD, but
-#' this can be changed using the optional input is_BP, which is FALSE by
-#' default.
+#' the dates for the calculation. By default, dates are assumed to be AD (more
+#' precisely: 1950 - years BP), but this can be changed using the optional input
+#' is_BP, which is FALSE by default.
 #'
 #' @param calib_df The calibration data frame, with columns year_BP,
-#'   uncal_year_BP, and uncal_year_BP_error
+#'   uncal_year_BP, and uncal_year_BP_error.
 #' @param tau The calendar dates tau (if not input, calib_df$uncal_year_BP is
-#'   used)
-#' @param is_BP (default FALSE) Whether the input dates are before present (BP),
-#'   as opposed to AD
+#'   used).
+#' @param is_BP Whether the input dates are before present (BP), as opposed to
+#'   AD (default: `FALSE`).
 #'
 #' @return The vector of calibration curve fraction modern values
+#'
+#' @seealso [load_calib_curve()] for the format of \code{calib_df}'
+#'
 #' @export
 calc_calib_curve_frac_modern <-
   function(calib_df,
@@ -39,36 +43,36 @@ calc_calib_curve_frac_modern <-
   }
 
 
-#' @title Calculate the measurement matrix given N observations and G grid
-#' points
+#' @title
+#' Calculate the measurement matrix given N observations and G grid points
 #'
-#' @description tau is a vector of calendar dates indexed from g = 1,2,...,G.
-#'              phi_m is a vector of n = 1,2,...,N radiocarbon determinations
-#'              (fraction modern) with associated uncertainties sig_m.
-#'              Calculate the measurement matrix M, which  has dimensions N x G
-#'              and for which each element is M_ig = p(phi_m,i|tau_g). The total
-#'              uncertainty of the measurement comes from measurement error
-#'              (SIG_M, calculated using the measurement error for each
-#'              measurement) and the calibration curve error (SIG_c, calculated
-#'              using the uncertainty for the calibration curve at each grid
-#'              point). These uncertainties (and the associated measurements)
-#'              should already be "projected" to 1950 equivalents. By default
-#'              the measurement matrix, M, is multiplied by dtau so that M * f
-#'              is an approximation to the integral over p(t|th) * p(phi|t)
-#'              using a Riemann sum with the density calculated at the points
-#'              tau and the width for each point being dtau. Alternatively,
-#'              the trapezoidal rule can be used (for details see
-#'              calc_trapez_weights). If the spacing of tau is irregular,
-#'              the trapezoidal rule must be used. An error is thrown if tau is
-#'              irregularly spaced and the the trapezoidal rule is not used
+#' @description
+#' tau is a vector of calendar dates indexed from g = 1,2,...,G. phi_m is a
+#' vector of n = 1,2,...,N radiocarbon determinations (fraction modern) with
+#' associated uncertainties sig_m. Calculate the measurement matrix M, which
+#' has dimensions N x G and for which each element is M_ig = p(phi_m,i|tau_g).
+#' The total uncertainty of the measurement comes from measurement error (SIG_M,
+#' calculated using the measurement error for each measurement) and the
+#' calibration curve error (SIG_c, calculated using the uncertainty for the
+#' calibration curve at each grid point). These uncertainties (and the
+#' associated measurements) should already be "projected" to 1950 equivalents.
+#' By default the measurement matrix, M, is multiplied by dtau so that M * f is
+#' an approximation to the integral over p(t|th) * p(phi|t) using a Riemann sum
+#' with the density calculated at the points tau and the width for each point
+#' being dtau. Alternatively, the trapezoidal rule can be used (for details see
+#' calc_trapez_weights). If the spacing of tau is irregular, the trapezoidal
+#' rule must be used. An error is thrown if tau is irregularly spaced and the
+#' trapezoidal rule is not used
 #'
 #' @param tau A vector of calendar dates indexed by g
 #' @param phi_m A vector of fraction moderns indexed by i
 #' @param sig_m A vector of standard deviations for phi_m indexed by i
 #' @param calib_df Calibration curve (see load_calib_curve)
-#' @param add_calib_unc (default TRUE) Whether to add calibration uncertainty
-#' @param use_trapez (default FALSE) Whether to use the trapezoidal rule for
-#'   integration
+#' @param add_calib_unc Whether to add calibration uncertainty (default: `TRUE`)
+#' @param use_trapez Whether to use the trapezoidal rule for integration
+#'   (default: `FALSE`)
+#'
+#' @return The measurement matrix, which has dimensions N x G
 #'
 #' @export
 
@@ -125,22 +129,22 @@ calc_meas_matrix <- function(tau,
   return(M)
 }
 
-#' @title Calculate integration weights assuming the midpoint rule
+#' @title
+#' Calculate integration weights assuming the midpoint rule
 #'
-#' @description tau is a vector of locations where a function to be integrated
-#'              is evaluated (the function values, f, are not input). Let
-#'              tau_g be the locations of integration and f_g the corresponding
-#'              function values for g=1, 2, ... G. Assuming trapezoidal
-#'              integration at the midpoints between elements of tau, the
-#'              weights to use for integration are
-#'              dtau_g = (tau_(g+1) - tau_(g-1)) / 2, where the conventions
-#'              tau_0 = tau_1 and tau_(G+1) = tau_G are used.
+#' @description
+#' tau is a vector of locations where a function to be integrated is evaluated
+#' (the function values, f, are not input). Let tau_g be the locations of
+#' integration and f_g the corresponding function values for g=1, 2, ... G.
+#' Assuming trapezoidal integration at the midpoints between elements of tau,
+#' the weights to use for integration are dtau_g = (tau_(g+1) - tau_(g-1)) / 2,
+#' where the conventions tau_0 = tau_1 and tau_(G+1) = tau_G are used.
 #'
 #' @param tau A vector of locations where the function is sampled, possibly
 #'   irregularly
 #'
 #' @return A vector of integration weights the same length as tau
-
+#'
 #' @export
 calc_trapez_weights <- function(tau) {
   G <- length(tau)
@@ -160,10 +164,11 @@ calc_trapez_weights <- function(tau) {
 #  ))
 #}
 
-#' @title Load Calibration Curve
+#' @title
+#' Load Calibration Curve
 #'
-#' @description Parse and return the radiocarbon calibration curve stored in
-#'   data
+#' @description
+#' Parse and return the radiocarbon calibration curve stored in data.
 #'
 #' @param calib_curve Name of calibration curve. One of: "intcal20", "marine20",
 #'   "shcal20", "intcal13", "marine13", or "shcal13"
@@ -172,8 +177,8 @@ calc_trapez_weights <- function(tau) {
 #'   uncal_year_BP_error
 #'
 #' @importFrom magrittr %>%
+#'
 #' @export
-
 load_calib_curve <- function(calib_curve) {
   if (!(calib_curve %in%
     c("intcal20", "marine20", "shcal20", "intcal13", "marine13", "shcal13"))) {
@@ -209,21 +214,24 @@ load_calib_curve <- function(calib_curve) {
   return(calib_df)
 }
 
-#' @title Find calendar date from fraction modern value given known bounding
+#' @title
+#' Find the calendar date from the fraction modern value given known bounding
 #' indices
 #'
-#' @details
+#' @description
 #' tau_curve and phi_curve give the calendar date and fraction modern of the
 #' radiocarbon calibration curve. It is known that the calendar date lies
-#' lies between `tau_curve[ii_lo]` and `tau_curve[ii_hi]`. Interpolate to find
-#' the calendar date corresponding to the input phi_known. This function is
-#' called by assess_calib_curve_equif.
+#' between `tau_curve[ii_lo]` and `tau_curve[ii_hi]`. Interpolate to find the
+#' calendar date corresponding to the input phi_known. This function is called
+#' by \code{assess_calib_curve_equif}.
 #'
 #' @param tau_curve Calibration curve calendar dates
 #' @param phi_curve Calibration curve fraction moderns
 #' @param phi_known Known fraction modern value
 #' @param ii_lo Lower bounding index
 #' @param ii_hi Upper bounding index
+#'
+#' @seealso [assess_calib_curve_equif()]
 #'
 #' @return The calendar date corresponding to the input phi_known
 #'

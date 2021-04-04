@@ -13,11 +13,11 @@ draw_rc_meas_using_date(t_e, calib_df, error_spec, is_AD = F)
 uncal_year_BP, and uncal_year_BP_error}
 
 \item{error_spec}{A list with entries type and parameter values specifying
-how to add uncertainty to the simualted measurement. Currently, only type =
+how to add uncertainty to the simulated measurement. Currently, only type =
 "unif_fm" is supported, for which the parameters min and max must be in
 error_spec.}
 
-\item{is_AD}{(Optional; default F) Whether t_e is cal_BP or AD}
+\item{is_AD}{Whether t_e is cal_BP or AD (optional; default: \code{FALSE})}
 }
 \description{
 Given input calendar dates t_e, simulate the radiocarbon measurement process

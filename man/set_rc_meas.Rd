@@ -20,8 +20,7 @@ of radiocarbon dates. As the analysis proceeds, results are stored in a save
 file called analysis_name.rds in the folder data_dir. Where results are
 non-determistic, random number seeds are set and stored to ensure that, even
 if processing is interupted, results are fully reproducible.
-}
-\details{
+
 Since this is the first helper function that is used in the sequence of
 analysis steps, a full description of the set of helper functions is
 described here and the documentation in the other functions points here.
@@ -49,4 +48,7 @@ Set the parametric model to be used for fitting and Bayesian inference.
 Currently, only a truncated Gaussian mixture is supported, which requires
 setting the calendar date range for truncation (likely using the result
 from step (3), thought it can be explicitly set)
+}
+\seealso{
+\code{\link[=import_rc_data]{import_rc_data()}} for the format of \code{rc_meas}'
 }
