@@ -3,7 +3,7 @@
 \name{summarize_bayesian_inference}
 \alias{summarize_bayesian_inference}
 \title{Calculate some key summary measures using the result of a call to
-\code{do_bayesian_inference}}
+\code{sample_theta}}
 \usage{
 summarize_bayesian_inference(
   bayesian_soln,
@@ -19,7 +19,7 @@ summarize_bayesian_inference(
 }
 \arguments{
 \item{bayesian_soln}{The solution, a list-like object of class
-bd_bayesian_soln (see do_bayesian_inference).}
+bd_bayesian_soln (see sample_theta).}
 
 \item{rc_meas}{The radiocarbon measurements (see import_rc_data).}
 
@@ -45,14 +45,14 @@ A list with information on the quantiles of the density function and
 growth rate (and sample summaries)
 }
 \description{
-\code{do_bayesian_inference} calls Stan to do Bayesian inference by
+\code{sample_theta} calls Stan to do Bayesian inference by
 generating a sample of parameters from the posterior of theta (or \code{th}).
-\code{do_bayesian_inference} analyzes the result of that inference. Notably,
+\code{sample_theta} analyzes the result of that inference. Notably,
 it calculates the quantiles of the density function and the growth rate.
 }
 \details{
 \code{bayesian_soln} is the result of a call to
-\code{do_bayesian_inference}. It contains posterior samples for the density
+\code{sample_theta}. It contains posterior samples for the density
 model. The primary thing \code{summarize_bayesian_inference} does is
 calculate quantiles of both the parameterized density and growth rate. For
 example, for a calendar date tau_g each sample yields a density and growth

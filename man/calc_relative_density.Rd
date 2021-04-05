@@ -16,7 +16,7 @@ calc_relative_density(
 )
 }
 \arguments{
-\item{bayesian_soln}{The result of a call to do_bayesian_inference}
+\item{bayesian_soln}{The result of a call to sample_theta}
 
 \item{density_model}{The density model (see set_density_model).}
 
@@ -49,7 +49,7 @@ real numbers. For a date range, spec1/spec2 should be real vectors with a
 length of 2. For the peak, spec1/spec2 should be the string 'peak'.
 
 By default, this calculation is done for all the Bayesian samples in
-bayesian_soln which is the result of a call to \code{do_bayesian_inference}.
+bayesian_soln which is the result of a call to \code{sample_theta}.
 Optionally, a subset can be specified via the input ind, which should be a
 vector of integer indices at which to do the calculation. To save computation
 if either spec1 or spec2 is 'peak', the result of a call to

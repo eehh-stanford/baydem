@@ -17,7 +17,7 @@ calc_half_life_from_peak(
 }
 \arguments{
 \item{bayesian_soln}{The solution, a list-like object of class
-bd_bayesian_soln (see do_bayesian_inference).}
+bd_bayesian_soln (see sample_theta).}
 
 \item{density_model}{The density model (see set_density_model).}
 

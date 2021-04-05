@@ -222,8 +222,10 @@ calc_tau_range <- function(rc_meas,calibration_curve="intcal20",dtau=1) {
   return(list(tau_min=tau_min,tau_max=tau_max))
 }
 
+#' @title
 #' Set the density model (density_model) for an analysis
 #'
+#' @description
 #' This is one of a set of helper functions for undertaking a typical analysis
 #' of radiocarbon dates. For details on the overall framework for these helper
 #' function, see set_rc_meas.
@@ -296,8 +298,10 @@ set_density_model <- function(data_dir,analysis_name,density_model) {
   }
 }
 
+#' @title
 #' Set the radiocarbon calibration curve for an analysis
 #'
+#' @description
 #' This is one of a set of helper functions for undertaking a typical analysis
 #' of radiocarbon dates. For details on the overall framework for these helper
 #' function, see set_rc_meas.
@@ -308,6 +312,7 @@ set_density_model <- function(data_dir,analysis_name,density_model) {
 #'   frame specifying the calibration curve (see load_calib_curve format and
 #'   choices).
 #'
+#' @seealso
 #' * [set_sim()] for an overview of the "standard pipeline"
 #' * [load_calib_curve()] for the format of \code{calib_df}
 #'
@@ -336,13 +341,14 @@ set_calib_curve <- function(data_dir,analysis_name,calibration_curve) {
 }
 
 # TODO: make and link to the vignette for a bespoke approach
+#' @title
 #' Do maximum likelihood fits given a set of radiocarbon measurements (rc_meas)
 #' and a specification of the density model (density_model)
 #'
+#' @description
 #' This is one of a set of helper functions for undertaking a typical analysis
 #' of radiocarbon dates. For details on the overall framework for these helper
 #' function, see set_rc_meas.
-#'
 #'
 #' To ensure reproducibility, the input_seed can be provided. The behavior and
 #' expectations are identical to the same parameter used in fit_trunc_gauss_mix,
@@ -355,9 +361,9 @@ set_calib_curve <- function(data_dir,analysis_name,calibration_curve) {
 #' @param dtau The spacing in years to use for the sampling grid
 #' @param input_seed An integer seed that will be used to set the seed for calls
 #'   to the maximum likelihood fits.
-#' @param ... Additional arguments to pass to the optimization function (see
-#'  fit_trunc_gauss_mix)
-#'
+#' @param ... Additional control arguments to pass to the optimization function
+#'   (see fit_trunc_gauss_mix)
+#' @seealso
 #' * [set_sim()] for an overview of the "standard pipeline"
 #' * [fit_trunc_gauss_mix()]
 #'
@@ -421,6 +427,148 @@ do_max_lik_fits <- function(data_dir,analysis_name,dtau=5,input_seed=NA,...) {
     analysis$max_lik_fits_seeds <- list(input_seed=input_seed,
                                         base_seed=base_seed,
                                         seed_vect=seed_vect)
+    saveRDS(analysis,data_file)
+  } else {
+    stop("Unsupported type for density_model")
+  }
+}
+
+#' @title
+#' Extract the vector of Akaike information criterion (AIC) values from a set
+#' of maximum likelihood fits created by do_max_lik_fits
+#'
+#' @param max_lik_fits The list of maximum likelihood fits (see
+#'   do_max_lik_fits).
+#'
+#' @seealso [do_max_lik_fits()]
+#'
+#' @returns A vector of AIC values the same length as max_lik_fits.
+#'
+#' @export
+get_aic_vect <- function(max_lik_fits) {
+  return(unlist(lapply(max_lik_fits,function(fit){fit$aic})))
+}
+
+#' @title
+#' Get the best parameter vector from a set of maximum likelihood fits created
+#' by do_max_lik_fits (by the AIC metric)
+#'
+#' @param max_lik_fits The list of maximum likelihood fits (see
+#'   do_max_lik_fits).
+#'
+#' @seealso [do_max_lik_fits()]
+#'
+#' @returns The best value of K
+#'
+#' @export
+get_best_th <- function(max_lik_fits) {
+  aic_vect <- get_aic_vect(max_lik_fits)
+  ind_best <- which.min(aic_vect)
+  return(max_lik_fits[[ind_best]]$th)
+}
+
+#' @title
+#' Get the best number of mixture components, K, from a set of maximum
+#' likelihood fits created by do_max_lik_fits (by the AIC metric)
+#'
+#' @param max_lik_fits The list of maximum likelihood fits (see
+#'   do_max_lik_fits).
+#'
+#' @seealso [do_max_lik_fits()]
+#'
+#' @returns The best value of K
+#'
+#' @export
+get_best_K <- function(max_lik_fits) {
+  th <- get_best_th(max_lik_fits)
+  return(length(th)/3)
+}
+
+#' @title
+#' Do Bayesian inference given a set of radiocarbon measurements (rc_meas)
+#' and an existing set of maximum likelihood fits (max_lik_fits)
+#'
+#' @description
+#' This is one of a set of helper functions for undertaking a typical analysis
+#' of radiocarbon dates. For details on the overall framework for these helper
+#' function, see set_rc_meas.
+#'
+#'
+#' To ensure reproducibility, the input_seed can be provided. The behavior and
+#' expectations are identical to the same parameter used in fit_trunc_gauss_mix,
+#' except that if a vector is specified it should be the same length as the
+#' vector K in analysis$density_model$K. That is, input_seed should be either
+#' (1) a single integer or (2) a vector of length analysis$density_model$K.
+#'
+#' @param data_dir The directory in which to store analysis data.
+#' @param analysis_name A unique name for a given analysis in data_dir.
+#' @param hp Hyperparameters for the priors and to specify the spacing of the
+#'   Riemann sum that approximates the integral for the likelihood (see
+#'   sample_theta).
+#' @param input_seed An integer seed that will be used to set the seed for calls
+#'   to the maximum likelihood fits.
+#' @param Ccontrol arguments to pass to the Bayesian inference function (see
+#'   sample_theta).
+#'
+#' @seealso [set_sim()] for an overview of the "standard pipeline"
+#'
+#' @export
+do_bayesian_inference <- function(data_dir,
+                                   analysis_name,
+                                   hp,
+                                   stan_seed=NA,
+                                   control=list()) {
+
+  data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
+  if (!file.exists(data_file)) {
+    stop("A save file for analysis_name does not exist in data_dir")
+  }
+
+  analysis <- readRDS(data_file)
+
+  if (!("rc_meas" %in% names(analysis))) {
+    stop("Radiocarbon measurements have not specified for this analysis")
+  }
+
+  if (!("density_model" %in% names(analysis))) {
+    stop("A density model has not been specified for this analysis")
+  }
+
+  if (!("calib_df" %in% names(analysis))) {
+    stop("A calibration curve has not been specified for this analysis")
+  }
+
+  if (!("max_lik_fits" %in% names(analysis))) {
+    stop("Maximum likelihood fits have not been specified for this analysis")
+  }
+
+  if ("bayesian_soln" %in% names(analysis)) {
+    stop("Bayesian inference has already been done for this analysis")
+  }
+
+  if (analysis$density_model$type == "trunc_gauss_mix") {
+    input_stan_seed <- stan_seed
+    if (is.na(stan_seed)) {
+      stan_seed <- sample.int(1000000,1)
+    }
+
+    # analysis$density_model may be a vector. It needs to be a scalar for the
+    # call to sample_theta, with K determined by the aic values of the
+    # maximum likelihood fits.
+    th0 <- get_best_th(analysis$max_lik_fits)
+    K <- get_best_K(analysis$max_lik_fits)
+    modified_density_model <- analysis$density_model
+    modified_density_model$K <- K
+    bayesian_soln <- sample_theta(analysis$rc_meas,
+                                  modified_density_model,
+                                  hp,
+                                  analysis$calib_df,
+                                  th0=th0,
+                                  stan_seed=stan_seed,
+                                  control=control)
+
+    analysis$input_stan_seed <- input_stan_seed
+    analysis$bayesian_soln <- bayesian_soln
     saveRDS(analysis,data_file)
   } else {
     stop("Unsupported type for density_model")

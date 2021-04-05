@@ -17,8 +17,7 @@ set_density_model(data_dir, analysis_name, density_model)
 This is one of a set of helper functions for undertaking a typical analysis
 of radiocarbon dates. For details on the overall framework for these helper
 function, see set_rc_meas.
-}
-\details{
+
 set_density_model sets the parameteric model to use for the density function
 assumed to give rise to the set of radiocarbon dates (rc_meas). The input
 variable density_model is a list in which the field "type" specifies the

@@ -13,14 +13,16 @@ set_calib_curve(data_dir, analysis_name, calibration_curve)
 
 \item{calibration_curve}{Either the name of a calibration curve or a data
 frame specifying the calibration curve (see load_calib_curve format and
-choices).
-\itemize{
-\item \code{\link[=set_sim]{set_sim()}} for an overview of the "standard pipeline"
-\item \code{\link[=load_calib_curve]{load_calib_curve()}} for the format of \code{calib_df}
-}}
+choices).}
 }
 \description{
 This is one of a set of helper functions for undertaking a typical analysis
 of radiocarbon dates. For details on the overall framework for these helper
 function, see set_rc_meas.
+}
+\seealso{
+\itemize{
+\item \code{\link[=set_sim]{set_sim()}} for an overview of the "standard pipeline"
+\item \code{\link[=load_calib_curve]{load_calib_curve()}} for the format of \code{calib_df}
+}
 }

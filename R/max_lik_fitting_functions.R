@@ -189,6 +189,13 @@ fit_trunc_gauss_mix <- function(K,
   # libraries and avoid using namespacing with :: (as is called for by some
   # style guides); hence, @import tags have been added to the function
   # documentation.
+
+  # TODO: consider alternatives to globally supressing warnings
+  # Temporarily turn of warnings (globally) to suppress the following warning
+  # from hjkb, which is not a problem:
+  # "Function evaluation limit exceeded -- may not converge."
+  warning_setting0 <- getOption("warn")
+  options(warn=-1)
   if(is.na(num_cores)) {
     # Use a conventional for loop to do the fits
 
@@ -219,8 +226,11 @@ fit_trunc_gauss_mix <- function(K,
                       control=control_list)
       }
   }
-  doParallel::stopImplicitCluster()
 
+  # Turn warnings back on (to the original setting value, actually)
+  options(warn=warning_setting0)
+
+  doParallel::stopImplicitCluster()
   # Identify the best solution across restarts and get the corresponding best
   # parameter vector and negative log-likelihood value.
   m_best <- which.min(unlist(lapply(

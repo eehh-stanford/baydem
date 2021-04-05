@@ -501,12 +501,12 @@ expect_error(
 # ------------------------------------------------------------------------------
 # (3) Do unit tests for functions related to the Bayesian inference
 #
-# coverage: do_bayesian_inference
+# coverage: sample_theta
 #           summarize_bayesian_inference
 # ------------------------------------------------------------------------------
 
 
-# (3a) do_bayesian_inference
+# (3a) sample_theta
 # Define the density model
 density_model <- list(type="trunc_gauss_mix",
                       tau_min=600,
@@ -531,7 +531,7 @@ input_control <- list(num_chains=2,
                       warmup=1000,
                       stan_control=list(adapt_delta=.99))
 expect_error(
-  soln <- do_bayesian_inference(
+  soln <- sample_theta(
     sim$data$rc_meas,
     density_model,
     hp,
@@ -574,7 +574,7 @@ expect_equal(
 # Check that the simulation is reproducible when init_seed and stan_seed are
 # used
 expect_error(
-  soln2 <- do_bayesian_inference(
+  soln2 <- sample_theta(
     sim$data$rc_meas,
     density_model,
     hp,
@@ -598,7 +598,7 @@ expect_equal(
 
 # Check that the inference succeeds if th0 is directly set
 expect_error(
-  soln <- do_bayesian_inference(
+  soln <- sample_theta(
     sim$data$rc_meas,
     density_model,
     hp,
@@ -611,7 +611,7 @@ expect_error(
 
 # Check that an error is thrown if th0 and init_seed are both provided
 expect_error(
-  do_bayesian_inference(
+  sample_theta(
     sim$data$rc_meas,
     density_model,
     hp,
@@ -625,7 +625,7 @@ expect_error(
 
 # Check that an error is thrown if an invalid parameter is passed in control
 expect_error(
-  do_bayesian_inference(
+  sample_theta(
     sim$data$rc_meas,
     density_model,
     hp,
@@ -1338,13 +1338,17 @@ expect_equal(
 # ------------------------------------------------------------------------------
 # (9) Do unit tests for data io (input/output) functions
 #
-# coverage: import_rc_data    (9a)
-#           set_rc_meas       (9b)
-#           set_sim           (9c)
-#           calc_tau_range    (9d)
-#           set_density_model (9e)
-#           set_calib_curve   (9f)
-#           do_max_lik_fits   (9g)
+# coverage: import_rc_data         (9a)
+#           set_rc_meas            (9b)
+#           set_sim                (9c)
+#           calc_tau_range         (9d)
+#           set_density_model      (9e)
+#           set_calib_curve        (9f)
+#           do_max_lik_fits        (9g)
+#           get_aic_vect           (9h)
+#           get_besk_K             (9i)
+#           get_besk_th            (9j)
+#           do_bayesian_inference (9k)
 # ------------------------------------------------------------------------------
 
 # (9a) import_rc_data
@@ -1462,7 +1466,7 @@ path_to_analysis_file <- file.path(data_dir,paste0(analysis_name,".rds"))
 
 # If the analysis file exists, delete it
 if (file.exists(path_to_analysis_file)) {
-  file.remove(path_to_analysis_file)
+  success <- file.remove(path_to_analysis_file)
 }
 
 expect_error(
@@ -1494,7 +1498,7 @@ path_to_sim_analysis_file <-
 
 # If the analysis file exists, delete it
 if (file.exists(path_to_sim_analysis_file)) {
-  file.remove(path_to_sim_analysis_file)
+  success <- file.remove(path_to_sim_analysis_file)
 }
 
 expect_error(
@@ -1640,7 +1644,7 @@ expect_error(
 density_model <- list(type="trunc_gauss_mix",
                               tau_min=600,
                               tau_max=1300,
-                              K=4)
+                              K=2:3)
 expect_error(
   set_density_model(data_dir,analysis_name,density_model),
   NA
@@ -1738,7 +1742,7 @@ expect_error(
   "Unsupported type for density_model"
 )
 
-file.remove(path_to_bad_analysis_file)
+success <- file.remove(path_to_bad_analysis_file)
 
 expect_error(
   do_max_lik_fits(data_dir,analysis_name,num_restarts=4,maxfeval=200),
@@ -1750,7 +1754,7 @@ expect_error(
   "Maximum likelihood fits have already been defined for this analysis"
 )
 
-# Check reproducbility with and without multiple cores
+# Check reproducibility with and without multiple cores
 analysis0 <- readRDS(path_to_analysis_file)
 input_seed <- analysis0$max_lik_fits_seeds$base_seed
 analysis <- analysis0
@@ -1795,4 +1799,134 @@ expect_equal(
   analysis0_modified
 )
 
-file.remove(path_to_analysis_file)
+# (9h) get_aic_vect
+# Set analysis back to equal analysis0
+analysis <- analysis0
+expect_equal(
+  aic_vect <- get_aic_vect(analysis$max_lik_fits),
+  c(analysis$max_lik_fits[[1]]$aic,analysis$max_lik_fits[[2]]$aic)
+)
+
+# (9i) get_best_th
+if (aic_vect[1] < aic_vect[2]) {
+  th_best <- analysis$max_lik_fits[[1]]$th
+  Kbest <- 2
+} else {
+  th_best <- analysis$max_lik_fits[[2]]$th
+  Kbest <- 3
+}
+
+expect_equal(
+  get_best_th(analysis$max_lik_fits),
+  th_best
+)
+
+# (9j) get_best_K
+expect_equal(
+  get_best_K(analysis$max_lik_fits),
+  Kbest
+)
+
+# (9k) do_bayesian_inference
+expect_error(
+  do_bayesian_inference(data_dir,bad_analysis_name,hp),
+  "A save file for analysis_name does not exist in data_dir"
+)
+
+bad_analysis_name <- "bad"
+path_to_bad_analysis_file <- file.path(data_dir,
+                                       paste0(bad_analysis_name,".rds"))
+saveRDS(list(),path_to_bad_analysis_file)
+expect_error(
+  do_bayesian_inference(data_dir,bad_analysis_name,hp),
+  "Radiocarbon measurements have not specified for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas),path_to_bad_analysis_file)
+expect_error(
+  do_bayesian_inference(data_dir,bad_analysis_name,hp),
+  "A density model has not been specified for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas,density_model=density_model),
+        path_to_bad_analysis_file)
+expect_error(
+  do_bayesian_inference(data_dir,bad_analysis_name,hp),
+  "A calibration curve has not been specified for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas,density_model=density_model,calib_df=calib_df),
+        path_to_bad_analysis_file)
+expect_error(
+  do_bayesian_inference(data_dir,bad_analysis_name,hp),
+  "Maximum likelihood fits have not been specified for this analysis"
+)
+
+invalid_density_model <- list(type="invalid_type")
+saveRDS(list(rc_meas=rc_meas,
+             density_model=invalid_density_model,
+             calib_df=calib_df,
+             max_lik_fits=analysis$max_lik_fits),
+        path_to_bad_analysis_file)
+expect_error(
+  do_bayesian_inference(data_dir,bad_analysis_name),
+  "Unsupported type for density_model"
+)
+
+saveRDS(list(rc_meas=rc_meas,
+             density_model=density_model,
+             calib_df=calib_df,
+             max_lik_fits=analysis$max_lik_fits),
+        path_to_analysis_file)
+expect_error(
+  do_bayesian_inference(data_dir,
+                         analysis_name,
+                         hp,
+                         control=input_control),
+  NA
+)
+
+analysis <- readRDS(path_to_analysis_file)
+expect_equal(
+  analysis$input_stan_seed,
+  NA
+)
+
+expect_error(
+  do_bayesian_inference(data_dir,
+                         analysis_name,
+                         hp,
+                         control=input_control),
+  "Bayesian inference has already been done for this analysis"
+)
+
+# Check reproducibility
+analysis0 <- readRDS(path_to_analysis_file)
+stan_seed <- analysis0$bayesian_soln$final_stan_seed
+analysis <- analysis0
+# Undo the Bayesian inference
+analysis$bayesian_soln <- NULL
+saveRDS(analysis,path_to_analysis_file)
+
+expect_error(
+  do_bayesian_inference(data_dir,
+                         analysis_name,
+                         hp,
+                         stan_seed=stan_seed,
+                         control=input_control),
+  NA
+)
+
+analysis <- readRDS(path_to_analysis_file)
+expect_equal(
+  analysis$input_stan_seed,
+  stan_seed
+)
+
+expect_equal(
+  extract_param(analysis$bayesian_soln$fit),
+  extract_param(analysis0$bayesian_soln$fit)
+)
+
+success <- file.remove(path_to_analysis_file)
+success <- file.remove(path_to_bad_analysis_file)
