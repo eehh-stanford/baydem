@@ -1,39 +1,41 @@
+# baydem
+The R package baydem (for bayESIAN demOGRAPHY) provides tools for reconstructing past and present demography.
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+# Installation
+There are three options for installing and using the package:
 
-baydem
-======
+(1) Install on an existing computer with necessary dependencies
+(2) Build a Docker image using the Dockerfile
+(3) Use a Docker image from Docker Hub
 
-<!-- badges: start -->
+## Option 1: Install on an existing computer with necessary dependencies
+Details will vary based on the machine and operating system since certain R packages on which baydem depends require the installation of tools outside R. The following should be sufficient:
 
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![Travis build
-status](https://travis-ci.org/eehh-stanford/baydem.svg?branch=master)](https://travis-ci.org/eehh-stanford/baydem)
-[![Codecov test
-coverage](https://codecov.io/gh/eehh-stanford/baydem/branch/master/graph/badge.svg)](https://codecov.io/gh/eehh-stanford/baydem?branch=master)
-<!-- badges: end -->
+(a) Install devtools with its dependencies
+https://www.rdocumentation.org/packages/devtools
 
-Bayesian tools for reconstructing past and present demography.
+(b) Install rstan with its dependencies
+http://mc-stan.org/rstan/
 
-Installation
-------------
+(c) Install baydem
+```
+library(devtools)
+install_github("eehh-stanford/baydem")
+```
 
-You can install the R package from [GitHub](https://github.com/) with:
+## Option 2: Build a Docker image using the Dockerfile
+First, clone the database and build the Docker image.
+```bash
+git clone https://github.com/eehh-stanford/baydem
+cd baydem
+docker build -t michaelholtonprice/baydem .
+```
 
-    # install.packages("devtools")
-    devtools::install_github("eehh-stanford/baydem")
+Start a container. Use the -v tag to mirror a directory for passing files between the host machine and the Docker container. The directory to the left of the semicolon is for the host machine and the directory to the right of the semicolon is for the Docker container. The path for the host machine will need to be modified for your situation.
 
-Requirements
-------------
+```bash
+docker run --name baydem -itv //c/mirrored_baydem_data:/data michaelholtonprice/baydem
+```
 
-For package/version dependencies, imports, and suggestions see the
-package DESCRIPTION file. Stan must be installed to call the functions
-that use rstan.
-
-Contributor Code of Conduct
----------------------------
-
-Please note that the ‘baydem’ project is released with a [Contributor
-Code of Conduct](CODE_OF_CONDUCT.md). By contributing to this project,
-you agree to abide by its terms.
+## Option 3: Use a Docker image from Docker Hub
+TODO: update example
