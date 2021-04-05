@@ -39,5 +39,9 @@ RUN Rscript setup.R
 
 # docker build -t michaelholtonprice/baydem .
 # docker run --name baydem -itv //c/mirrored_baydem_data:/data michaelholtonprice/baydem
-# git clone https://github.com/eehh-stanford/baydem && \
-
+# git clone https://github.com/eehh-stanford/baydem
+# cd baydem
+# R
+# library(devtools)
+# install_local(".",force=T,dep=F)
+# test()

@@ -37,5 +37,17 @@ Start a container. Use the -v tag to mirror a directory for passing files betwee
 docker run --name baydem -itv //c/mirrored_baydem_data:/data michaelholtonprice/baydem
 ```
 
+The Docker container already has baydem installed, and it is likely the latest version. However, the latest version can be (re)installed by cloning the github repository inside the Docker container and using devtools::install_local. Following this, the test scripts can be run to check the installation (they will take perhaps 30 minutes to complete):
+
+```bash
+git clone https://github.com/eehh-stanford/baydem
+cd baydem
+R
+library(devtools)
+install_local(".",force=T,dep=F)
+test()
+```
+
+
 ## Option 3: Use a Docker image from Docker Hub
 TODO: update example
