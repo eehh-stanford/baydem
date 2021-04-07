@@ -75,6 +75,7 @@ import_rc_data <- function(file_name,
   return (list(phi_m=phi_m,sig_m=sig_m,trc_m=trc_m,sig_trc_m=sig_trc_m))
 }
 
+# TODO: update documentation to describe full pipeline once code is ready
 #' @title
 #' Set the radiocarbon measurements (rc_meas) for an analysis
 #'

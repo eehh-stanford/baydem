@@ -527,8 +527,8 @@ hp <-
   )
 
 input_control <- list(num_chains=2,
-                      samps_per_chain=2000,
-                      warmup=1000,
+                      samps_per_chain=1800,
+                      warmup=600,
                       stan_control=list(adapt_delta=.99))
 expect_error(
   soln <- sample_theta(
@@ -562,8 +562,8 @@ expect_is(
 )
 
 expect_equal(
-  names(soln$final_control),
-  c("num_chains","samps_per_chain","warmup","stan_control")
+  soln$final_control,
+  input_control
 )
 
 expect_equal(
@@ -735,7 +735,7 @@ expect_error(
 # ------------------------------------------------------------------------------
 
 # (5a) extract_param
-total_samples <- 4000
+total_samples <- 2400
 expect_error(
   TH <- extract_param(soln$fit),
   NA

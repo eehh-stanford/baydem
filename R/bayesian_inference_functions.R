@@ -104,10 +104,10 @@ sample_theta <- function(rc_meas,
   }
 
   # Unpack and/or define the control parameters
-  have_num_chains      <- "num_chains"      %in% control
-  have_samps_per_chain <- "samps_per_chain" %in% control
-  have_warmup          <- "warmup"          %in% control
-  have_stan_control    <- "stan_control"    %in% control
+  have_num_chains      <- "num_chains"      %in% names(control)
+  have_samps_per_chain <- "samps_per_chain" %in% names(control)
+  have_warmup          <- "warmup"          %in% names(control)
+  have_stan_control    <- "stan_control"    %in% names(control)
 
   if (have_num_chains) {
     num_chains <- control$num_chains
