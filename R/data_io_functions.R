@@ -1,4 +1,73 @@
 #' @title
+#' Set the radiocarbon measurements (rc_meas) for an analysis
+#'
+#' @description
+#' This is one of a set of helper functions for undertaking a typical analysis
+#' of radiocarbon dates. As the analysis proceeds, results are stored in a save
+#' file called analysis_name.rds in the folder data_dir. Where results are
+#' non-determistic, random number seeds are set and stored to ensure that, even
+#' if processing is interupted, results are fully reproducible.
+#'
+#' Since this is the first helper function that is used in the sequence of
+#' analysis steps, a full description of the set of helper functions is
+#' described here and the documentation in the other functions points here.
+#'
+#' The variables data_dir and analysis_name must be specified for each helper
+#' function. data_dir is a directory that can store the data for multiple
+#' analyses. The analysis_name is a unique specified of a given analysis within
+#' data_dir. If a new analysis is initiated by calling set_rc_meas yet a data
+#' file already exists in data_dir for that analysis name, an error is thrown.
+#'
+#' The typical set of steps for an analysis is:
+#'
+#' (1) import_rc_data
+#'     Import the radiocarbon measurements from file (or simulate them using
+#'     simulate_rc_data)
+#' (2) set_rc_meas
+#'     Set the radiocarbon measurements (or use set_sim)
+#'
+#' (3) calc_tau_range
+#'     Determine the range of calendar dates that span the radiocarbon
+#'     measurements
+#'
+#' (4) set_density_model
+#'     Set the parametric model to be used for fitting and Bayesian inference.
+#'     Currently, only a truncated Gaussian mixture is supported, which requires
+#'     setting the calendar date range for truncation (likely using the result
+#'     from step (3))
+#'
+#' (5) set_calib_curve
+#'     Set the calibration curve to use for fitting and analysis
+#' (6) do_max_lik_fits
+#'     Do maximum likelihood fits for a range of models (currently, only
+#'     truncated Gaussian mixtures are supported, for which the models
+#'     specifically differ in the number of mixture components)
+#' (7) do_bayesian_inference
+#'     For the best model among the the results of do_max_lik_fits (assessed by
+#'     the AIC metric), do Bayesian inference (i.e., sample from the posterior
+#'     of the parameter vector theta)
+#' @param data_dir The directory in which to store analysis data
+#' @param analysis_name A unique name for a given analysis in data_dir
+#' @param rc_meas The radiocarbon measurements to use for this analysis (the
+#'   format of rc_meas is as output by import_rc_data)
+#'
+#' @seealso [import_rc_data()] for the format of \code{rc_meas}'
+#'
+#' @export
+set_rc_meas <- function(data_dir,analysis_name,rc_meas) {
+  data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
+
+  if (file.exists(data_file)) {
+    stop("A save file for analysis_name already exists in data_dir")
+  }
+
+  # TODO: Consider doing error checking on rc_meas
+
+  analysis <- list(rc_meas=rc_meas)
+  saveRDS(analysis,data_file)
+}
+
+#' @title
 #' Import radiocarbon data from a .csv file
 #'
 #' @description
@@ -75,66 +144,6 @@ import_rc_data <- function(file_name,
   return (list(phi_m=phi_m,sig_m=sig_m,trc_m=trc_m,sig_trc_m=sig_trc_m))
 }
 
-# TODO: update documentation to describe full pipeline once code is ready
-#' @title
-#' Set the radiocarbon measurements (rc_meas) for an analysis
-#'
-#' @description
-#' This is one of a set of helper functions for undertaking a typical analysis
-#' of radiocarbon dates. As the analysis proceeds, results are stored in a save
-#' file called analysis_name.rds in the folder data_dir. Where results are
-#' non-determistic, random number seeds are set and stored to ensure that, even
-#' if processing is interupted, results are fully reproducible.
-#'
-#' Since this is the first helper function that is used in the sequence of
-#' analysis steps, a full description of the set of helper functions is
-#' described here and the documentation in the other functions points here.
-#'
-#' The variables data_dir and analysis_name must be specified for each helper
-#' function. data_dir is a directory that can store the data for multiple
-#' analyses. The analysis_name is a unique specified of a given analysis within
-#' data_dir. If a new analysis is initiated by calling set_rc_meas yet a data
-#' file already exists in data_dir for that analysis name, an error is thrown.
-#'
-#' The typical set of steps for an analysis is:
-#'
-#' (2) import_rc_data
-#'     Import the radiocarbon measurements from file (or simulate them)
-#'
-#' (2) set_rc_meas [or set_sim]
-#'     Set the radiocarbon measurements
-#'
-#' (3) calc_tau_range
-#'     Determine the range of calendar dates that span the radiocarbon
-#'     measurements
-#'
-#' (4) set_density_model
-#'     Set the parametric model to be used for fitting and Bayesian inference.
-#'     Currently, only a truncated Gaussian mixture is supported, which requires
-#'     setting the calendar date range for truncation (likely using the result
-#'     from step (3), thought it can be explicitly set)
-#'
-#' @param data_dir The directory in which to store analysis data
-#' @param analysis_name A unique name for a given analysis in data_dir
-#' @param rc_meas The radiocarbon measurements to use for this analysis (the
-#'   format of rc_meas is as output by import_rc_data)
-#'
-#' @seealso [import_rc_data()] for the format of \code{rc_meas}'
-#'
-#' @export
-set_rc_meas <- function(data_dir,analysis_name,rc_meas) {
-  data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
-
-  if (file.exists(data_file)) {
-    stop("A save file for analysis_name already exists in data_dir")
-  }
-
-  # TODO: Consider doing error checking on rc_meas
-
-  analysis <- list(rc_meas=rc_meas)
-  saveRDS(analysis,data_file)
-}
-
 #' @title
 #' Use the results of a simulation to set the radiocarbon measurements (rc_meas)
 #' for an analysis (and store the settings used to do the simulation)
@@ -197,7 +206,6 @@ set_sim <- function(data_dir,analysis_name,sim) {
 #'
 #' @export
 calc_tau_range <- function(rc_meas,calibration_curve="intcal20",dtau=1) {
-
   N <- length(rc_meas$trc_m)
   calibrations <- Bchron::BchronCalibrate(ages=round(rc_meas$trc_m),
                                           ageSds=round(rc_meas$sig_trc_m),

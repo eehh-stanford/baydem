@@ -33,11 +33,11 @@ file already exists in data_dir for that analysis name, an error is thrown.
 
 The typical set of steps for an analysis is:
 
-(2) import_rc_data
-Import the radiocarbon measurements from file (or simulate them)
-
-(2) set_rc_meas \link{or set_sim}
-Set the radiocarbon measurements
+(1) import_rc_data
+Import the radiocarbon measurements from file (or simulate them using
+simulate_rc_data)
+(2) set_rc_meas
+Set the radiocarbon measurements (or use set_sim)
 
 (3) calc_tau_range
 Determine the range of calendar dates that span the radiocarbon
@@ -47,7 +47,18 @@ measurements
 Set the parametric model to be used for fitting and Bayesian inference.
 Currently, only a truncated Gaussian mixture is supported, which requires
 setting the calendar date range for truncation (likely using the result
-from step (3), thought it can be explicitly set)
+from step (3))
+
+(5) set_calib_curve
+Set the calibration curve to use for fitting and analysis
+(6) do_max_lik_fits
+Do maximum likelihood fits for a range of models (currently, only
+truncated Gaussian mixtures are supported, for which the models
+specifically differ in the number of mixture components)
+(7) do_bayesian_inference
+For the best model among the the results of do_max_lik_fits (assessed by
+the AIC metric), do Bayesian inference (i.e., sample from the posterior
+of the parameter vector theta)
 }
 \seealso{
 \code{\link[=import_rc_data]{import_rc_data()}} for the format of \code{rc_meas}'
