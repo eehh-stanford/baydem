@@ -220,7 +220,8 @@ expect_equal(
 #
 # coverage: is_th_reduced_valid
 #           calc_trunc_gauss_mix_neg_log_lik
-#           temper_trunc_gauss_mix
+#           fit_trunc_gauss_mix
+#           init_trunc_gauss_mix
 # ------------------------------------------------------------------------------
 
 # (2a) is_th_reduced_valid
@@ -276,7 +277,7 @@ expect_equal(
 # Check that fit_trunc_gauss_mix does not throw an error (and also that the
 # output has the right fields). Do this for both not using and using multiple
 # cores. Also check the behavior and reproducibility when setting the random
-# number seed(s).
+# number seed(s) and that r_max can be used.
 
 expect_error(
   max_lik_fit <-
@@ -496,6 +497,202 @@ expect_error(
   paste0("input_seed must be NA, a single integer, or a vector of ",
          "integers with length 1 + num_restarts"),
   fixed = TRUE
+)
+
+# Check that r_max can be used (though function is not checked, do check that
+# a different fit results)
+expect_error(
+  max_lik_fit_c <-
+    fit_trunc_gauss_mix(
+                           2,
+                           sim$data$rc_meas$phi_m,
+                           sim$data$rc_meas$sig_m,
+                           600,
+                           1300,
+                           1,
+                           calib_df,
+                           r_max=.001,
+                           num_restarts=3,
+                           num_cores=2,
+                           input_seed=10:13),
+  NA
+)
+
+expect_equal(
+  all(max_lik_fit_b$th == max_lik_fit_c$th),
+  FALSE
+)
+
+# (2d) init_trunc_gauss_mix
+
+# Case:
+# num_draws    1
+# s_min        Not set
+# input_seed   Not set
+expect_error(
+  th0 <- init_trunc_gauss_mix(2,
+                              1,
+                              600,
+                              1300),
+  NA
+)
+
+expect_equal(
+  length(th0),
+  6
+)
+
+expect_equal(
+  any(is.na(th0)),
+  FALSE
+)
+
+# Case:
+# num_draws    1
+# s_min        Set
+# input_seed   Set
+expect_error(
+  th0 <- init_trunc_gauss_mix(2,
+                              1,
+                              600,
+                              1300,
+                              s_min=600,
+                              input_seed=20),
+  NA
+)
+
+expect_equal(
+  length(th0),
+  6
+)
+
+expect_equal(
+  any(is.na(th0)),
+  FALSE
+)
+
+expect_equal(
+  all(th0[5:6] >= 600),
+  TRUE
+)
+
+expect_equal(
+  all(th0[5:6] <= 700),
+  TRUE
+)
+
+# Case: [same as previous to check reproducibility]
+# num_draws    1
+# s_min        Set
+# input_seed   Set
+expect_error(
+  th0_repeat <- init_trunc_gauss_mix(2,
+                                     1,
+                                     600,
+                                     1300,
+                                     s_min=600,
+                                     input_seed=20),
+  NA
+)
+
+expect_equal(
+  th0,
+  th0_repeat
+)
+
+# Case:
+# num_draws    5
+# s_min        Not set
+# input_seed   Not set
+expect_error(
+  TH0 <- init_trunc_gauss_mix(2,
+                              5,
+                              600,
+                              1300),
+  NA
+)
+
+expect_equal(
+  dim(TH0),
+  c(6,5)
+)
+
+expect_equal(
+  any(is.na(TH0)),
+  FALSE
+)
+
+# Case:
+# num_draws    5
+# s_min        Set
+# input_seed   Set
+expect_error(
+  TH0 <- init_trunc_gauss_mix(2,
+                              5,
+                              600,
+                              1300,
+                              s_min=600,
+                              input_seed=30),
+  NA
+)
+
+expect_equal(
+  dim(TH0),
+  c(6,5)
+)
+
+expect_equal(
+  any(is.na(TH0)),
+  FALSE
+)
+
+expect_equal(
+  all(TH0[5:6,] >= 600),
+  TRUE
+)
+
+expect_equal(
+  all(TH0[5:6,] <= 700),
+  TRUE
+)
+
+# Case: [same as previous to check reproducibility]
+# num_draws    5
+# s_min        Set
+# input_seed   Set
+expect_error(
+  TH0_repeat <- init_trunc_gauss_mix(2,
+                                     5,
+                                     600,
+                                     1300,
+                                     s_min=600,
+                                     input_seed=30),
+  NA
+)
+
+expect_equal(
+  TH0,
+  TH0_repeat
+)
+
+# Case: [same as previous, but with a different seed to check lack of
+#        reproducibility]
+# num_draws    5
+# s_min        Set
+# input_seed   Set
+expect_error(
+  TH0_repeat <- init_trunc_gauss_mix(2,
+                                     5,
+                                     600,
+                                     1300,
+                                     s_min=600,
+                                     input_seed=40),
+  NA
+)
+
+expect_equal(
+  isTRUE(all.equal(TH0,TH0_repeat)),
+  FALSE
 )
 
 # ------------------------------------------------------------------------------

@@ -18,6 +18,5 @@ of non-warmup samples
 The input fit is the result of a call to stan by
 \code{sample_theta}, of class stanfit. Return a matrix TH with
 dimensions S x (3*K), where S is the number of samples (across all chains,
-and excluding warmup), and K is the number of mixtures. The final column of
-as.matrix for class stanfit is the log-posterior, which must be removed.
+and excluding warmup), and K is the number of mixtures.
 }

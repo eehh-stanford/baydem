@@ -4,6 +4,7 @@ data {
   int K; // Number of mixtures
   matrix[G,N] Mt; // Measurement matrix (transposed)
   vector[G] tau; // Calendar grid points for the measurement matrix calculation
+  real dtau; // Grid spacing (not error checked for consistency with tau)
   real<lower=0> alpha_d; // Concentration parameter for pi prior
   real tau_min; // Lower calendar date. Same as min(tau)
   real tau_max; // Upper calendar date. Same as max(tau)
@@ -17,8 +18,9 @@ parameters {
   vector<lower=0>[K] s;
 }
 
-model {
-  row_vector[N] L;
+transformed parameters {
+  row_vector[N] h;
+  row_vector[N] logh;
   row_vector[G] f;
   row_vector[G] logf;
   vector[K] logpi = log(pi);
@@ -33,13 +35,27 @@ model {
   }
   f = exp(logf);
 
-  // Since the target only needs to be proportional to the likelihood,
-  // there is no need to multiply by dtau on the following line.
-  f = f / sum(f);
+  // The following line truncates the distribution by normalizing the density to
+  // integrate to 1 on the interval of tau, which is assumed to run from tau_min
+  // to tau_max.
+  f = f / sum(f) / dtau;
+  h = f * Mt;
+  logh = log(h);
+}
 
+model {
   pi ~ dirichlet(rep_vector(alpha_d,K));
   s ~ gamma(alpha_s,alpha_r);
   mu ~ uniform(tau_min,tau_max);
-  L = f * Mt;
-  target += sum(log(L));
+  target += sum(logh);
+}
+
+generated quantities {
+  vector[N] log_post_vect;
+  for (n in 1:N) {
+    log_post_vect[n] = logh[n]
+                       + dirichlet_lpdf( pi | rep_vector(alpha_d,K))
+                       + gamma_lpdf( s | alpha_s, alpha_r)
+                       + uniform_lpdf( mu | tau_min, tau_max);
+  }
 }

@@ -13,6 +13,7 @@ fit_trunc_gauss_mix(
   tau_max,
   dtau,
   calib_df,
+  r_max = Inf,
   num_restarts = 100,
   maxfeval = (K - 1) * 10000,
   num_cores = NA,
@@ -33,6 +34,9 @@ fit_trunc_gauss_mix(
 \item{dtau}{The spacing of the sampling grid}
 
 \item{calib_df}{Calibration curve (see load_calib_curve)}
+
+\item{r_max}{Maximum value for the instantaneous growth rate of the density
+function (default: Inf, no constraint)}
 
 \item{num_restarts}{Number of restarts to use (default: 100)}
 
@@ -120,4 +124,12 @@ entries are used with set.seed() prior to calling the bounded Hooke-Jeeves
 optimization algorithm for each restart. These additional seeds are necessary
 to ensure reproducibility is achieved when multiple cores are used to do the
 optimizations in a parallel for loop.
+
+It can be desirable to regularize the probability density function so that
+it does not have periods of very fast decay or growth, which can be done
+using the optional input r_max. Setting a constraint should most likely be
+done if the density function is used for demographic reconstruction (i.e., if
+it is interpreted as the relative population size as a function of calendar
+date). If so, a value of r_max = 0.04 could be sensible. By default, however,
+r_max = Inf and no constraint is used.
 }

@@ -27,7 +27,7 @@ Riemann sum that approximates the integral for the likelihood.}
 \item{calib_df}{The calibration data frame (see load_calib_curve).}
 
 \item{th0}{An optional parameter vector to initialize the Stan chains. If not
-provided, it is calculated using a maximum likelihood fit.}
+provided, it is set by calling init_trunc_gauss_mix.}
 
 \item{init_seed}{An optional random number seed for determining the starting
 parameter vector using a maximum likelihood fit. If not provided, it is
@@ -61,10 +61,10 @@ provided.}
 This is the core function that implements the Bayesian inference. Currently,
 the only supported density model is a truncated Gaussian mixture. Currently,
 the only supported density model is a truncated Gaussian mixture. If a
-starting parameter vector (\code{th0}) is not provided, it is set via a
-maximum likelihood fit; the same vector is used for all sampling chains.
-Named elements of the variable control must consist of one of the following
-four options (defaults in parantheses):
+starting parameter vector (\code{th0}) is not provided, it is set by calling
+init_trunc_gauss_mix; the same vector is used for all sampling chains. Named
+elements of the variable control must consist of one of the following four
+options (defaults in parantheses):
 
 \itemize{
 \item{\code{num_chains}}

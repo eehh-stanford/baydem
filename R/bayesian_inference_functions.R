@@ -6,10 +6,10 @@
 #' This is the core function that implements the Bayesian inference. Currently,
 #' the only supported density model is a truncated Gaussian mixture. Currently,
 #' the only supported density model is a truncated Gaussian mixture. If a
-#' starting parameter vector (\code{th0}) is not provided, it is set via a
-#' maximum likelihood fit; the same vector is used for all sampling chains.
-#' Named elements of the variable control must consist of one of the following
-#' four options (defaults in parantheses):
+#' starting parameter vector (\code{th0}) is not provided, it is set by calling
+#' init_trunc_gauss_mix; the same vector is used for all sampling chains. Named
+#' elements of the variable control must consist of one of the following four
+#' options (defaults in parantheses):
 #'
 #' \itemize{
 #'   \item{\code{num_chains}}
@@ -28,7 +28,7 @@
 #'   Riemann sum that approximates the integral for the likelihood.
 #' @param calib_df The calibration data frame (see load_calib_curve).
 #' @param th0 An optional parameter vector to initialize the Stan chains. If not
-#'   provided, it is calculated using a maximum likelihood fit.
+#'   provided, it is set by calling init_trunc_gauss_mix.
 #' @param init_seed An optional random number seed for determining the starting
 #'   parameter vector using a maximum likelihood fit. If not provided, it is
 #'   drawn. It should not be provided if th0 is provided.
@@ -147,22 +147,17 @@ sample_theta <- function(rc_meas,
     tau_max <- density_model$tau_max
     tau <- seq(tau_min, tau_max, by = hp$dtau)
     M <- calc_meas_matrix(tau, rc_meas$phi_m, rc_meas$sig_m, calib_df)
+    dtau <- hp$dtau
 
     K <- density_model$K
     if (all(is.na(th0))) {
-      # Then an initialization vector has not been provided. Do a maximum
-      # likelihood fit to get a starting parameter. Use init_seed for this to
-      # allow reproducibility.
-      dtau <- hp$dtau
-      max_lik_fit <- fit_trunc_gauss_mix(K,
-                                         rc_meas$phi_m,
-                                         rc_meas$sig_m,
-                                         tau_min,
-                                         tau_max,
-                                         dtau,
-                                         calib_df,
-                                         input_seed=init_seed)
-      th0 <- max_lik_fit$th
+      # Then an initialization vector has not been provided. Call
+      # init_trunc_gauss_mix to randomly initialize the parameter vector.
+      th0 <- init_trunc_gauss_mix(K,
+                                  1,
+                                  tau_min,
+                                  tau_max,
+                                  input_seed=init_seed)
     }
 
     # stan expects the initial parameter to be a named list
@@ -424,8 +419,7 @@ summarize_bayesian_inference <- function(bayesian_soln,
 #' The input fit is the result of a call to stan by
 #' \code{sample_theta}, of class stanfit. Return a matrix TH with
 #' dimensions S x (3*K), where S is the number of samples (across all chains,
-#' and excluding warmup), and K is the number of mixtures. The final column of
-#' as.matrix for class stanfit is the log-posterior, which must be removed.
+#' and excluding warmup), and K is the number of mixtures.
 #'
 #' @param fit The fit from stan, of class stanfit
 #'
@@ -437,10 +431,10 @@ extract_param <- function(fit) {
   if (class(fit) != "stanfit") {
     stop(paste("Expected fit to be class stanfit, but it is", class(fit)))
   }
-  # as.matrix is defined for class stanfit and excludes warmup samples
-  TH <- as.matrix(fit)
-  # Remove the final column, which is the log-posterior, not a parameter
-  TH <- TH[, -ncol(TH)]
+
+  K <- sum(unlist(lapply(names(fit),
+                         function(long_string){startsWith(long_string,"mu[")})))
+  TH <- as.matrix(fit)[,1:(3*K)]
 
   return(TH)
 }

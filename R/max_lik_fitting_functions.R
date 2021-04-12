@@ -48,6 +48,14 @@
 #' to ensure reproducibility is achieved when multiple cores are used to do the
 #' optimizations in a parallel for loop.
 #'
+#' It can be desirable to regularize the probability density function so that
+#' it does not have periods of very fast decay or growth, which can be done
+#' using the optional input r_max. Setting a constraint should most likely be
+#' done if the density function is used for demographic reconstruction (i.e., if
+#' it is interpreted as the relative population size as a function of calendar
+#' date). If so, a value of r_max = 0.04 could be sensible. By default, however,
+#' r_max = Inf and no constraint is used.
+#'
 #' @param K The number of mixture components to use for the fit
 #' @param phi_m A vector of fraction moderns
 #' @param sig_m A vector of standard deviations for phi_m
@@ -55,6 +63,8 @@
 #' @param tau_max The maximum calendar date (AD) for the sampling grid
 #' @param dtau The spacing of the sampling grid
 #' @param calib_df Calibration curve (see load_calib_curve)
+#' @param r_max Maximum value for the instantaneous growth rate of the density
+#'   function (default: Inf, no constraint)
 #' @param num_restarts Number of restarts to use (default: 100)
 #' @param maxfeval Maximum number of function evaluations for each restart
 #'   (default: (K-1)*10000)
@@ -104,6 +114,7 @@ fit_trunc_gauss_mix <- function(K,
                                 tau_max,
                                 dtau,
                                 calib_df,
+                                r_max=Inf,
                                 num_restarts=100,
                                 maxfeval=(K-1)*10000,
                                 num_cores=NA,
@@ -151,12 +162,24 @@ fit_trunc_gauss_mix <- function(K,
   # (2) mu, the means, are restricted to the interval tau_min to tau_max.
   # (3) s, the standard deviations, are restricted to the interval 10*dtau to
   #     tau_max-tau_min
-  set.seed(seed_vect[1])
+
+  TH0 <- init_trunc_gauss_mix(K,
+                              num_restarts,
+                              tau_min,
+                              tau_max,
+                              s_min=10*dtau,
+                              input_seed=seed_vect[1])
+  # If num_restarts is 1, init_trunc_gauss_mix will return a vector, but we want
+  # a column matrix.
+  if (num_restarts == 1) {
+    TH0 <- t(as.matrix(TH0))
+  }
+
+  # Iterate over restarts to create the reduced parameter vector
+  # TODO: consider making reduced an optional input to init_trunc_gauss_mix
   TH0_reduced <- matrix(NA,3*K-1,num_restarts)
   for(m in 1:num_restarts) {
-    th0 <- c(MCMCpack::rdirichlet(1,rep(1,K)),
-             sort(runif(K,tau_min,tau_max)),
-             runif(K,10*dtau,tau_max-tau_min))
+    th0 <- TH0[,m]
     th0_reduced <- th0[-1]
     TH0_reduced[,m] <- th0_reduced
   }
@@ -168,7 +191,7 @@ fit_trunc_gauss_mix <- function(K,
   # Re-wrap the negative log-likelihood (the objective function) to enforce
   # the bounds on the parameter vector.
   neg_log_lik_rewrap <- function(th_reduced,M,tau,
-                                 lower_bounds,upper_bounds) {
+                                 lower_bounds,upper_bounds,r_max) {
     if (any(th_reduced < lower_bounds)) {
       return(Inf)
     }
@@ -177,6 +200,15 @@ fit_trunc_gauss_mix <- function(K,
       return(Inf)
     }
 
+    if(is.finite(r_max)) {
+      K <- (length(th_reduced) + 1)/3
+      pi_ <- th_reduced[1:(K-1)]
+      th <- c(1-sum(pi_),th_reduced)
+      rate <- calc_gauss_mix_pdf(th,tau,tau_min,tau_max,type="rate")
+      if(any(abs(rate) > r_max)) {
+        return(Inf)
+      }
+    }
     return(calc_trunc_gauss_mix_neg_log_lik(th_reduced,M,tau))
   }
 
@@ -209,6 +241,7 @@ fit_trunc_gauss_mix <- function(K,
                                           tau=tau,
                                           lower_bounds=lower_bounds,
                                           upper_bounds=upper_bounds,
+                                          r_max=r_max,
                                           control=control_list)
     }
   } else {
@@ -223,6 +256,7 @@ fit_trunc_gauss_mix <- function(K,
                       tau=tau,
                       lower_bounds=lower_bounds,
                       upper_bounds=upper_bounds,
+                      r_max=r_max,
                       control=control_list)
       }
   }
@@ -259,6 +293,65 @@ fit_trunc_gauss_mix <- function(K,
   return(list(th=th_best,neg_log_lik=neg_log_lik_best,tau=tau,f=f,
               bic=bic,aic=aic,hjkb_fit_list=hjkb_fit_list,
               input_seed=input_seed,base_seed=base_seed,seed_vect=seed_vect))
+}
+#' @title
+#' Do random number draws to initialize a truncated Gaussian mixture
+#'
+#' @details
+#' The parameter vector, theta (th), has the ordering
+#' th = (pi_1,...,pi_K,mu_1,..mu_K,s_1,...s_K), where K is the number of
+#' mixture components and pi_k / mu_k / s_k are, respectively, the weighting /
+#' mean / standard deviation of the k-th mixture. The mixture proportions are
+#' drawn from a Dirichlet distribution with `rep(1,K)` used for the dispersion
+#' parameter. The means are drawn from a uniform distribution on the interval
+#' tau_min to tau_max. The standard deviations are drawn from a uniform
+#' distribution on the interval s_min to tau_max - tau_min. By default, s_min is
+#' 0.
+#'
+#' @param K The number of mixture components
+#' @param num_draws The number of draws to make (if more than one, a matrix is
+#'   returned rather than a vector)
+#' @param tau_min The minimum calendar date (AD) for the sampling grid
+#' @param tau_max The maximum calendar date (AD) for the sampling grid
+#' @param s_min The minimum value for the mixture standard deviations (default:
+#'   0)
+#' @param input_seed A single integer for initializing the random number seed
+#'   prior to making draws (default: NA, no seed set)
+#'
+#' @return A matrix of parameter vectors with dimensions 3*K by num_draws. If
+#'   `num_draws=1`, a vector with length 3*K is returned rather than a matrix.
+#'
+#' @export
+init_trunc_gauss_mix <- function(K,
+                                 num_draws,
+                                 tau_min,
+                                 tau_max,
+                                 s_min=0,
+                                 input_seed=NA) {
+
+  if (!is.na(input_seed)) {
+    set.seed(input_seed)
+  }
+
+  # Iterate to generate starting vectors, assuming the following:
+  # (1) pi, the mixture proportions, are drawn from a Dirichlet distribution.
+  # (2) mu, the means, are restricted to the interval tau_min to tau_max.
+  # (3) s, the standard deviations, are restricted to the interval s_min to
+  #     tau_max-tau_min, where s_min is zero by default.
+
+  # A matrix in which to store parameter vectors, with dimensions 3*K by
+  # num_draws
+  TH0 <- matrix(NA,3*K,num_draws)
+  for(m in 1:num_draws) {
+    TH0[,m] <- c(MCMCpack::rdirichlet(1,rep(1,K)),
+             sort(runif(K,tau_min,tau_max)),
+             runif(K,s_min,tau_max-tau_min))
+  }
+
+  if(num_draws == 1) {
+    TH0 <- as.vector(TH0)
+  }
+  return(TH0)
 }
 
 #' @title
