@@ -23,6 +23,7 @@
 #' (1) import_rc_data
 #'     Import the radiocarbon measurements from file (or simulate them using
 #'     simulate_rc_data)
+#'
 #' (2) set_rc_meas
 #'     Set the radiocarbon measurements (or use set_sim)
 #'
@@ -31,21 +32,18 @@
 #'     measurements
 #'
 #' (4) set_density_model
-#'     Set the parametric model to be used for fitting and Bayesian inference.
-#'     Currently, only a truncated Gaussian mixture is supported, which requires
-#'     setting the calendar date range for truncation (likely using the result
-#'     from step (3))
+#'     Set the parametric model to be used for Bayesian inference. Currently,
+#'     only a truncated Gaussian mixture is supported, which requires setting
+#'     the calendar date range for truncation (likely using the result from step
+#'     (3)) and choosing the number of mixture components, K. If K is a vector,
+#'     Bayesian inference will be done for each element of the vector during
+#'     step (6), do_bayesian_inference.
 #'
 #' (5) set_calib_curve
 #'     Set the calibration curve to use for fitting and analysis
-#' (6) do_max_lik_fits
-#'     Do maximum likelihood fits for a range of models (currently, only
-#'     truncated Gaussian mixtures are supported, for which the models
-#'     specifically differ in the number of mixture components)
-#' (7) do_bayesian_inference
-#'     For the best model among the the results of do_max_lik_fits (assessed by
-#'     the AIC metric), do Bayesian inference (i.e., sample from the posterior
-#'     of the parameter vector theta)
+#'
+#' (6) do_bayesian_inference
+#'     Call sample_theta to do the Bayesian inference
 #' @param data_dir The directory in which to store analysis data
 #' @param analysis_name A unique name for a given analysis in data_dir
 #' @param rc_meas The radiocarbon measurements to use for this analysis (the
@@ -349,174 +347,40 @@ set_calib_curve <- function(data_dir,analysis_name,calibration_curve) {
   saveRDS(analysis,data_file)
 }
 
-# TODO: make and link to the vignette for a bespoke approach
 #' @title
-#' Do maximum likelihood fits given a set of radiocarbon measurements (rc_meas)
-#' and a specification of the density model (density_model)
+#' Do Bayesian inference given a set of radiocarbon measurements (rc_meas) and
+#' a density model (density_model).
 #'
 #' @description
 #' This is one of a set of helper functions for undertaking a typical analysis
 #' of radiocarbon dates. For details on the overall framework for these helper
 #' function, see set_rc_meas.
 #'
-#' To ensure reproducibility, the input_seed can be provided. The behavior and
-#' expectations are identical to the same parameter used in fit_trunc_gauss_mix,
-#' except that if a vector is specified it should be the same length as the
-#' vector K in analysis$density_model$K. That is, input_seed should be either
-#' (1) a single integer or (2) a vector of length analysis$density_model$K.
+#' #' To ensure reproducibility, the input_seed can be provided. The input seed
+#' should either be (1) NA [the default], (2) a single integer, or (3) a matrix
+#' with dimensions `num_models` by 2, where
+#' `num_models = length(analysis$density_model$K)`. If no seed is provided, one
+#' is drawn and treated as if it (a single integer) was input. If a single
+#' integer is provided, it is used to generate a matrix of integers with
+#' dimensions `num_models` by 2. The first column of the matrix provides the
+#' seeds for initializing the parameter vector and the second column provides
+#' the seeds for stan.
 #'
-#' @param data_dir The directory in which to store analysis data
-#' @param analysis_name A unique name for a given analysis in data_dir
-#' @param dtau The spacing in years to use for the sampling grid
-#' @param input_seed An integer seed that will be used to set the seed for calls
-#'   to the maximum likelihood fits.
-#' @param ... Additional control arguments to pass to the optimization function
-#'   (see fit_trunc_gauss_mix)
-#' @seealso
-#' * [set_sim()] for an overview of the "standard pipeline"
-#' * [fit_trunc_gauss_mix()]
-#'
-#' @export
-do_max_lik_fits <- function(data_dir,analysis_name,dtau=5,input_seed=NA,...) {
-  data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
-
-  if (!file.exists(data_file)) {
-    stop("A save file for analysis_name does not exist in data_dir")
-  }
-
-  analysis <- readRDS(data_file)
-
-  if (!("rc_meas" %in% names(analysis))) {
-    stop("Radiocarbon measurements have not specified for this analysis")
-  }
-
-  if (!("density_model" %in% names(analysis))) {
-    stop("A density model has not been specified for this analysis")
-  }
-
-  if (!("calib_df" %in% names(analysis))) {
-    stop("A calibration curve has not been specified for this analysis")
-  }
-
-  if ("max_lik_fits" %in% names(analysis)) {
-    stop("Maximum likelihood fits have already been defined for this analysis")
-  }
-
-  if (length(input_seed) == 1) {
-    if (is.na(input_seed)) {
-      base_seed <- sample.int(1000000,1)
-    } else {
-      base_seed <- input_seed
-    }
-    set.seed(base_seed)
-    seed_vect <- sample.int(1000000,length(analysis$density_model$K))
-  } else if(length(input_seed) == 1 + length(analysis$density_model$K)) {
-    base_seed <- NA
-    seed_vect <- input_seed
-  } else {
-    stop(paste0("input_seed must be NA, a single integer, or a vector of ",
-                "integers with length analysis$density_model$K"))
-  }
-
-  if (analysis$density_model$type == "trunc_gauss_mix") {
-
-    max_lik_fits <- list()
-    for(m_K in 1:length(analysis$density_model$K)) {
-      set.seed(seed_vect[m_K])
-      max_lik_fits[[m_K]] <- fit_trunc_gauss_mix(analysis$density_model$K[m_K],
-                                                 analysis$rc_meas$phi_m,
-                                                 analysis$rc_meas$sig_m,
-                                                 analysis$density_model$tau_min,
-                                                 analysis$density_model$tau_max,
-                                                 dtau,
-                                                 analysis$calib_df,
-                                                 ...)
-    }
-    analysis$max_lik_fits <- max_lik_fits
-    analysis$max_lik_fits_seeds <- list(input_seed=input_seed,
-                                        base_seed=base_seed,
-                                        seed_vect=seed_vect)
-    saveRDS(analysis,data_file)
-  } else {
-    stop("Unsupported type for density_model")
-  }
-}
-
-#' @title
-#' Extract the vector of Akaike information criterion (AIC) values from a set
-#' of maximum likelihood fits created by do_max_lik_fits
-#'
-#' @param max_lik_fits The list of maximum likelihood fits (see
-#'   do_max_lik_fits).
-#'
-#' @seealso [do_max_lik_fits()]
-#'
-#' @returns A vector of AIC values the same length as max_lik_fits.
-#'
-#' @export
-get_aic_vect <- function(max_lik_fits) {
-  return(unlist(lapply(max_lik_fits,function(fit){fit$aic})))
-}
-
-#' @title
-#' Get the best parameter vector from a set of maximum likelihood fits created
-#' by do_max_lik_fits (by the AIC metric)
-#'
-#' @param max_lik_fits The list of maximum likelihood fits (see
-#'   do_max_lik_fits).
-#'
-#' @seealso [do_max_lik_fits()]
-#'
-#' @returns The best value of K
-#'
-#' @export
-get_best_th <- function(max_lik_fits) {
-  aic_vect <- get_aic_vect(max_lik_fits)
-  ind_best <- which.min(aic_vect)
-  return(max_lik_fits[[ind_best]]$th)
-}
-
-#' @title
-#' Get the best number of mixture components, K, from a set of maximum
-#' likelihood fits created by do_max_lik_fits (by the AIC metric)
-#'
-#' @param max_lik_fits The list of maximum likelihood fits (see
-#'   do_max_lik_fits).
-#'
-#' @seealso [do_max_lik_fits()]
-#'
-#' @returns The best value of K
-#'
-#' @export
-get_best_K <- function(max_lik_fits) {
-  th <- get_best_th(max_lik_fits)
-  return(length(th)/3)
-}
-
-#' @title
-#' Do Bayesian inference given a set of radiocarbon measurements (rc_meas)
-#' and an existing set of maximum likelihood fits (max_lik_fits)
-#'
-#' @description
-#' This is one of a set of helper functions for undertaking a typical analysis
-#' of radiocarbon dates. For details on the overall framework for these helper
-#' function, see set_rc_meas.
-#'
-#'
-#' To ensure reproducibility, the input_seed can be provided. The behavior and
-#' expectations are identical to the same parameter used in fit_trunc_gauss_mix,
-#' except that if a vector is specified it should be the same length as the
-#' vector K in analysis$density_model$K. That is, input_seed should be either
-#' (1) a single integer or (2) a vector of length analysis$density_model$K.
+#' The best model is identified based on the widely applicable information
+#' criterion (WAIC) and the corresponding index (in density_model$K) and value
+#' are stored in, respectively, m_K_best and K_best (currently, only a truncated
+#' Gaussian mixture is supported for the density model specification).
 #'
 #' @param data_dir The directory in which to store analysis data.
 #' @param analysis_name A unique name for a given analysis in data_dir.
 #' @param hp Hyperparameters for the priors and to specify the spacing of the
 #'   Riemann sum that approximates the integral for the likelihood (see
 #'   sample_theta).
-#' @param input_seed An integer seed that will be used to set the seed for calls
-#'   to the maximum likelihood fits.
-#' @param Ccontrol arguments to pass to the Bayesian inference function (see
+#' @param input_seed An optional seed that can be used to make results
+#'   reproducible. The input_seed must be either (1) NA / not provided (the
+#'   default), (2) a single integer, or (3) a matrix with dimensions
+#'   `num_models` by 2 (see description for further details).
+#' @param Control arguments to pass to the Bayesian inference function (see
 #'   sample_theta).
 #'
 #' @seealso [set_sim()] for an overview of the "standard pipeline"
@@ -525,7 +389,7 @@ get_best_K <- function(max_lik_fits) {
 do_bayesian_inference <- function(data_dir,
                                    analysis_name,
                                    hp,
-                                   stan_seed=NA,
+                                   input_seed=NA,
                                    control=list()) {
 
   data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
@@ -547,39 +411,245 @@ do_bayesian_inference <- function(data_dir,
     stop("A calibration curve has not been specified for this analysis")
   }
 
-  if (!("max_lik_fits" %in% names(analysis))) {
-    stop("Maximum likelihood fits have not been specified for this analysis")
+  if (analysis$density_model$type != "trunc_gauss_mix") {
+    stop("Unsupported type for density_model")
   }
 
-  if ("bayesian_soln" %in% names(analysis)) {
+  if ("bayesian_solutions" %in% names(analysis)) {
     stop("Bayesian inference has already been done for this analysis")
   }
 
-  if (analysis$density_model$type == "trunc_gauss_mix") {
-    input_stan_seed <- stan_seed
-    if (is.na(stan_seed)) {
-      stan_seed <- sample.int(1000000,1)
+  # If additional model types are added, the behavior of input_seed may need to
+  # be changed (though it may not need to be changed, too).
+  num_models <- length(analysis$density_model$K)
+  if (is.vector(input_seed)) {
+    if (is.na(input_seed)) {
+      base_seed <- sample.int(1000000,1)
+    } else {
+      base_seed <- input_seed
     }
+    set.seed(base_seed)
+    seed_mat <- matrix(sample.int(1000000,2*num_models),ncol=2)
+  } else if(is.matrix(input_seed)) {
+      if(dim(input_seed) != c(num_models,2))
+      stop(paste0("If input_seed is a matrix, it must have dimensions ",
+                  "num_models x 2 (see function details)"))
+    base_seed <- NA
+    seed_mat <- input_seed
+  } else {
+    stop(paste0("input_seed must be NA, a single integer, or a matrix (see ",
+                "function details)"))
+  }
 
-    # analysis$density_model may be a vector. It needs to be a scalar for the
-    # call to sample_theta, with K determined by the aic values of the
-    # maximum likelihood fits.
-    th0 <- get_best_th(analysis$max_lik_fits)
-    K <- get_best_K(analysis$max_lik_fits)
+  # Save the random number seed information
+  analysis$input_seed <- input_seed
+  analysis$base_seed  <- base_seed
+  analysis$seed_mat   <- seed_mat
+
+  # analysis$density_model may be a vector. Loop over values of K to do
+  # inference
+  analysis$bayesian_solutions <- list()
+  for (m_K in 1:num_models) {
+    K <- analysis$density_model$K[m_K]
     modified_density_model <- analysis$density_model
     modified_density_model$K <- K
-    bayesian_soln <- sample_theta(analysis$rc_meas,
-                                  modified_density_model,
-                                  hp,
-                                  analysis$calib_df,
-                                  th0=th0,
-                                  stan_seed=stan_seed,
-                                  control=control)
-
-    analysis$input_stan_seed <- input_stan_seed
-    analysis$bayesian_soln <- bayesian_soln
-    saveRDS(analysis,data_file)
-  } else {
-    stop("Unsupported type for density_model")
+    analysis$bayesian_solutions[[m_K]] <-
+      sample_theta(analysis$rc_meas,
+                   modified_density_model,
+                   hp,
+                   analysis$calib_df,
+                   init_seed=seed_mat[m_K,1],
+                   stan_seed=seed_mat[m_K,2],
+                   control=control)
   }
+  analysis$hp <- hp
+  analysis$K_best <- get_best_K(analysis$bayesian_solutions)
+  analysis$m_K_best <- which(analysis$density_model$K == analysis$K_best)
+  saveRDS(analysis,data_file)
+}
+
+#' @title
+#' For a mixture model, get the best value of K for an input list of Bayesian
+#' solutions created (based on the widely applicable information criterion,
+#' WAIC).
+#'
+#'
+#' @description
+#' Get the best number of mixture components (K) from the Bayesian inference
+#' based on the widely applicable information criterion (WAIC).
+#'
+#' @param bayesian_solutions The list of Bayesian "solutions" (see
+#' do_bayesian_inference).
+#'
+#' @seealso [do_bayesian_inference()]
+#'
+#' @returns The best value of K
+#'
+#' @export
+get_best_K <- function(bayesian_solutions) {
+  waic_vect <- rep(NA,length(bayesian_solutions))
+  for (m_K in 1:length(bayesian_solutions)) {
+    log_lik_mat <- rstan::extract(bayesian_solutions[[m_K]]$fit,"logh")[[1]]
+    waic_analysis <- loo::waic(log_lik_mat)
+    waic_vect[m_K] <- waic_analysis$estimates["waic","Estimate"]
+  }
+  m_K_best <- which.min(waic_vect)
+  TH <- extract_param(bayesian_solutions[[m_K_best]]$fit)
+  return(ncol(TH)/3)
+}
+
+#' @title
+#' Call summarize_bayesian_inference for the best model created by
+#' do_bayesian_inference (the previous step in the standard pipeline).
+#'
+#' Plot the best model among those for which Bayesian inference was done with
+#' the standard pipeline. The plot is a standard plot shows the 50% and +/- 2.5%
+#' quantiles. If an output file name for is provided (plot_file_name), the plot
+#' is written to file. The format is detected from the extension (e.g., if
+#' plot_file_name is "analysis.pdf", a PDF file is written. If the extension is
+#' not one of (pdf, png, or jpg, an error is thrown).
+#'
+#' @param data_dir The directory in which to store analysis data.
+#' @param analysis_name A unique name for a given analysis in data_dir.
+#' @param plot_file_name An optional file name for saving the file
+#'
+#' @seealso [do_bayesian_inference()]
+#'
+#' @export
+do_bayesian_summary <- function(data_dir,
+                               analysis_name) {
+  # TODO: consider writing a stand-alone helper function that does error
+  #  checking for all the functions in the standard pipeline.
+
+  data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
+  if (!file.exists(data_file)) {
+    stop("A save file for analysis_name does not exist in data_dir")
+  }
+
+  analysis <- readRDS(data_file)
+
+  if (!("rc_meas" %in% names(analysis))) {
+    stop("Radiocarbon measurements have not specified for this analysis")
+  }
+
+  if (!("density_model" %in% names(analysis))) {
+    stop("A density model has not been specified for this analysis")
+  }
+
+  if (!("calib_df" %in% names(analysis))) {
+    stop("A calibration curve has not been specified for this analysis")
+  }
+
+  if (!("bayesian_solutions" %in% names(analysis))) {
+    stop("Bayesian inference has not been done for this analysis")
+  }
+
+  if ("bayesian_summary" %in% names(analysis)) {
+    stop("A summary has already been done for this analysis")
+  }
+
+  modified_density_model <- analysis$density_model
+  modified_density_model$K <- analysis$K_best
+
+  analysis$bayesian_summary <- summarize_bayesian_inference (
+     analysis$bayesian_solutions[[analysis$m_K_best]],
+     analysis$rc_meas,
+     modified_density_model,
+     analysis$calib_df,
+     analysis$hp$dtau)
+
+  saveRDS(analysis,data_file)
+}
+
+#' @title
+#' Plot the best model created by do_bayesian_inference
+#' Plot the best model among those for which Bayesian inference was done with
+#' the standard pipeline. The plot is a standard plot shows the 50% and +/- 2.5%
+#' quantiles. If an output file name for is provided (plot_file_name), the plot
+#' is written to file. The format is detected from the extension (e.g., if
+#' plot_file_name is "analysis.pdf", a PDF file is written. If the extension is
+#' not one of (pdf, png, or jpg, an error is thrown).
+#'
+#' @param data_dir The directory in which to store analysis data.
+#' @param analysis_name A unique name for a given analysis in data_dir.
+#' @param plot_file_name An optional file name for saving the file
+#'
+#' @seealso [do_bayesian_inference()]
+#'
+#' @export
+plot_best_solution <- function(data_dir,
+                               analysis_name,
+                               plot_file_name=NA) {
+
+  data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
+  if (!file.exists(data_file)) {
+    stop("A save file for analysis_name does not exist in data_dir")
+  }
+
+  analysis <- readRDS(data_file)
+
+  if (!("rc_meas" %in% names(analysis))) {
+    stop("Radiocarbon measurements have not specified for this analysis")
+  }
+
+  if (!("density_model" %in% names(analysis))) {
+    stop("A density model has not been specified for this analysis")
+  }
+
+  if (!("calib_df" %in% names(analysis))) {
+    stop("A calibration curve has not been specified for this analysis")
+  }
+
+  if ("bayesian_solutions" %in% names(analysis)) {
+    stop("Bayesian inference has not been done for this analysis")
+  }
+
+
+#  # Make a blank plot
+#  bd_make_blank_density_plot(sim_anal[[r]],
+#    ylim = c(0, 0.01),
+#    xlab = "",
+#    ylab = "Density",
+#    xaxt = "n",
+#    yaxt = "n"
+#  )
+#
+#  # Add the shaded quantiles
+#  bd_add_shaded_quantiles(sim_anal[[r]],
+#    col = "gray80"
+#  )
+#
+#  # Add the summed probability density
+#  bd_plot_summed_density(sim_anal[[r]],
+#    lwd = 2,
+#    add = T,
+#    col = "black"
+#  )
+#
+#  # Add the Bchron fit
+#  lines(tau,sim_bc[[r]]$f_bc,
+#    lwd = 2,
+#    col = "black",
+#    lty=3
+#  )
+#
+#  # Add solid 50% quantile
+#  bd_plot_50_percent_quantile(sim_anal[[r]],
+#    lwd = 2,
+#    add = T,
+#    col = "red"
+#  )
+#
+#  # Plot the known, target distribution
+#  bd_plot_known_sim_density(sim_anal[[r]],
+#    lwd = 2,
+#    add = T,
+#    col = "blue"
+#  )
+
+
+
+  K <- get_best_K(analysis$bayesian_solutions)
+
+  return(ncol(TH)/3)
 }

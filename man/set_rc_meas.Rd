@@ -36,6 +36,7 @@ The typical set of steps for an analysis is:
 (1) import_rc_data
 Import the radiocarbon measurements from file (or simulate them using
 simulate_rc_data)
+
 (2) set_rc_meas
 Set the radiocarbon measurements (or use set_sim)
 
@@ -44,21 +45,18 @@ Determine the range of calendar dates that span the radiocarbon
 measurements
 
 (4) set_density_model
-Set the parametric model to be used for fitting and Bayesian inference.
-Currently, only a truncated Gaussian mixture is supported, which requires
-setting the calendar date range for truncation (likely using the result
-from step (3))
+Set the parametric model to be used for Bayesian inference. Currently,
+only a truncated Gaussian mixture is supported, which requires setting
+the calendar date range for truncation (likely using the result from step
+(3)) and choosing the number of mixture components, K. If K is a vector,
+Bayesian inference will be done for each element of the vector during
+step (6), do_bayesian_inference.
 
 (5) set_calib_curve
 Set the calibration curve to use for fitting and analysis
-(6) do_max_lik_fits
-Do maximum likelihood fits for a range of models (currently, only
-truncated Gaussian mixtures are supported, for which the models
-specifically differ in the number of mixture components)
-(7) do_bayesian_inference
-For the best model among the the results of do_max_lik_fits (assessed by
-the AIC metric), do Bayesian inference (i.e., sample from the posterior
-of the parameter vector theta)
+
+(6) do_bayesian_inference
+Call sample_theta to do the Bayesian inference
 }
 \seealso{
 \code{\link[=import_rc_data]{import_rc_data()}} for the format of \code{rc_meas}'

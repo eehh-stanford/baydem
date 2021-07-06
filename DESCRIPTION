@@ -29,6 +29,7 @@ Imports:
     evd,
     foreach,
     graphics,
+    loo,
     MCMCpack,
     miscTools,
     parallel,

@@ -2,22 +2,23 @@
 % Please edit documentation in R/data_io_functions.R
 \name{get_best_K}
 \alias{get_best_K}
-\title{Get the best number of mixture components, K, from a set of maximum
-likelihood fits created by do_max_lik_fits (by the AIC metric)}
+\title{For a mixture model, get the best value of K for an input list of Bayesian
+solutions created (based on the widely applicable information criterion,
+WAIC).}
 \usage{
-get_best_K(max_lik_fits)
+get_best_K(bayesian_solutions)
 }
 \arguments{
-\item{max_lik_fits}{The list of maximum likelihood fits (see
-do_max_lik_fits).}
+\item{bayesian_solutions}{The list of Bayesian "solutions" (see
+do_bayesian_inference).}
 }
 \value{
 The best value of K
 }
 \description{
-Get the best number of mixture components, K, from a set of maximum
-likelihood fits created by do_max_lik_fits (by the AIC metric)
+Get the best number of mixture components (K) from the Bayesian inference
+based on the widely applicable information criterion (WAIC).
 }
 \seealso{
-\code{\link[=do_max_lik_fits]{do_max_lik_fits()}}
+\code{\link[=do_bayesian_inference]{do_bayesian_inference()}}
 }

@@ -10,7 +10,7 @@ simulate_rc_data(sim_spec)
 \item{sim_spec}{A simulation specification (see Description)}
 }
 \value{
-A list consisting of the input sim_spac and data (see Description)
+A list consisting of the input sim_spec and data (see Description)
 }
 \description{
 The input is a multi-tiered list specifying all aspects of the simulation. In

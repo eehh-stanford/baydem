@@ -1541,11 +1541,9 @@ expect_equal(
 #           calc_tau_range         (9d)
 #           set_density_model      (9e)
 #           set_calib_curve        (9f)
-#           do_max_lik_fits        (9g)
-#           get_aic_vect           (9h)
-#           get_besk_K             (9i)
-#           get_besk_th            (9j)
-#           do_bayesian_inference (9k)
+#           do_bayesian_inference  (9g)
+#           get_best_K             (9h)
+#           do_bayesian_summary    (9h)
 # ------------------------------------------------------------------------------
 
 # (9a) import_rc_data
@@ -1902,129 +1900,7 @@ expect_equal(
   calib_df
 )
 
-# (9g) do_max_lik_fits
-expect_error(
-  do_max_lik_fits(data_dir,bad_analysis_name),
-  "A save file for analysis_name does not exist in data_dir"
-)
-
-bad_analysis_name <- "bad"
-path_to_bad_analysis_file <- file.path(data_dir,
-                                       paste0(bad_analysis_name,".rds"))
-saveRDS(list(),path_to_bad_analysis_file)
-expect_error(
-  do_max_lik_fits(data_dir,bad_analysis_name),
-  "Radiocarbon measurements have not specified for this analysis"
-)
-
-saveRDS(list(rc_meas=rc_meas),path_to_bad_analysis_file)
-expect_error(
-  do_max_lik_fits(data_dir,bad_analysis_name),
-  "A density model has not been specified for this analysis"
-)
-
-saveRDS(list(rc_meas=rc_meas,density_model=density_model),
-        path_to_bad_analysis_file)
-expect_error(
-  do_max_lik_fits(data_dir,bad_analysis_name),
-  "A calibration curve has not been specified for this analysis"
-)
-invalid_density_model <- list(type="invalid_type")
-saveRDS(list(rc_meas=rc_meas,
-             density_model=invalid_density_model,
-             calib_df=calib_df),
-        path_to_bad_analysis_file)
-expect_error(
-  do_max_lik_fits(data_dir,bad_analysis_name),
-  "Unsupported type for density_model"
-)
-
-success <- file.remove(path_to_bad_analysis_file)
-
-expect_error(
-  do_max_lik_fits(data_dir,analysis_name,num_restarts=4,maxfeval=200),
-  NA
-)
-
-expect_error(
-  do_max_lik_fits(data_dir,analysis_name),
-  "Maximum likelihood fits have already been defined for this analysis"
-)
-
-# Check reproducibility with and without multiple cores
-analysis0 <- readRDS(path_to_analysis_file)
-input_seed <- analysis0$max_lik_fits_seeds$base_seed
-analysis <- analysis0
-# Undo the maximum likelihood fitting
-analysis$max_lik_fits       <- NULL
-analysis$max_lik_fits_seeds <- NULL
-saveRDS(analysis,path_to_analysis_file)
-
-expect_error(
-  do_max_lik_fits(data_dir,analysis_name,num_restarts=4,maxfeval=200,
-                  input_seed=input_seed),
-  NA
-)
-
-# analysis0 and new_analysis should be identical except that
-# analysis0$max_lik_fits_seeds$input_seed is NA. Check that it is indeed NA,
-# set it to base_seed, and make sure that the resulting lists are identical.
-expect_equal(
-  is.na(analysis0$max_lik_fits_seeds$input_seed),
-  TRUE
-)
-
-analysis0_modified <- analysis0
-analysis0_modified$max_lik_fits_seeds$input_seed <- input_seed
-expect_equal(
-  readRDS(path_to_analysis_file),
-  analysis0_modified
-)
-
-# Rewrite the file without the maximum likelihood fits, then check the
-# reproducibility when using multiple cores.
-saveRDS(analysis,path_to_analysis_file)
-
-expect_error(
-  do_max_lik_fits(data_dir,analysis_name,num_restarts=4,maxfeval=200,
-                  input_seed=input_seed,num_cores=2),
-  NA
-)
-
-expect_equal(
-  readRDS(path_to_analysis_file),
-  analysis0_modified
-)
-
-# (9h) get_aic_vect
-# Set analysis back to equal analysis0
-analysis <- analysis0
-expect_equal(
-  aic_vect <- get_aic_vect(analysis$max_lik_fits),
-  c(analysis$max_lik_fits[[1]]$aic,analysis$max_lik_fits[[2]]$aic)
-)
-
-# (9i) get_best_th
-if (aic_vect[1] < aic_vect[2]) {
-  th_best <- analysis$max_lik_fits[[1]]$th
-  Kbest <- 2
-} else {
-  th_best <- analysis$max_lik_fits[[2]]$th
-  Kbest <- 3
-}
-
-expect_equal(
-  get_best_th(analysis$max_lik_fits),
-  th_best
-)
-
-# (9j) get_best_K
-expect_equal(
-  get_best_K(analysis$max_lik_fits),
-  Kbest
-)
-
-# (9k) do_bayesian_inference
+# (9g) do_bayesian_inference
 expect_error(
   do_bayesian_inference(data_dir,bad_analysis_name,hp),
   "A save file for analysis_name does not exist in data_dir"
@@ -2050,20 +1926,12 @@ saveRDS(list(rc_meas=rc_meas,density_model=density_model),
 expect_error(
   do_bayesian_inference(data_dir,bad_analysis_name,hp),
   "A calibration curve has not been specified for this analysis"
-)
-
-saveRDS(list(rc_meas=rc_meas,density_model=density_model,calib_df=calib_df),
-        path_to_bad_analysis_file)
-expect_error(
-  do_bayesian_inference(data_dir,bad_analysis_name,hp),
-  "Maximum likelihood fits have not been specified for this analysis"
 )
 
 invalid_density_model <- list(type="invalid_type")
 saveRDS(list(rc_meas=rc_meas,
              density_model=invalid_density_model,
-             calib_df=calib_df,
-             max_lik_fits=analysis$max_lik_fits),
+             calib_df=calib_df),
         path_to_bad_analysis_file)
 expect_error(
   do_bayesian_inference(data_dir,bad_analysis_name),
@@ -2072,8 +1940,7 @@ expect_error(
 
 saveRDS(list(rc_meas=rc_meas,
              density_model=density_model,
-             calib_df=calib_df,
-             max_lik_fits=analysis$max_lik_fits),
+             calib_df=calib_df),
         path_to_analysis_file)
 expect_error(
   do_bayesian_inference(data_dir,
@@ -2084,9 +1951,46 @@ expect_error(
 )
 
 analysis <- readRDS(path_to_analysis_file)
+
+num_models <- length(density_model$K)
 expect_equal(
-  analysis$input_stan_seed,
+  length(analysis$bayesian_solutions),
+  num_models
+)
+
+expect_equal(
+  analysis$input_seed,
   NA
+)
+
+expect_equal(
+  is.na(analysis$base_seed),
+  FALSE
+)
+
+expect_equal(
+  length(analysis$base_seed),
+  1
+)
+
+expect_equal(
+  any(is.na(analysis$seed_mat)),
+  FALSE
+)
+
+expect_equal(
+  dim(analysis$seed_mat),
+  c(num_models,2)
+)
+
+expect_equal(
+  is.numeric(analysis$m_K),
+  TRUE
+)
+
+expect_equal(
+  is.numeric(analysis$m_K_best),
+  TRUE
 )
 
 expect_error(
@@ -2099,31 +2003,123 @@ expect_error(
 
 # Check reproducibility
 analysis0 <- readRDS(path_to_analysis_file)
-stan_seed <- analysis0$bayesian_soln$final_stan_seed
+base_seed <- analysis0$base_seed
 analysis <- analysis0
 # Undo the Bayesian inference
-analysis$bayesian_soln <- NULL
+analysis$bayesian_solutions <- NULL
 saveRDS(analysis,path_to_analysis_file)
 
 expect_error(
   do_bayesian_inference(data_dir,
                          analysis_name,
                          hp,
-                         stan_seed=stan_seed,
+                         input_seed=base_seed,
                          control=input_control),
   NA
 )
 
 analysis <- readRDS(path_to_analysis_file)
 expect_equal(
-  analysis$input_stan_seed,
-  stan_seed
+  analysis$base_seed,
+  base_seed
+)
+
+for (m_K in 1:length(analysis$bayesian_solutions)) {
+  expect_equal(
+    extract_param(analysis$bayesian_solutions[[m_K]]$fit),
+    extract_param(analysis0$bayesian_solutions[[m_K]]$fit)
+  )
+}
+
+
+# (9h) get_best_K
+bayesian_solutions <- analysis$bayesian_solutions
+expect_error(
+  K_best <- get_best_K(bayesian_solutions),
+  NA
+)
+
+waic_vect <- rep(NA,length(bayesian_solutions))
+for (m_K in 1:length(bayesian_solutions)) {
+  log_lik_mat <- rstan::extract(bayesian_solutions[[m_K]]$fit,"logh")[[1]]
+  waic_analysis <- loo::waic(log_lik_mat)
+  waic_vect[m_K] <- waic_analysis$estimates["waic","Estimate"]
+}
+m_K_best <- which.min(waic_vect)
+
+expect_equal(
+  K_best,
+  c(2,3)[m_K_best]
 )
 
 expect_equal(
-  extract_param(analysis$bayesian_soln$fit),
-  extract_param(analysis0$bayesian_soln$fit)
+  analysis$m_K_best,
+  m_K_best
 )
 
-success <- file.remove(path_to_analysis_file)
+expect_equal(
+  analysis$K_best,
+  K_best
+)
+
+# (9i) do_bayesian_summary
 success <- file.remove(path_to_bad_analysis_file)
+expect_error(
+  do_bayesian_summary(data_dir,bad_analysis_name),
+  "A save file for analysis_name does not exist in data_dir"
+)
+
+bad_analysis_name <- "bad"
+path_to_bad_analysis_file <- file.path(data_dir,
+                                       paste0(bad_analysis_name,".rds"))
+saveRDS(list(),path_to_bad_analysis_file)
+expect_error(
+  do_bayesian_summary(data_dir,bad_analysis_name),
+  "Radiocarbon measurements have not specified for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas),path_to_bad_analysis_file)
+expect_error(
+  do_bayesian_summary(data_dir,bad_analysis_name),
+  "A density model has not been specified for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas,density_model=density_model),
+        path_to_bad_analysis_file)
+expect_error(
+  do_bayesian_summary(data_dir,bad_analysis_name),
+  "A calibration curve has not been specified for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas,density_model=density_model,calib_df=calib_df),
+        path_to_bad_analysis_file)
+expect_error(
+  do_bayesian_summary(data_dir,bad_analysis_name),
+  "Bayesian inference has not been done for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas,
+             density_model=density_model,
+             calib_df=calib_df,
+             bayesian_solutions=analysis0$bayesian_solutions,
+             hp=analysis0$hp,
+             K_best=analysis0$K_best,
+             m_K_best=analysis0$m_K_best),
+        path_to_analysis_file)
+expect_error(
+  do_bayesian_summary(data_dir,
+                      analysis_name),
+  NA
+)
+
+# Check function here
+#analysis <- readRDS(path_to_analysis_file)
+
+expect_error(
+  do_bayesian_summary(data_dir,
+                         analysis_name),
+  "A summary has already been done for this analysis"
+)
+
+success <- file.remove(path_to_bad_analysis_file)
+success <- file.remove(path_to_analysis_file)

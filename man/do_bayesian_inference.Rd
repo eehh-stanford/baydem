@@ -2,14 +2,14 @@
 % Please edit documentation in R/data_io_functions.R
 \name{do_bayesian_inference}
 \alias{do_bayesian_inference}
-\title{Do Bayesian inference given a set of radiocarbon measurements (rc_meas)
-and an existing set of maximum likelihood fits (max_lik_fits)}
+\title{Do Bayesian inference given a set of radiocarbon measurements (rc_meas) and
+a density model (density_model).}
 \usage{
 do_bayesian_inference(
   data_dir,
   analysis_name,
   hp,
-  stan_seed = NA,
+  input_seed = NA,
   control = list()
 )
 }
@@ -22,10 +22,12 @@ do_bayesian_inference(
 Riemann sum that approximates the integral for the likelihood (see
 sample_theta).}
 
-\item{input_seed}{An integer seed that will be used to set the seed for calls
-to the maximum likelihood fits.}
+\item{input_seed}{An optional seed that can be used to make results
+reproducible. The input_seed must be either (1) NA / not provided (the
+default), (2) a single integer, or (3) a matrix with dimensions
+\code{num_models} by 2 (see description for further details).}
 
-\item{Ccontrol}{arguments to pass to the Bayesian inference function (see
+\item{Control}{arguments to pass to the Bayesian inference function (see
 sample_theta).}
 }
 \description{
@@ -33,11 +35,20 @@ This is one of a set of helper functions for undertaking a typical analysis
 of radiocarbon dates. For details on the overall framework for these helper
 function, see set_rc_meas.
 
-To ensure reproducibility, the input_seed can be provided. The behavior and
-expectations are identical to the same parameter used in fit_trunc_gauss_mix,
-except that if a vector is specified it should be the same length as the
-vector K in analysis$density_model$K. That is, input_seed should be either
-(1) a single integer or (2) a vector of length analysis$density_model$K.
+#' To ensure reproducibility, the input_seed can be provided. The input seed
+should either be (1) NA \link{the default}, (2) a single integer, or (3) a matrix
+with dimensions \code{num_models} by 2, where
+\code{num_models = length(analysis$density_model$K)}. If no seed is provided, one
+is drawn and treated as if it (a single integer) was input. If a single
+integer is provided, it is used to generate a matrix of integers with
+dimensions \code{num_models} by 2. The first column of the matrix provides the
+seeds for initializing the parameter vector and the second column provides
+the seeds for stan.
+
+The best model is identified based on the widely applicable information
+criterion (WAIC) and the corresponding index (in density_model$K) and value
+are stored in, respectively, m_K_best and K_best (currently, only a truncated
+Gaussian mixture is supported for the density model specification).
 }
 \seealso{
 \code{\link[=set_sim]{set_sim()}} for an overview of the "standard pipeline"

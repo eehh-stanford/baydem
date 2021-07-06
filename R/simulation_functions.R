@@ -55,7 +55,7 @@
 #'
 #' @param sim_spec A simulation specification (see Description)
 #'
-#' @returns A list consisting of the input sim_spac and data (see Description)
+#' @returns A list consisting of the input sim_spec and data (see Description)
 #'
 #' @export
 simulate_rc_data <- function(sim_spec) {
