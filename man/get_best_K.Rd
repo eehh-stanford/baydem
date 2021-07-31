@@ -2,9 +2,7 @@
 % Please edit documentation in R/data_io_functions.R
 \name{get_best_K}
 \alias{get_best_K}
-\title{For a mixture model, get the best value of K for an input list of Bayesian
-solutions created (based on the widely applicable information criterion,
-WAIC).}
+\title{Get the number of mixtures, K, of the best model in the input list}
 \usage{
 get_best_K(bayesian_solutions)
 }

@@ -12,7 +12,7 @@ set_calib_curve(data_dir, analysis_name, calibration_curve)
 \item{analysis_name}{A unique name for a given analysis in data_dir}
 
 \item{calibration_curve}{Either the name of a calibration curve or a data
-frame specifying the calibration curve (see load_calib_curve format and
+frame specifying the calibration curve (see load_calib_curve for format and
 choices).}
 }
 \description{

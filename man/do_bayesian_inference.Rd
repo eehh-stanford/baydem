@@ -35,7 +35,7 @@ This is one of a set of helper functions for undertaking a typical analysis
 of radiocarbon dates. For details on the overall framework for these helper
 function, see set_rc_meas.
 
-#' To ensure reproducibility, the input_seed can be provided. The input seed
+#' To ensure reproducibility, the input seed can be provided. The input seed
 should either be (1) NA \link{the default}, (2) a single integer, or (3) a matrix
 with dimensions \code{num_models} by 2, where
 \code{num_models = length(analysis$density_model$K)}. If no seed is provided, one

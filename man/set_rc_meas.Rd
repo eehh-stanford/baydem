@@ -18,45 +18,49 @@ format of rc_meas is as output by import_rc_data)}
 This is one of a set of helper functions for undertaking a typical analysis
 of radiocarbon dates. As the analysis proceeds, results are stored in a save
 file called analysis_name.rds in the folder data_dir. Where results are
-non-determistic, random number seeds are set and stored to ensure that, even
-if processing is interupted, results are fully reproducible.
+non-deterministic, random number seeds are set and stored to ensure that,
+even if processing is interrupted, results are fully reproducible.
 
-Since this is the first helper function that is used in the sequence of
-analysis steps, a full description of the set of helper functions is
-described here and the documentation in the other functions points here.
+There are, in fact, two distinct pipelines for (a) simulations and (b)
+analyses that use existing radiocarbon measurements saved in a .csv file.
+Since this is the first helper function used in the standard pipeline for
+using an input .csv file, that pipeline is described here. See set_sim for
+the pipeline when doing a simulation.
 
-The variables data_dir and analysis_name must be specified for each helper
-function. data_dir is a directory that can store the data for multiple
-analyses. The analysis_name is a unique specified of a given analysis within
-data_dir. If a new analysis is initiated by calling set_rc_meas yet a data
-file already exists in data_dir for that analysis name, an error is thrown.
+The standard pipeline for analyses that use an input data stored in a .csv
+file (see the vignette standard_pipeline for additional details):
 
-The typical set of steps for an analysis is:
+(0) import_rc_data
+Import data from a .csv file using import_rc_data.
 
-(1) import_rc_data
-Import the radiocarbon measurements from file (or simulate them using
-simulate_rc_data)
+(1) set_rc_meas
+Use the data from the previous step to set the radiocarbon measurements
+to be used for this analysis
 
-(2) set_rc_meas
-Set the radiocarbon measurements (or use set_sim)
-
-(3) calc_tau_range
+(2) calc_tau_range
 Determine the range of calendar dates that span the radiocarbon
-measurements
+measurements (or specify the range directly)
 
-(4) set_density_model
+(3) set_density_model
 Set the parametric model to be used for Bayesian inference. Currently,
 only a truncated Gaussian mixture is supported, which requires setting
 the calendar date range for truncation (likely using the result from step
 (3)) and choosing the number of mixture components, K. If K is a vector,
 Bayesian inference will be done for each element of the vector during
-step (6), do_bayesian_inference.
+step (5), do_bayesian_inference.
 
-(5) set_calib_curve
-Set the calibration curve to use for fitting and analysis
+(4) set_calib_curve
+Set the calibration curve to be used for subsequent steps.
 
-(6) do_bayesian_inference
-Call sample_theta to do the Bayesian inference
+(5) do_bayesian_inference
+Call sample_theta to do the Bayesian inference for each model to check.
+
+(6) do_bayesian_summary
+Calculate summary statistics for the best model sampled by calling
+do_bayesian_inference (the best model is the one with the best WAIC).
+
+(7) plot_best_solution
+Create a plot of the best solution.
 }
 \seealso{
 \code{\link[=import_rc_data]{import_rc_data()}} for the format of \code{rc_meas}'

@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Use the results of a simulation to set the radiocarbon measurements (rc_meas)
-for an analysis (and store the settings used to do the simulation) — set_sim • baydem</title>
+<title>Get the number of mixtures, K, of the best model in the input list — get_best_K • baydem</title>
 
 
 <!-- jquery -->
@@ -40,45 +39,9 @@ for an analysis (and store the settings used to do the simulation) — set_sim �
 
 
 
-<meta property="og:title" content="Use the results of a simulation to set the radiocarbon measurements (rc_meas)
-for an analysis (and store the settings used to do the simulation) — set_sim" />
-<meta property="og:description" content="This is one of a set of helper functions for undertaking a typical analysis
-of radiocarbon dates. As the analysis proceeds, results are stored in a save
-file called analysis_name.rds in the folder data_dir. Where results are
-non-deterministic, random number seeds are set and stored to ensure that,
-even if processing is interrupted, results are fully reproducible.
-There are, in fact, two distinct pipelines for (a) simulations and (b)
-analyses that use existing radiocarbon measurements saved in a .csv file.
-Since this is the first helper function used in the standard pipeline for
-simulations, that pipeline is described here. See set_rc_meas for the
-pipeline when using an input .csv file.
-The standard pipeline for simulations is (see the vignette standard_pipeline
-for additional details):
-(0) simulate_rc_data
-Define the simulation parameters and create simulated data using
-simulate_rc_data.
-(1) set_sim
-Set the simulated data for the analysis
-(2) calc_tau_range
-Determine the range of calendar dates that span the radiocarbon
-measurements (or specify the range directly)
-(3) set_density_model
-Set the parametric model to be used for Bayesian inference. Currently,
-only a truncated Gaussian mixture is supported, which requires setting
-the calendar date range for truncation (likely using the result from step
-(3)) and choosing the number of mixture components, K. If K is a vector,
-Bayesian inference will be done for each element of the vector during
-step (4), do_bayesian_inference.
-(4) do_bayesian_inference
-Call sample_theta to do the Bayesian inference for each model to check.
-(Unlike the other pipeline that starts with an input .csv file,
-set_calib_curve does not need to be called prior to this step since the
-calibration curve is set with set_sim.)
-(5) do_bayesian_summary
-Calculate summary statistics for the best model sampled by calling
-do_bayesian_inference (the best model is the one with the best WAIC).
-(6) plot_best_solution
-Create a plot of the best solution." />
+<meta property="og:title" content="Get the number of mixtures, K, of the best model in the input list — get_best_K" />
+<meta property="og:description" content="Get the best number of mixture components (K) from the Bayesian inference
+based on the widely applicable information criterion (WAIC)." />
 
 
 
@@ -158,71 +121,34 @@ Create a plot of the best solution." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Use the results of a simulation to set the radiocarbon measurements (rc_meas)
-for an analysis (and store the settings used to do the simulation)</h1>
+    <h1>Get the number of mixtures, K, of the best model in the input list</h1>
     <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/data_io_functions.R'><code>R/data_io_functions.R</code></a></small>
-    <div class="hidden name"><code>set_sim.Rd</code></div>
+    <div class="hidden name"><code>get_best_K.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This is one of a set of helper functions for undertaking a typical analysis
-of radiocarbon dates. As the analysis proceeds, results are stored in a save
-file called analysis_name.rds in the folder data_dir. Where results are
-non-deterministic, random number seeds are set and stored to ensure that,
-even if processing is interrupted, results are fully reproducible.</p>
-<p>There are, in fact, two distinct pipelines for (a) simulations and (b)
-analyses that use existing radiocarbon measurements saved in a .csv file.
-Since this is the first helper function used in the standard pipeline for
-simulations, that pipeline is described here. See set_rc_meas for the
-pipeline when using an input .csv file.</p>
-<p>The standard pipeline for simulations is (see the vignette standard_pipeline
-for additional details):</p>
-<p>(0) simulate_rc_data
-Define the simulation parameters and create simulated data using
-simulate_rc_data.</p>
-<p>(1) set_sim
-Set the simulated data for the analysis</p>
-<p>(2) calc_tau_range
-Determine the range of calendar dates that span the radiocarbon
-measurements (or specify the range directly)</p>
-<p>(3) set_density_model
-Set the parametric model to be used for Bayesian inference. Currently,
-only a truncated Gaussian mixture is supported, which requires setting
-the calendar date range for truncation (likely using the result from step
-(3)) and choosing the number of mixture components, K. If K is a vector,
-Bayesian inference will be done for each element of the vector during
-step (4), do_bayesian_inference.</p>
-<p>(4) do_bayesian_inference
-Call sample_theta to do the Bayesian inference for each model to check.
-(Unlike the other pipeline that starts with an input .csv file,
-set_calib_curve does not need to be called prior to this step since the
-calibration curve is set with set_sim.)</p>
-<p>(5) do_bayesian_summary
-Calculate summary statistics for the best model sampled by calling
-do_bayesian_inference (the best model is the one with the best WAIC).</p>
-<p>(6) plot_best_solution
-Create a plot of the best solution.</p>
+    <p>Get the best number of mixture components (K) from the Bayesian inference
+based on the widely applicable information criterion (WAIC).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>set_sim</span><span class='op'>(</span><span class='va'>data_dir</span>, <span class='va'>analysis_name</span>, <span class='va'>sim</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_best_K</span><span class='op'>(</span><span class='va'>bayesian_solutions</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data_dir</th>
-      <td><p>The directory in which to store analysis data</p></td>
-    </tr>
-    <tr>
-      <th>analysis_name</th>
-      <td><p>A unique name for a given analysis in data_dir</p></td>
-    </tr>
-    <tr>
-      <th>sim</th>
-      <td><p>The simulation object (see simulate_rc_data)</p></td>
+      <th>bayesian_solutions</th>
+      <td><p>The list of Bayesian "solutions" (see
+do_bayesian_inference).</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>The best value of K</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='do_bayesian_inference.html'>do_bayesian_inference()</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

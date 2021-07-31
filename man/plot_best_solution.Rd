@@ -2,15 +2,14 @@
 % Please edit documentation in R/data_io_functions.R
 \name{plot_best_solution}
 \alias{plot_best_solution}
-\title{Plot the best model created by do_bayesian_inference
-Plot the best model among those for which Bayesian inference was done with
-the standard pipeline. The plot is a standard plot shows the 50\% and +/- 2.5\%
-quantiles. If an output file name for is provided (plot_file_name), the plot
-is written to file. The format is detected from the extension (e.g., if
-plot_file_name is "analysis.pdf", a PDF file is written. If the extension is
-not one of (pdf, png, or jpg, an error is thrown).}
+\title{Plot the best model created by do_bayesian_inference}
 \usage{
-plot_best_solution(data_dir, analysis_name, plot_file_name = NA)
+plot_best_solution(
+  data_dir,
+  analysis_name,
+  plot_file_name = NA,
+  add_known_density = FALSE
+)
 }
 \arguments{
 \item{data_dir}{The directory in which to store analysis data.}
@@ -20,13 +19,12 @@ plot_best_solution(data_dir, analysis_name, plot_file_name = NA)
 \item{plot_file_name}{An optional file name for saving the file}
 }
 \description{
-Plot the best model created by do_bayesian_inference
 Plot the best model among those for which Bayesian inference was done with
 the standard pipeline. The plot is a standard plot shows the 50\% and +/- 2.5\%
-quantiles. If an output file name for is provided (plot_file_name), the plot
-is written to file. The format is detected from the extension (e.g., if
+quantiles. If an output file name is provided (plot_file_name), the plot is
+written to file. The format is detected from the extension (e.g., if
 plot_file_name is "analysis.pdf", a PDF file is written. If the extension is
-not one of (pdf, png, or jpg, an error is thrown).
+not one of pdf or png an error is thrown.
 }
 \seealso{
 \code{\link[=do_bayesian_inference]{do_bayesian_inference()}}

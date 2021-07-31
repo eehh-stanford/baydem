@@ -6,8 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sample from the posterior of a density model for a set of radiocarbon
-measurements — do_bayesian_inference • baydem</title>
+<title>Do Bayesian inference given a set of radiocarbon measurements (rc_meas) and
+a density model (density_model). — do_bayesian_inference • baydem</title>
 
 
 <!-- jquery -->
@@ -40,26 +40,24 @@ measurements — do_bayesian_inference • baydem</title>
 
 
 
-<meta property="og:title" content="Sample from the posterior of a density model for a set of radiocarbon
-measurements — do_bayesian_inference" />
-<meta property="og:description" content="This is the core function that implements the Bayesian inference. Currently,
-the only supported density model is a truncated Gaussian mixture. Currently,
-the only supported density model is a truncated Gaussian mixture. If a
-starting parameter vector (th0) is not provided, it is set via a
-maximum likelihood fit; the same vector is used for all sampling chains.
-Named elements of the variable control must consist of one of the following
-four options (defaults in parantheses):
-
-num_chains
-Number of chains (4)
-samps_per_chain
-Number of samples per chain (2000)
-warmup
-Number of warmup samples (samps_per_chain/2)
-stan_control
-Additional control parameters to pass to stan (list())
-
-" />
+<meta property="og:title" content="Do Bayesian inference given a set of radiocarbon measurements (rc_meas) and
+a density model (density_model). — do_bayesian_inference" />
+<meta property="og:description" content="This is one of a set of helper functions for undertaking a typical analysis
+of radiocarbon dates. For details on the overall framework for these helper
+function, see set_rc_meas.
+#' To ensure reproducibility, the input seed can be provided. The input seed
+should either be (1) NA the default, (2) a single integer, or (3) a matrix
+with dimensions num_models by 2, where
+num_models = length(analysis$density_model$K). If no seed is provided, one
+is drawn and treated as if it (a single integer) was input. If a single
+integer is provided, it is used to generate a matrix of integers with
+dimensions num_models by 2. The first column of the matrix provides the
+seeds for initializing the parameter vector and the second column provides
+the seeds for stan.
+The best model is identified based on the widely applicable information
+criterion (WAIC) and the corresponding index (in density_model$K) and value
+are stored in, respectively, m_K_best and K_best (currently, only a truncated
+Gaussian mixture is supported for the density model specification)." />
 
 
 
@@ -106,6 +104,18 @@ Additional control parameters to pass to stan (list())
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/standard_pipeline.html">Summarizing sets of radiocarbon dates using baydem's standard pipeline</a>
+    </li>
+  </ul>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -127,41 +137,36 @@ Additional control parameters to pass to stan (list())
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Sample from the posterior of a density model for a set of radiocarbon
-measurements</h1>
-    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/bayesian_inference_functions.R'><code>R/bayesian_inference_functions.R</code></a></small>
+    <h1>Do Bayesian inference given a set of radiocarbon measurements (rc_meas) and
+a density model (density_model).</h1>
+    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/data_io_functions.R'><code>R/data_io_functions.R</code></a></small>
     <div class="hidden name"><code>do_bayesian_inference.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This is the core function that implements the Bayesian inference. Currently,
-the only supported density model is a truncated Gaussian mixture. Currently,
-the only supported density model is a truncated Gaussian mixture. If a
-starting parameter vector (<code>th0</code>) is not provided, it is set via a
-maximum likelihood fit; the same vector is used for all sampling chains.
-Named elements of the variable control must consist of one of the following
-four options (defaults in parantheses):</p>
-<ul>
-<li><p><code>num_chains</code>
-Number of chains (4)</p></li>
-<li><p><code>samps_per_chain</code>
-Number of samples per chain (2000)</p></li>
-<li><p><code>warmup</code>
-Number of warmup samples (<code>samps_per_chain/2</code>)</p></li>
-<li><p><code>stan_control</code>
-Additional control parameters to pass to stan (<code><a href='https://rdrr.io/r/base/list.html'>list()</a></code>)</p></li>
-</ul>
-
+    <p>This is one of a set of helper functions for undertaking a typical analysis
+of radiocarbon dates. For details on the overall framework for these helper
+function, see set_rc_meas.</p>
+<p>#' To ensure reproducibility, the input seed can be provided. The input seed
+should either be (1) NA the default, (2) a single integer, or (3) a matrix
+with dimensions <code>num_models</code> by 2, where
+<code>num_models = length(analysis$density_model$K)</code>. If no seed is provided, one
+is drawn and treated as if it (a single integer) was input. If a single
+integer is provided, it is used to generate a matrix of integers with
+dimensions <code>num_models</code> by 2. The first column of the matrix provides the
+seeds for initializing the parameter vector and the second column provides
+the seeds for stan.</p>
+<p>The best model is identified based on the widely applicable information
+criterion (WAIC) and the corresponding index (in density_model$K) and value
+are stored in, respectively, m_K_best and K_best (currently, only a truncated
+Gaussian mixture is supported for the density model specification).</p>
     </div>
 
     <pre class="usage"><span class='fu'>do_bayesian_inference</span><span class='op'>(</span>
-  <span class='va'>rc_meas</span>,
-  <span class='va'>density_model</span>,
+  <span class='va'>data_dir</span>,
+  <span class='va'>analysis_name</span>,
   <span class='va'>hp</span>,
-  <span class='va'>calib_df</span>,
-  th0 <span class='op'>=</span> <span class='cn'>NA</span>,
-  init_seed <span class='op'>=</span> <span class='cn'>NA</span>,
-  stan_seed <span class='op'>=</span> <span class='cn'>NA</span>,
+  input_seed <span class='op'>=</span> <span class='cn'>NA</span>,
   control <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
@@ -169,70 +174,36 @@ Additional control parameters to pass to stan (<code><a href='https://rdrr.io/r/
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>rc_meas</th>
-      <td><p>The radiocarbon measurements (see import_rc_data).</p></td>
+      <th>data_dir</th>
+      <td><p>The directory in which to store analysis data.</p></td>
     </tr>
     <tr>
-      <th>density_model</th>
-      <td><p>The density model (see set_density_model).</p></td>
+      <th>analysis_name</th>
+      <td><p>A unique name for a given analysis in data_dir.</p></td>
     </tr>
     <tr>
       <th>hp</th>
       <td><p>Hyperparameters for the priors and to specify the spacing of the
-Riemann sum that approximates the integral for the likelihood.</p></td>
+Riemann sum that approximates the integral for the likelihood (see
+sample_theta).</p></td>
     </tr>
     <tr>
-      <th>calib_df</th>
-      <td><p>The calibration data frame (see load_calib_curve).</p></td>
+      <th>input_seed</th>
+      <td><p>An optional seed that can be used to make results
+reproducible. The input_seed must be either (1) NA / not provided (the
+default), (2) a single integer, or (3) a matrix with dimensions
+<code>num_models</code> by 2 (see description for further details).</p></td>
     </tr>
     <tr>
-      <th>th0</th>
-      <td><p>An optional parameter vector to initialize the Stan chains. If not
-provided, it is calculated using a maximum likelihood fit.</p></td>
-    </tr>
-    <tr>
-      <th>init_seed</th>
-      <td><p>An optional random number seed for determining the starting
-parameter vector using a maximum likelihood fit. If not provided, it is
-drawn. It should not be provided if th0 is provided.</p></td>
-    </tr>
-    <tr>
-      <th>stan_seed</th>
-      <td><p>An optional random number seed for the call to Stan. If not
-provided, it is drawn.</p></td>
+      <th>Control</th>
+      <td><p>arguments to pass to the Bayesian inference function (see
+sample_theta).</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p><code>bayesian_soln</code>, a list-like object of class bd_bayesian_soln with the
-following fields:</p><ul>
-<li><p><code>fit</code>
-The result of the call to stan</p></li>
-<li><p><code>final_th0</code>
-The final <code>th0</code> value; i.e., never NA.</p></li>
-<li><p><code>final_init_seed</code>
-The final init_seed value; i.e., never NA unless <code>th0</code> is
-provided.</p></li>
-<li><p><code>final_stan_seed</code>
-The final <code>stan_seed</code> value; i.e., never NA.</p></li>
-<li><p><code>final_control</code>
-The final control parameters used; i.e., if a parameter is not
-provided.</p></li>
-<li><p><code>optional_inputs</code>
-A record of the actual input values for the optional inputs, which are
-<code>th0</code>, <code>init_seed</code>, <code>stan_seed</code>, and <code>control</code>.</p></li>
-</ul>
-
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'>
-<ul>
-<li><p><code><a href='import_rc_data.html'>import_rc_data()</a></code> for the format of <code>rc_meas</code></p></li>
-<li><p><code><a href='set_density_model.html'>set_density_model()</a></code> for the format of <code>density_model</code></p></li>
-<li><p><code><a href='load_calib_curve.html'>load_calib_curve()</a></code> for the format of <code>calib_df</code></p></li>
-</ul>
-</div>
+    <div class='dont-index'><p><code><a href='set_sim.html'>set_sim()</a></code> for an overview of the "standard pipeline"</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

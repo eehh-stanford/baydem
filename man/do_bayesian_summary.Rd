@@ -2,15 +2,7 @@
 % Please edit documentation in R/data_io_functions.R
 \name{do_bayesian_summary}
 \alias{do_bayesian_summary}
-\title{Call summarize_bayesian_inference for the best model created by
-do_bayesian_inference (the previous step in the standard pipeline).
-
-Plot the best model among those for which Bayesian inference was done with
-the standard pipeline. The plot is a standard plot shows the 50\% and +/- 2.5\%
-quantiles. If an output file name for is provided (plot_file_name), the plot
-is written to file. The format is detected from the extension (e.g., if
-plot_file_name is "analysis.pdf", a PDF file is written. If the extension is
-not one of (pdf, png, or jpg, an error is thrown).}
+\title{Summarize the best model sampled by do_bayesian_inference}
 \usage{
 do_bayesian_summary(data_dir, analysis_name)
 }
@@ -22,15 +14,13 @@ do_bayesian_summary(data_dir, analysis_name)
 \item{plot_file_name}{An optional file name for saving the file}
 }
 \description{
-Call summarize_bayesian_inference for the best model created by
-do_bayesian_inference (the previous step in the standard pipeline).
+This is one of a set of helper functions for undertaking a typical analysis
+of radiocarbon dates. For details on the overall framework for these helper
+function, see set_rc_meas.
 
-Plot the best model among those for which Bayesian inference was done with
-the standard pipeline. The plot is a standard plot shows the 50\% and +/- 2.5\%
-quantiles. If an output file name for is provided (plot_file_name), the plot
-is written to file. The format is detected from the extension (e.g., if
-plot_file_name is "analysis.pdf", a PDF file is written. If the extension is
-not one of (pdf, png, or jpg, an error is thrown).
+Call summarize_bayesian_inference for the best model created by
+do_bayesian_inference (the previous step in the standard pipeline). Store the
+result in the save file.
 }
 \seealso{
 \code{\link[=do_bayesian_inference]{do_bayesian_inference()}}

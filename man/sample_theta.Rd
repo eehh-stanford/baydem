@@ -59,12 +59,11 @@ provided.}
 }
 \description{
 This is the core function that implements the Bayesian inference. Currently,
-the only supported density model is a truncated Gaussian mixture. Currently,
 the only supported density model is a truncated Gaussian mixture. If a
 starting parameter vector (\code{th0}) is not provided, it is set by calling
 init_trunc_gauss_mix; the same vector is used for all sampling chains. Named
 elements of the variable control must consist of one of the following four
-options (defaults in parantheses):
+options (defaults in parentheses):
 
 \itemize{
 \item{\code{num_chains}}

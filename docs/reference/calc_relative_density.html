@@ -47,7 +47,7 @@ density on an interval. For a simple date, spec1/spec2 should be scalar
 real numbers. For a date range, spec1/spec2 should be real vectors with a
 length of 2. For the peak, spec1/spec2 should be the string 'peak'.
 By default, this calculation is done for all the Bayesian samples in
-bayesian_soln which is the result of a call to do_bayesian_inference.
+bayesian_soln which is the result of a call to sample_theta.
 Optionally, a subset can be specified via the input ind, which should be a
 vector of integer indices at which to do the calculation. To save computation
 if either spec1 or spec2 is 'peak', the result of a call to
@@ -99,6 +99,18 @@ be input." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/standard_pipeline.html">Summarizing sets of radiocarbon dates using baydem's standard pipeline</a>
+    </li>
+  </ul>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -133,7 +145,7 @@ density on an interval. For a simple date, spec1/spec2 should be scalar
 real numbers. For a date range, spec1/spec2 should be real vectors with a
 length of 2. For the peak, spec1/spec2 should be the string 'peak'.</p>
 <p>By default, this calculation is done for all the Bayesian samples in
-bayesian_soln which is the result of a call to <code>do_bayesian_inference</code>.
+bayesian_soln which is the result of a call to <code>sample_theta</code>.
 Optionally, a subset can be specified via the input ind, which should be a
 vector of integer indices at which to do the calculation. To save computation
 if either spec1 or spec2 is 'peak', the result of a call to
@@ -157,7 +169,7 @@ be input.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>bayesian_soln</th>
-      <td><p>The result of a call to do_bayesian_inference</p></td>
+      <td><p>The result of a call to sample_theta</p></td>
     </tr>
     <tr>
       <th>density_model</th>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Calculate some key summary measures using the result of a call to
-do_bayesian_inference — summarize_bayesian_inference • baydem</title>
+sample_theta — summarize_bayesian_inference • baydem</title>
 
 
 <!-- jquery -->
@@ -41,10 +41,10 @@ do_bayesian_inference — summarize_bayesian_inference • baydem</title>
 
 
 <meta property="og:title" content="Calculate some key summary measures using the result of a call to
-do_bayesian_inference — summarize_bayesian_inference" />
-<meta property="og:description" content="do_bayesian_inference calls Stan to do Bayesian inference by
+sample_theta — summarize_bayesian_inference" />
+<meta property="og:description" content="sample_theta calls Stan to do Bayesian inference by
 generating a sample of parameters from the posterior of theta (or th).
-do_bayesian_inference analyzes the result of that inference. Notably,
+sample_theta analyzes the result of that inference. Notably,
 it calculates the quantiles of the density function and the growth rate." />
 
 
@@ -92,6 +92,18 @@ it calculates the quantiles of the density function and the growth rate." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/standard_pipeline.html">Summarizing sets of radiocarbon dates using baydem's standard pipeline</a>
+    </li>
+  </ul>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -114,15 +126,15 @@ it calculates the quantiles of the density function and the growth rate." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate some key summary measures using the result of a call to
-<code>do_bayesian_inference</code></h1>
+<code>sample_theta</code></h1>
     <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/bayesian_inference_functions.R'><code>R/bayesian_inference_functions.R</code></a></small>
     <div class="hidden name"><code>summarize_bayesian_inference.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>do_bayesian_inference</code> calls Stan to do Bayesian inference by
+    <p><code>sample_theta</code> calls Stan to do Bayesian inference by
 generating a sample of parameters from the posterior of theta (or <code>th</code>).
-<code>do_bayesian_inference</code> analyzes the result of that inference. Notably,
+<code>sample_theta</code> analyzes the result of that inference. Notably,
 it calculates the quantiles of the density function and the growth rate.</p>
     </div>
 
@@ -144,7 +156,7 @@ it calculates the quantiles of the density function and the growth rate.</p>
     <tr>
       <th>bayesian_soln</th>
       <td><p>The solution, a list-like object of class
-bd_bayesian_soln (see do_bayesian_inference).</p></td>
+bd_bayesian_soln (see sample_theta).</p></td>
     </tr>
     <tr>
       <th>rc_meas</th>
@@ -190,7 +202,7 @@ growth rate (and sample summaries)</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><code>bayesian_soln</code> is the result of a call to
-<code>do_bayesian_inference</code>. It contains posterior samples for the density
+<code>sample_theta</code>. It contains posterior samples for the density
 model. The primary thing <code>summarize_bayesian_inference</code> does is
 calculate quantiles of both the parameterized density and growth rate. For
 example, for a calendar date tau_g each sample yields a density and growth

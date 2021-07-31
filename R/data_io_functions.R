@@ -1,49 +1,127 @@
 #' @title
-#' Set the radiocarbon measurements (rc_meas) for an analysis
+#' Use the results of a simulation to set the radiocarbon measurements (rc_meas)
+#' for an analysis (and store the settings used to do the simulation)
 #'
 #' @description
 #' This is one of a set of helper functions for undertaking a typical analysis
 #' of radiocarbon dates. As the analysis proceeds, results are stored in a save
 #' file called analysis_name.rds in the folder data_dir. Where results are
-#' non-determistic, random number seeds are set and stored to ensure that, even
-#' if processing is interupted, results are fully reproducible.
+#' non-deterministic, random number seeds are set and stored to ensure that,
+#' even if processing is interrupted, results are fully reproducible.
 #'
-#' Since this is the first helper function that is used in the sequence of
-#' analysis steps, a full description of the set of helper functions is
-#' described here and the documentation in the other functions points here.
+#' There are, in fact, two distinct pipelines for (a) simulations and (b)
+#' analyses that use existing radiocarbon measurements saved in a .csv file.
+#' Since this is the first helper function used in the standard pipeline for
+#' simulations, that pipeline is described here. See set_rc_meas for the
+#' pipeline when using an input .csv file.
 #'
-#' The variables data_dir and analysis_name must be specified for each helper
-#' function. data_dir is a directory that can store the data for multiple
-#' analyses. The analysis_name is a unique specified of a given analysis within
-#' data_dir. If a new analysis is initiated by calling set_rc_meas yet a data
-#' file already exists in data_dir for that analysis name, an error is thrown.
+#' The standard pipeline for simulations is (see the vignette standard_pipeline
+#' for additional details):
 #'
-#' The typical set of steps for an analysis is:
+#' (0) simulate_rc_data
+#'     Define the simulation parameters and create simulated data using
+#'     simulate_rc_data.
 #'
-#' (1) import_rc_data
-#'     Import the radiocarbon measurements from file (or simulate them using
-#'     simulate_rc_data)
+#' (1) set_sim
+#'     Set the simulated data for the analysis
 #'
-#' (2) set_rc_meas
-#'     Set the radiocarbon measurements (or use set_sim)
-#'
-#' (3) calc_tau_range
+#' (2) calc_tau_range
 #'     Determine the range of calendar dates that span the radiocarbon
-#'     measurements
+#'     measurements (or specify the range directly)
 #'
-#' (4) set_density_model
+#' (3) set_density_model
 #'     Set the parametric model to be used for Bayesian inference. Currently,
 #'     only a truncated Gaussian mixture is supported, which requires setting
 #'     the calendar date range for truncation (likely using the result from step
 #'     (3)) and choosing the number of mixture components, K. If K is a vector,
 #'     Bayesian inference will be done for each element of the vector during
-#'     step (6), do_bayesian_inference.
+#'     step (4), do_bayesian_inference.
 #'
-#' (5) set_calib_curve
-#'     Set the calibration curve to use for fitting and analysis
+#' (4) do_bayesian_inference
+#'     Call sample_theta to do the Bayesian inference for each model to check.
+#'     (Unlike the other pipeline that starts with an input .csv file,
+#'      set_calib_curve does not need to be called prior to this step since the
+#'      calibration curve is set with set_sim.)
 #'
-#' (6) do_bayesian_inference
-#'     Call sample_theta to do the Bayesian inference
+#' (5) do_bayesian_summary
+#'     Calculate summary statistics for the best model sampled by calling
+#'     do_bayesian_inference (the best model is the one with the best WAIC).
+#'
+#' (6) plot_best_solution
+#'     Create a plot of the best solution.
+#'
+#' @param data_dir The directory in which to store analysis data
+#' @param analysis_name A unique name for a given analysis in data_dir
+#' @param sim The simulation object (see simulate_rc_data)
+#'
+#' @export
+set_sim <- function(data_dir,analysis_name,sim) {
+  data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
+
+  if (file.exists(data_file)) {
+    stop("A save file for analysis_name already exists in data_dir")
+  }
+
+  calib_df <- load_calib_curve(sim$sim_spec$calib_curve)
+
+  # rc_meas are stored twice for convenience since they are also contained in
+  # the input simulation object
+  analysis <- list(rc_meas=sim$data$rc_meas,calib_df=calib_df,sim=sim)
+  saveRDS(analysis,data_file)
+}
+
+#' @title
+#' Set the radiocarbon measurements (rc_meas) for an analysis
+#'
+#' @description
+
+#' This is one of a set of helper functions for undertaking a typical analysis
+#' of radiocarbon dates. As the analysis proceeds, results are stored in a save
+#' file called analysis_name.rds in the folder data_dir. Where results are
+#' non-deterministic, random number seeds are set and stored to ensure that,
+#' even if processing is interrupted, results are fully reproducible.
+#'
+#' There are, in fact, two distinct pipelines for (a) simulations and (b)
+#' analyses that use existing radiocarbon measurements saved in a .csv file.
+#' Since this is the first helper function used in the standard pipeline for
+#' using an input .csv file, that pipeline is described here. See set_sim for
+#' the pipeline when doing a simulation.
+#'
+#' The standard pipeline for analyses that use an input data stored in a .csv
+#' file (see the vignette standard_pipeline for additional details):
+#'
+#' (0) import_rc_data
+#'     Import data from a .csv file using import_rc_data.
+#'
+#' (1) set_rc_meas
+#'     Use the data from the previous step to set the radiocarbon measurements
+#'     to be used for this analysis
+#'
+#' (2) calc_tau_range
+#'     Determine the range of calendar dates that span the radiocarbon
+#'     measurements (or specify the range directly)
+#'
+#' (3) set_density_model
+#'     Set the parametric model to be used for Bayesian inference. Currently,
+#'     only a truncated Gaussian mixture is supported, which requires setting
+#'     the calendar date range for truncation (likely using the result from step
+#'     (3)) and choosing the number of mixture components, K. If K is a vector,
+#'     Bayesian inference will be done for each element of the vector during
+#'     step (5), do_bayesian_inference.
+#'
+#' (4) set_calib_curve
+#'     Set the calibration curve to be used for subsequent steps.
+#'
+#' (5) do_bayesian_inference
+#'     Call sample_theta to do the Bayesian inference for each model to check.
+#'
+#' (6) do_bayesian_summary
+#'     Calculate summary statistics for the best model sampled by calling
+#'     do_bayesian_inference (the best model is the one with the best WAIC).
+#'
+#' (7) plot_best_solution
+#'     Create a plot of the best solution.
+#'
 #' @param data_dir The directory in which to store analysis data
 #' @param analysis_name A unique name for a given analysis in data_dir
 #' @param rc_meas The radiocarbon measurements to use for this analysis (the
@@ -142,47 +220,15 @@ import_rc_data <- function(file_name,
   return (list(phi_m=phi_m,sig_m=sig_m,trc_m=trc_m,sig_trc_m=sig_trc_m))
 }
 
-#' @title
-#' Use the results of a simulation to set the radiocarbon measurements (rc_meas)
-#' for an analysis (and store the settings used to do the simulation)
-#'
-#' @description
-#' This is one of a set of helper functions for undertaking a typical analysis
-#' of radiocarbon dates. As the analysis proceeds, results are stored in a save
-#' file called analysis_name.rds in the folder data_dir. Where results are
-#' non-determistic, random number seeds are set and stored to ensure that, even
-#' if processing is interupted, results are fully reproducible.
-#'
-#' @param data_dir The directory in which to store analysis data
-#' @param analysis_name A unique name for a given analysis in data_dir
-#' @param sim The simulation object (see simulate_rc_data)
-#'
-#' @seealso [set_sim()] for an overview of the "standard pipeline"
-#'
-#' @export
-set_sim <- function(data_dir,analysis_name,sim) {
-  data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
-
-  if (file.exists(data_file)) {
-    stop("A save file for analysis_name already exists in data_dir")
-  }
-
-  calib_df <- load_calib_curve(sim$sim_spec$calib_curve)
-
-  # rc_meas are stored twice for convenience since they are also contained in
-  # the input simulation object
-  analysis <- list(rc_meas=sim$data$rc_meas,calib_df=calib_df,sim=sim)
-  saveRDS(analysis,data_file)
-}
 
 #' @title
 #' Calculate a calendar date range that spans the input radiocarbon measurements
 #'
 #' @description
 #' To determine the calendar dates, first Bchron::BchronCalibrate is called to
-#' calibrate the individual dates, which yields a date range for each. The
+#' calibrate the individual dates, which yields a date range for each date. The
 #' maximum range across dates is identified (BchronCalibrate adopts a spacing of
-#' one year), then (if necessary) the range is slighty extended to multiples of
+#' one year), then (if necessary) the range is slightly extended to multiples of
 #' dtau. If intcal20 is being used, dtau should likely be 5, since that is the
 #' spacing at which the calibration curve is specified. If dtau is not an
 #' integer, it is ignored and a warning is thrown. If dtau is 1 (the default),
@@ -237,7 +283,7 @@ calc_tau_range <- function(rc_meas,calibration_curve="intcal20",dtau=1) {
 #' of radiocarbon dates. For details on the overall framework for these helper
 #' function, see set_rc_meas.
 #'
-#' set_density_model sets the parameteric model to use for the density function
+#' set_density_model sets the parametric model to use for the density function
 #' assumed to give rise to the set of radiocarbon dates (rc_meas). The input
 #' variable density_model is a list in which the field "type" specifies the
 #' type of parametric model and additional named fields are type-specific.
@@ -316,7 +362,7 @@ set_density_model <- function(data_dir,analysis_name,density_model) {
 #' @param data_dir The directory in which to store analysis data
 #' @param analysis_name A unique name for a given analysis in data_dir
 #' @param calibration_curve Either the name of a calibration curve or a data
-#'   frame specifying the calibration curve (see load_calib_curve format and
+#'   frame specifying the calibration curve (see load_calib_curve for format and
 #'   choices).
 #'
 #' @seealso
@@ -356,7 +402,7 @@ set_calib_curve <- function(data_dir,analysis_name,calibration_curve) {
 #' of radiocarbon dates. For details on the overall framework for these helper
 #' function, see set_rc_meas.
 #'
-#' #' To ensure reproducibility, the input_seed can be provided. The input seed
+#' #' To ensure reproducibility, the input seed can be provided. The input seed
 #' should either be (1) NA [the default], (2) a single integer, or (3) a matrix
 #' with dimensions `num_models` by 2, where
 #' `num_models = length(analysis$density_model$K)`. If no seed is provided, one
@@ -446,6 +492,7 @@ do_bayesian_inference <- function(data_dir,
   analysis$base_seed  <- base_seed
   analysis$seed_mat   <- seed_mat
 
+  analysis$hp <- hp
   # analysis$density_model may be a vector. Loop over values of K to do
   # inference
   analysis$bayesian_solutions <- list()
@@ -461,18 +508,17 @@ do_bayesian_inference <- function(data_dir,
                    init_seed=seed_mat[m_K,1],
                    stan_seed=seed_mat[m_K,2],
                    control=control)
+    # Save the analysis to file after each optimization so it can be assessed
+    # in real time.
+    saveRDS(analysis,data_file)
   }
-  analysis$hp <- hp
   analysis$K_best <- get_best_K(analysis$bayesian_solutions)
   analysis$m_K_best <- which(analysis$density_model$K == analysis$K_best)
   saveRDS(analysis,data_file)
 }
 
 #' @title
-#' For a mixture model, get the best value of K for an input list of Bayesian
-#' solutions created (based on the widely applicable information criterion,
-#' WAIC).
-#'
+#' Get the number of mixtures, K, of the best model in the input list
 #'
 #' @description
 #' Get the best number of mixture components (K) from the Bayesian inference
@@ -499,15 +545,17 @@ get_best_K <- function(bayesian_solutions) {
 }
 
 #' @title
-#' Call summarize_bayesian_inference for the best model created by
-#' do_bayesian_inference (the previous step in the standard pipeline).
+#' Summarize the best model sampled by do_bayesian_inference
 #'
-#' Plot the best model among those for which Bayesian inference was done with
-#' the standard pipeline. The plot is a standard plot shows the 50% and +/- 2.5%
-#' quantiles. If an output file name for is provided (plot_file_name), the plot
-#' is written to file. The format is detected from the extension (e.g., if
-#' plot_file_name is "analysis.pdf", a PDF file is written. If the extension is
-#' not one of (pdf, png, or jpg, an error is thrown).
+#' @description
+#'
+#' This is one of a set of helper functions for undertaking a typical analysis
+#' of radiocarbon dates. For details on the overall framework for these helper
+#' function, see set_rc_meas.
+#'
+#' Call summarize_bayesian_inference for the best model created by
+#' do_bayesian_inference (the previous step in the standard pipeline). Store the
+#' result in the save file.
 #'
 #' @param data_dir The directory in which to store analysis data.
 #' @param analysis_name A unique name for a given analysis in data_dir.
@@ -551,24 +599,38 @@ do_bayesian_summary <- function(data_dir,
   modified_density_model <- analysis$density_model
   modified_density_model$K <- analysis$K_best
 
-  analysis$bayesian_summary <- summarize_bayesian_inference (
-     analysis$bayesian_solutions[[analysis$m_K_best]],
-     analysis$rc_meas,
-     modified_density_model,
-     analysis$calib_df,
-     analysis$hp$dtau)
+  if ("sim" %in% names(analysis)) {
+    th_sim <- as.vector(analysis$sim$sim_spec$model_spec$th)
+    th_sim <- th_sim[1:(length(th_sim)-2)]
+    analysis$bayesian_summary <- summarize_bayesian_inference(
+      analysis$bayesian_solutions[[analysis$m_K_best]],
+      analysis$rc_meas,
+      modified_density_model,
+      analysis$calib_df,
+      analysis$hp$dtau,
+      th_sim=th_sim)
+  } else {
+    analysis$bayesian_summary <- summarize_bayesian_inference(
+      analysis$bayesian_solutions[[analysis$m_K_best]],
+      analysis$rc_meas,
+      modified_density_model,
+      analysis$calib_df,
+      analysis$hp$dtau)
+  }
 
   saveRDS(analysis,data_file)
 }
 
 #' @title
 #' Plot the best model created by do_bayesian_inference
+#'
+#' @description
 #' Plot the best model among those for which Bayesian inference was done with
 #' the standard pipeline. The plot is a standard plot shows the 50% and +/- 2.5%
-#' quantiles. If an output file name for is provided (plot_file_name), the plot
-#' is written to file. The format is detected from the extension (e.g., if
+#' quantiles. If an output file name is provided (plot_file_name), the plot is
+#' written to file. The format is detected from the extension (e.g., if
 #' plot_file_name is "analysis.pdf", a PDF file is written. If the extension is
-#' not one of (pdf, png, or jpg, an error is thrown).
+#' not one of pdf or png an error is thrown.
 #'
 #' @param data_dir The directory in which to store analysis data.
 #' @param analysis_name A unique name for a given analysis in data_dir.
@@ -579,7 +641,8 @@ do_bayesian_summary <- function(data_dir,
 #' @export
 plot_best_solution <- function(data_dir,
                                analysis_name,
-                               plot_file_name=NA) {
+                               plot_file_name=NA,
+                               add_known_density=FALSE) {
 
   data_file <- file.path(data_dir,paste0(analysis_name,".rds"))
   if (!file.exists(data_file)) {
@@ -600,56 +663,62 @@ plot_best_solution <- function(data_dir,
     stop("A calibration curve has not been specified for this analysis")
   }
 
-  if ("bayesian_solutions" %in% names(analysis)) {
+  if (!("bayesian_solutions" %in% names(analysis))) {
     stop("Bayesian inference has not been done for this analysis")
   }
 
+  if (!("bayesian_summary" %in% names(analysis))) {
+    stop("Summary has not been done for this analysis")
+  }
 
-#  # Make a blank plot
-#  bd_make_blank_density_plot(sim_anal[[r]],
-#    ylim = c(0, 0.01),
-#    xlab = "",
-#    ylab = "Density",
-#    xaxt = "n",
-#    yaxt = "n"
-#  )
-#
-#  # Add the shaded quantiles
-#  bd_add_shaded_quantiles(sim_anal[[r]],
-#    col = "gray80"
-#  )
-#
-#  # Add the summed probability density
-#  bd_plot_summed_density(sim_anal[[r]],
-#    lwd = 2,
-#    add = T,
-#    col = "black"
-#  )
-#
-#  # Add the Bchron fit
-#  lines(tau,sim_bc[[r]]$f_bc,
-#    lwd = 2,
-#    col = "black",
-#    lty=3
-#  )
-#
-#  # Add solid 50% quantile
-#  bd_plot_50_percent_quantile(sim_anal[[r]],
-#    lwd = 2,
-#    add = T,
-#    col = "red"
-#  )
-#
-#  # Plot the known, target distribution
-#  bd_plot_known_sim_density(sim_anal[[r]],
-#    lwd = 2,
-#    add = T,
-#    col = "blue"
-#  )
+  if (!is.na(plot_file_name)) {
+    if (endsWith(plot_file_name, ".pdf")) {
+      pdf(plot_file_name)
+    } else if (endsWith(plot_file_name, ".png")) {
+      png(plot_file_name)
+    } else {
+      stop("plot_file_name must be a .pdf .png file")
+    }
+  }
 
+  # Make a blank plot
+  # TODO: in the future, models other than truncated Gaussian mixtures may be
+  #       supported
+  make_blank_density_plot(analysis$bayesian_summary,
+                          main=paste0('Truncated Gaussian Mixture [K = ',
+                                      analysis$K_best,
+                                      "]"))
 
+  # Add the shaded quantiles
+  add_shaded_quantiles(analysis$bayesian_summary)
 
-  K <- get_best_K(analysis$bayesian_solutions)
+  legend_names <- c("Summed Density")
+  legend_colors <- c("black")
 
-  return(ncol(TH)/3)
+  if (add_known_density) {
+    legend_names <- c(legend_names, "Sim. Density")
+    legend_colors <- c(legend_colors, "blue")
+  }
+
+  legend_names <- c(legend_names, "50% Quantile")
+  legend_colors <- c(legend_colors, "red")
+
+  # Add the summed density
+  plot_summed_density(analysis$bayesian_summary, add=T, lwd=2, col="black")
+
+  # If necessary, add the known density
+  if (add_known_density) {
+    plot_known_sim_density(analysis$bayesian_summary, add=T, lwd=2, col="blue")
+  }
+
+  # Add the 50% quantile
+  plot_50_percent_quantile(analysis$bayesian_summary, add=T, lwd=2, col="red")
+
+  # Add the legend
+  legend("topright", legend_names, lty=1, col=legend_colors)
+
+  if (!is.na(plot_file_name)) {
+    dev.off()
+  }
+
 }

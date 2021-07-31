@@ -47,6 +47,18 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/standard_pipeline.html">Summarizing sets of radiocarbon dates using baydem's standard pipeline</a>
+    </li>
+  </ul>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -67,30 +79,53 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
+
 <div id="baydem" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#baydem" class="anchor"></a>baydem</h1></div>
-<!-- badges: start -->
+<p>The R package baydem (for bayESIAN demOGRAPHY) provides tools for reconstructing past and present demography.</p>
+</div>
+<div id="installation" class="section level1">
+<h1 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h1>
+<p>There are three options for installing and using the package:</p>
+<p>(1) Install on an existing computer with necessary dependencies</p>
+<p>(2) Build a Docker image using the Dockerfile</p>
+<p>(3) Use a Docker image from Docker Hub</p>
+<div id="option-1-install-on-an-existing-computer-with-necessary-dependencies" class="section level2">
+<h2 class="hasAnchor">
+<a href="#option-1-install-on-an-existing-computer-with-necessary-dependencies" class="anchor"></a>Option 1: Install on an existing computer with necessary dependencies</h2>
+<p>Details will vary based on the machine and operating system since certain R packages on which baydem depends require the installation of tools outside R. The following should be sufficient:</p>
+<p>(a) Install devtools with its dependencies <a href="https://www.rdocumentation.org/packages/devtools" class="uri">https://www.rdocumentation.org/packages/devtools</a></p>
+<p>(b) Install rstan with its dependencies <a href="http://mc-stan.org/rstan/" class="uri">http://mc-stan.org/rstan/</a></p>
+<p>(c) Install baydem</p>
+<pre><code><a href="https://devtools.r-lib.org/">library(devtools)
+install_github("eehh-stanford/baydem")</a></code></pre>
+</div>
+<div id="option-2-build-a-docker-image-using-the-dockerfile" class="section level2">
+<h2 class="hasAnchor">
+<a href="#option-2-build-a-docker-image-using-the-dockerfile" class="anchor"></a>Option 2: Build a Docker image using the Dockerfile</h2>
+<p>First, clone the database and build the Docker image.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"><span class="fu">git</span> clone https://github.com/eehh-stanford/baydem</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="bu">cd</span> baydem</a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="ex">docker</span> build -t michaelholtonprice/baydem .</a></code></pre></div>
+<p>Start a container. Use the -v tag to mirror a directory for passing files between the host machine and the Docker container. The directory to the left of the semicolon is for the host machine and the directory to the right of the semicolon is for the Docker container. The path for the host machine will need to be modified for your situation.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="ex">docker</span> run --name baydem -itv //c/mirrored_baydem_data:/data michaelholtonprice/baydem</a></code></pre></div>
+<p>The Docker container already has baydem installed, and it is likely the latest version. However, the latest version can be (re)installed by cloning the github repository inside the Docker container and using devtools::install_local. Following this, the test scripts can be run to check the installation (they will take perhaps 30 minutes to complete):</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="fu">git</span> clone https://github.com/eehh-stanford/baydem</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="bu">cd</span> baydem</a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="ex">R</span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="ex">library</span>(devtools)</a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="ex">install_local</span>(<span class="st">"."</span>,force=T,dep=F)</a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="fu">test()</span></a></code></pre></div>
+</div>
+<div id="option-3-use-a-docker-image-from-docker-hub" class="section level2">
+<h2 class="hasAnchor">
+<a href="#option-3-use-a-docker-image-from-docker-hub" class="anchor"></a>Option 3: Use a Docker image from Docker Hub</h2>
+<p>TODO: update example</p>
+</div>
+</div>
 
-<p>Bayesian tools for reconstructing past and present demography.</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>You can install the R package from <a href="https://github.com/">GitHub</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># install.packages("devtools")</span></a>
-<a class="sourceLine" id="cb1-2" title="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"eehh-stanford/baydem"</span>)</a></code></pre></div>
-</div>
-<div id="requirements" class="section level2">
-<h2 class="hasAnchor">
-<a href="#requirements" class="anchor"></a>Requirements</h2>
-<p>For package/version dependencies, imports, and suggestions see the package DESCRIPTION file. Stan must be installed to call the functions that use rstan.</p>
-</div>
-<div id="contributor-code-of-conduct" class="section level2">
-<h2 class="hasAnchor">
-<a href="#contributor-code-of-conduct" class="anchor"></a>Contributor Code of Conduct</h2>
-<p>Please note that the ‘baydem’ project is released with a <a href="CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
-</div>
-</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -124,15 +159,7 @@
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
-<li><a href="https://travis-ci.org/eehh-stanford/baydem"><img src="https://travis-ci.org/eehh-stanford/baydem.svg?branch=master" alt="Travis build status"></a></li>
-<li><a href="https://codecov.io/gh/eehh-stanford/baydem?branch=master"><img src="https://codecov.io/gh/eehh-stanford/baydem/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
-</ul>
-</div>
-</div>
+  </div>
 </div>
 
 

@@ -8,6 +8,7 @@
 #
 # Coverage: sample_gauss_mix
 #           draw_rc_meas_using_date
+#           load_calib_curve [indirect]
 #           simulate_rc_data
 # ------------------------------------------------------------------------------
 
@@ -857,7 +858,32 @@ expect_equal(
   c(3,length(seq(density_model$tau_min,density_model$tau_max,by=5)))
 )
 
+# also check summarize_bayesian_inference when th_sim is used
+expect_error(
+  summary <- summarize_bayesian_inference(soln,
+                                          rc_meas,
+                                          density_model,
+                                          calib_df,
+                                          th_sim=th_sim),
+  NA
+)
 
+expect_is(
+  summary,
+  "bd_bayesian_summary"
+)
+
+expect_equal(
+  names(summary),
+  c("tau","f_spdf","Qdens","Qrate","probs",
+    "rate_prop","rate_ind","growth_state","summ_list",
+    "f_sim","rate_sim")
+)
+
+expect_equal(
+  dim(summary$Qdens),
+  c(3,length(seq(density_model$tau_min,density_model$tau_max,by=5)))
+)
 
 # ------------------------------------------------------------------------------
 # (4) Do unit tests for plotting functions
@@ -865,8 +891,9 @@ expect_equal(
 # coverage: make_blank_density_plot
 #           plot_50_percent_quantile
 #           add_shaded_quantiles
-#           plot_summed_density
 #           plot_known_sim_density
+#           plot_summed_density
+#           vis_calib_curve
 # ------------------------------------------------------------------------------
 
 # (4a) make_blank_density_plot
@@ -924,7 +951,7 @@ expect_error(
 #           calc_quantiles
 #           calc_half_life_from_peak
 #           calc_relative_density
-#             unpack_spec           [indirect]
+#             unpack_spec        [indirect]
 #             calc_point_density [indirect]
 #             calc_range_density [indirect]
 #             calc_peak_density  [indirect]
@@ -1198,7 +1225,7 @@ expect_error(
 )
 
 # (5f) calc_relative_density
-#        unpack_spec           [indirect]
+#        unpack_spec        [indirect]
 #        calc_point_density [indirect]
 #        calc_range_density [indirect]
 #        calc_peak_density  [indirect]
@@ -1438,7 +1465,7 @@ expect_equal(
 # coverage: assess_calib_curve_equif
 #             phi2tau [indirect]
 #           calc_calib_curve_equif_dates
-#           calc_calib_curve_frac_modern
+#           calc_calib_curve_frac_modern [now located in radiocarbon_functions.R]
 # ------------------------------------------------------------------------------
 
 # (7a) assess_calib_curve_equif
@@ -1510,7 +1537,7 @@ expect_equal(
 # ------------------------------------------------------------------------------
 # (8) Do unit tests for truncated exponential model
 #
-# coverage: assess_calib_curve_equif
+# coverage: sample_trunc_exp
 # ------------------------------------------------------------------------------
 expect_error(
   exp_samp1 <- sample_trunc_exp(50, 0.01, 600, 1300),
@@ -1543,7 +1570,8 @@ expect_equal(
 #           set_calib_curve        (9f)
 #           do_bayesian_inference  (9g)
 #           get_best_K             (9h)
-#           do_bayesian_summary    (9h)
+#           do_bayesian_summary    (9i)
+#           plot_best_solution     (9j)
 # ------------------------------------------------------------------------------
 
 # (9a) import_rc_data
@@ -2063,6 +2091,11 @@ expect_equal(
 )
 
 # (9i) do_bayesian_summary
+#      [Currently, do_bayesian_summary is not checked when sim is in analysis.
+#       However, the functioning of summarize_bayesian_inference with th_sim
+#       is checked, and the vignette standard_pipeline.Rmd validates the
+#       behavior of do_bayesian_summary when a simulation is used in the
+#       standard pipeline.]
 success <- file.remove(path_to_bad_analysis_file)
 expect_error(
   do_bayesian_summary(data_dir,bad_analysis_name),
@@ -2112,14 +2145,122 @@ expect_error(
   NA
 )
 
-# Check function here
-#analysis <- readRDS(path_to_analysis_file)
+# Check that analysis has the right fields
+analysis <- readRDS(path_to_analysis_file)
+expect_equal(
+  names(analysis),
+  c("rc_meas",
+    "density_model",
+    "calib_df",
+    "bayesian_solutions",
+    "hp",
+    "K_best",
+    "m_K_best",
+    "bayesian_summary")
+)
 
+# Extract bayesian_solutions and bayesian_summary for use below
+bayesian_solutions <- analysis$bayesian_solutions
+bayesian_summary   <- analysis$bayesian_summary
 expect_error(
   do_bayesian_summary(data_dir,
                          analysis_name),
   "A summary has already been done for this analysis"
 )
 
+# (9j) plot_best_solution
+success <- file.remove(path_to_bad_analysis_file)
+expect_error(
+  plot_best_solution(data_dir,bad_analysis_name),
+  "A save file for analysis_name does not exist in data_dir"
+)
+
+bad_analysis_name <- "bad"
+path_to_bad_analysis_file <- file.path(data_dir,
+                                       paste0(bad_analysis_name,".rds"))
+saveRDS(list(),path_to_bad_analysis_file)
+expect_error(
+  plot_best_solution(data_dir,bad_analysis_name),
+  "Radiocarbon measurements have not specified for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas),path_to_bad_analysis_file)
+expect_error(
+  plot_best_solution(data_dir,bad_analysis_name),
+  "A density model has not been specified for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas,density_model=density_model),
+        path_to_bad_analysis_file)
+expect_error(
+  plot_best_solution(data_dir,bad_analysis_name),
+  "A calibration curve has not been specified for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas,density_model=density_model,calib_df=calib_df),
+        path_to_bad_analysis_file)
+expect_error(
+  plot_best_solution(data_dir,bad_analysis_name),
+  "Bayesian inference has not been done for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas,
+             density_model=density_model,
+             calib_df=calib_df,
+             bayesian_solutions=bayesian_solutions),
+        path_to_bad_analysis_file)
+expect_error(
+  plot_best_solution(data_dir,bad_analysis_name),
+  "Summary has not been done for this analysis"
+)
+
+saveRDS(list(rc_meas=rc_meas,
+             density_model=density_model,
+             calib_df=calib_df,
+             bayesian_solutions=bayesian_solutions,
+             bayesian_summary=bayesian_summary),
+        path_to_bad_analysis_file)
+expect_error(
+  plot_best_solution(data_dir,
+                     analysis_name,
+                     "temp.jpg"),
+  "plot_file_name must be a .pdf .png file"
+)
+
+expect_error(
+  plot_best_solution(data_dir,bad_analysis_name),
+  NA
+)
+
+plot_file1 <- file.path(data_dir,plot_file_name="temp.pdf")
+if (file.exists(plot_file1)) {
+  success = file.remove(plot_file1)
+}
+expect_error(
+  plot_best_solution(data_dir,bad_analysis_name,plot_file_name=plot_file1),
+  NA
+)
+
+expect_true(
+  file.exists(plot_file1),
+  TRUE
+)
+
+plot_file2 <- file.path(data_dir,plot_file_name="temp.png")
+if (file.exists(plot_file2)) {
+  success = file.remove(plot_file2)
+}
+expect_error(
+  plot_best_solution(data_dir,bad_analysis_name,plot_file_name=plot_file2),
+  NA
+)
+
+expect_true(
+  file.exists(plot_file2),
+  TRUE
+)
+
 success <- file.remove(path_to_bad_analysis_file)
 success <- file.remove(path_to_analysis_file)
+success <- file.remove(plot_file1)
+success <- file.remove(plot_file2)

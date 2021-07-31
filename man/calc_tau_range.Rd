@@ -22,9 +22,9 @@ tau_max
 }
 \description{
 To determine the calendar dates, first Bchron::BchronCalibrate is called to
-calibrate the individual dates, which yields a date range for each. The
+calibrate the individual dates, which yields a date range for each date. The
 maximum range across dates is identified (BchronCalibrate adopts a spacing of
-one year), then (if necessary) the range is slighty extended to multiples of
+one year), then (if necessary) the range is slightly extended to multiples of
 dtau. If intcal20 is being used, dtau should likely be 5, since that is the
 spacing at which the calibration curve is specified. If dtau is not an
 integer, it is ignored and a warning is thrown. If dtau is 1 (the default),

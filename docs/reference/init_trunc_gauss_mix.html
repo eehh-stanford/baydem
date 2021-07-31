@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Use the results of a simulation to set the radiocarbon measurements (rc_meas)
-for an analysis (and store the settings used to do the simulation) — set_sim • baydem</title>
+<title>Do random number draws to initialize a truncated Gaussian mixture — init_trunc_gauss_mix • baydem</title>
 
 
 <!-- jquery -->
@@ -40,45 +39,8 @@ for an analysis (and store the settings used to do the simulation) — set_sim �
 
 
 
-<meta property="og:title" content="Use the results of a simulation to set the radiocarbon measurements (rc_meas)
-for an analysis (and store the settings used to do the simulation) — set_sim" />
-<meta property="og:description" content="This is one of a set of helper functions for undertaking a typical analysis
-of radiocarbon dates. As the analysis proceeds, results are stored in a save
-file called analysis_name.rds in the folder data_dir. Where results are
-non-deterministic, random number seeds are set and stored to ensure that,
-even if processing is interrupted, results are fully reproducible.
-There are, in fact, two distinct pipelines for (a) simulations and (b)
-analyses that use existing radiocarbon measurements saved in a .csv file.
-Since this is the first helper function used in the standard pipeline for
-simulations, that pipeline is described here. See set_rc_meas for the
-pipeline when using an input .csv file.
-The standard pipeline for simulations is (see the vignette standard_pipeline
-for additional details):
-(0) simulate_rc_data
-Define the simulation parameters and create simulated data using
-simulate_rc_data.
-(1) set_sim
-Set the simulated data for the analysis
-(2) calc_tau_range
-Determine the range of calendar dates that span the radiocarbon
-measurements (or specify the range directly)
-(3) set_density_model
-Set the parametric model to be used for Bayesian inference. Currently,
-only a truncated Gaussian mixture is supported, which requires setting
-the calendar date range for truncation (likely using the result from step
-(3)) and choosing the number of mixture components, K. If K is a vector,
-Bayesian inference will be done for each element of the vector during
-step (4), do_bayesian_inference.
-(4) do_bayesian_inference
-Call sample_theta to do the Bayesian inference for each model to check.
-(Unlike the other pipeline that starts with an input .csv file,
-set_calib_curve does not need to be called prior to this step since the
-calibration curve is set with set_sim.)
-(5) do_bayesian_summary
-Calculate summary statistics for the best model sampled by calling
-do_bayesian_inference (the best model is the one with the best WAIC).
-(6) plot_best_solution
-Create a plot of the best solution." />
+<meta property="og:title" content="Do random number draws to initialize a truncated Gaussian mixture — init_trunc_gauss_mix" />
+<meta property="og:description" content="Do random number draws to initialize a truncated Gaussian mixture" />
 
 
 
@@ -158,71 +120,71 @@ Create a plot of the best solution." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Use the results of a simulation to set the radiocarbon measurements (rc_meas)
-for an analysis (and store the settings used to do the simulation)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/data_io_functions.R'><code>R/data_io_functions.R</code></a></small>
-    <div class="hidden name"><code>set_sim.Rd</code></div>
+    <h1>Do random number draws to initialize a truncated Gaussian mixture</h1>
+    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/max_lik_fitting_functions.R'><code>R/max_lik_fitting_functions.R</code></a></small>
+    <div class="hidden name"><code>init_trunc_gauss_mix.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This is one of a set of helper functions for undertaking a typical analysis
-of radiocarbon dates. As the analysis proceeds, results are stored in a save
-file called analysis_name.rds in the folder data_dir. Where results are
-non-deterministic, random number seeds are set and stored to ensure that,
-even if processing is interrupted, results are fully reproducible.</p>
-<p>There are, in fact, two distinct pipelines for (a) simulations and (b)
-analyses that use existing radiocarbon measurements saved in a .csv file.
-Since this is the first helper function used in the standard pipeline for
-simulations, that pipeline is described here. See set_rc_meas for the
-pipeline when using an input .csv file.</p>
-<p>The standard pipeline for simulations is (see the vignette standard_pipeline
-for additional details):</p>
-<p>(0) simulate_rc_data
-Define the simulation parameters and create simulated data using
-simulate_rc_data.</p>
-<p>(1) set_sim
-Set the simulated data for the analysis</p>
-<p>(2) calc_tau_range
-Determine the range of calendar dates that span the radiocarbon
-measurements (or specify the range directly)</p>
-<p>(3) set_density_model
-Set the parametric model to be used for Bayesian inference. Currently,
-only a truncated Gaussian mixture is supported, which requires setting
-the calendar date range for truncation (likely using the result from step
-(3)) and choosing the number of mixture components, K. If K is a vector,
-Bayesian inference will be done for each element of the vector during
-step (4), do_bayesian_inference.</p>
-<p>(4) do_bayesian_inference
-Call sample_theta to do the Bayesian inference for each model to check.
-(Unlike the other pipeline that starts with an input .csv file,
-set_calib_curve does not need to be called prior to this step since the
-calibration curve is set with set_sim.)</p>
-<p>(5) do_bayesian_summary
-Calculate summary statistics for the best model sampled by calling
-do_bayesian_inference (the best model is the one with the best WAIC).</p>
-<p>(6) plot_best_solution
-Create a plot of the best solution.</p>
+    <p>Do random number draws to initialize a truncated Gaussian mixture</p>
     </div>
 
-    <pre class="usage"><span class='fu'>set_sim</span><span class='op'>(</span><span class='va'>data_dir</span>, <span class='va'>analysis_name</span>, <span class='va'>sim</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>init_trunc_gauss_mix</span><span class='op'>(</span>
+  <span class='va'>K</span>,
+  <span class='va'>num_draws</span>,
+  <span class='va'>tau_min</span>,
+  <span class='va'>tau_max</span>,
+  s_min <span class='op'>=</span> <span class='fl'>0</span>,
+  input_seed <span class='op'>=</span> <span class='cn'>NA</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data_dir</th>
-      <td><p>The directory in which to store analysis data</p></td>
+      <th>K</th>
+      <td><p>The number of mixture components</p></td>
     </tr>
     <tr>
-      <th>analysis_name</th>
-      <td><p>A unique name for a given analysis in data_dir</p></td>
+      <th>num_draws</th>
+      <td><p>The number of draws to make (if more than one, a matrix is
+returned rather than a vector)</p></td>
     </tr>
     <tr>
-      <th>sim</th>
-      <td><p>The simulation object (see simulate_rc_data)</p></td>
+      <th>tau_min</th>
+      <td><p>The minimum calendar date (AD) for the sampling grid</p></td>
+    </tr>
+    <tr>
+      <th>tau_max</th>
+      <td><p>The maximum calendar date (AD) for the sampling grid</p></td>
+    </tr>
+    <tr>
+      <th>s_min</th>
+      <td><p>The minimum value for the mixture standard deviations (default:
+0)</p></td>
+    </tr>
+    <tr>
+      <th>input_seed</th>
+      <td><p>A single integer for initializing the random number seed
+prior to making draws (default: NA, no seed set)</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A matrix of parameter vectors with dimensions 3<em>K by num_draws. If
+<code>num_draws=1</code>, a vector with length 3</em>K is returned rather than a matrix.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The parameter vector, theta (th), has the ordering
+th = (pi_1,...,pi_K,mu_1,..mu_K,s_1,...s_K), where K is the number of
+mixture components and pi_k / mu_k / s_k are, respectively, the weighting /
+mean / standard deviation of the k-th mixture. The mixture proportions are
+drawn from a Dirichlet distribution with <code><a href='https://rdrr.io/r/base/rep.html'>rep(1,K)</a></code> used for the dispersion
+parameter. The means are drawn from a uniform distribution on the interval
+tau_min to tau_max. The standard deviations are drawn from a uniform
+distribution on the interval s_min to tau_max - tau_min. By default, s_min is
+0.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

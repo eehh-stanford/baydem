@@ -6,8 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Use the results of a simulation to set the radiocarbon measurements (rc_meas)
-for an analysis (and store the settings used to do the simulation) — set_sim • baydem</title>
+<title>Sample from the posterior of a density model for a set of radiocarbon
+measurements — sample_theta • baydem</title>
 
 
 <!-- jquery -->
@@ -40,45 +40,25 @@ for an analysis (and store the settings used to do the simulation) — set_sim �
 
 
 
-<meta property="og:title" content="Use the results of a simulation to set the radiocarbon measurements (rc_meas)
-for an analysis (and store the settings used to do the simulation) — set_sim" />
-<meta property="og:description" content="This is one of a set of helper functions for undertaking a typical analysis
-of radiocarbon dates. As the analysis proceeds, results are stored in a save
-file called analysis_name.rds in the folder data_dir. Where results are
-non-deterministic, random number seeds are set and stored to ensure that,
-even if processing is interrupted, results are fully reproducible.
-There are, in fact, two distinct pipelines for (a) simulations and (b)
-analyses that use existing radiocarbon measurements saved in a .csv file.
-Since this is the first helper function used in the standard pipeline for
-simulations, that pipeline is described here. See set_rc_meas for the
-pipeline when using an input .csv file.
-The standard pipeline for simulations is (see the vignette standard_pipeline
-for additional details):
-(0) simulate_rc_data
-Define the simulation parameters and create simulated data using
-simulate_rc_data.
-(1) set_sim
-Set the simulated data for the analysis
-(2) calc_tau_range
-Determine the range of calendar dates that span the radiocarbon
-measurements (or specify the range directly)
-(3) set_density_model
-Set the parametric model to be used for Bayesian inference. Currently,
-only a truncated Gaussian mixture is supported, which requires setting
-the calendar date range for truncation (likely using the result from step
-(3)) and choosing the number of mixture components, K. If K is a vector,
-Bayesian inference will be done for each element of the vector during
-step (4), do_bayesian_inference.
-(4) do_bayesian_inference
-Call sample_theta to do the Bayesian inference for each model to check.
-(Unlike the other pipeline that starts with an input .csv file,
-set_calib_curve does not need to be called prior to this step since the
-calibration curve is set with set_sim.)
-(5) do_bayesian_summary
-Calculate summary statistics for the best model sampled by calling
-do_bayesian_inference (the best model is the one with the best WAIC).
-(6) plot_best_solution
-Create a plot of the best solution." />
+<meta property="og:title" content="Sample from the posterior of a density model for a set of radiocarbon
+measurements — sample_theta" />
+<meta property="og:description" content="This is the core function that implements the Bayesian inference. Currently,
+the only supported density model is a truncated Gaussian mixture. If a
+starting parameter vector (th0) is not provided, it is set by calling
+init_trunc_gauss_mix; the same vector is used for all sampling chains. Named
+elements of the variable control must consist of one of the following four
+options (defaults in parentheses):
+
+num_chains
+Number of chains (4)
+samps_per_chain
+Number of samples per chain (2000)
+warmup
+Number of warmup samples (samps_per_chain/2)
+stan_control
+Additional control parameters to pass to stan (list())
+
+" />
 
 
 
@@ -158,71 +138,111 @@ Create a plot of the best solution." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Use the results of a simulation to set the radiocarbon measurements (rc_meas)
-for an analysis (and store the settings used to do the simulation)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/data_io_functions.R'><code>R/data_io_functions.R</code></a></small>
-    <div class="hidden name"><code>set_sim.Rd</code></div>
+    <h1>Sample from the posterior of a density model for a set of radiocarbon
+measurements</h1>
+    <small class="dont-index">Source: <a href='https://github.com/eehh-stanford/baydem/blob/master/R/bayesian_inference_functions.R'><code>R/bayesian_inference_functions.R</code></a></small>
+    <div class="hidden name"><code>sample_theta.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This is one of a set of helper functions for undertaking a typical analysis
-of radiocarbon dates. As the analysis proceeds, results are stored in a save
-file called analysis_name.rds in the folder data_dir. Where results are
-non-deterministic, random number seeds are set and stored to ensure that,
-even if processing is interrupted, results are fully reproducible.</p>
-<p>There are, in fact, two distinct pipelines for (a) simulations and (b)
-analyses that use existing radiocarbon measurements saved in a .csv file.
-Since this is the first helper function used in the standard pipeline for
-simulations, that pipeline is described here. See set_rc_meas for the
-pipeline when using an input .csv file.</p>
-<p>The standard pipeline for simulations is (see the vignette standard_pipeline
-for additional details):</p>
-<p>(0) simulate_rc_data
-Define the simulation parameters and create simulated data using
-simulate_rc_data.</p>
-<p>(1) set_sim
-Set the simulated data for the analysis</p>
-<p>(2) calc_tau_range
-Determine the range of calendar dates that span the radiocarbon
-measurements (or specify the range directly)</p>
-<p>(3) set_density_model
-Set the parametric model to be used for Bayesian inference. Currently,
-only a truncated Gaussian mixture is supported, which requires setting
-the calendar date range for truncation (likely using the result from step
-(3)) and choosing the number of mixture components, K. If K is a vector,
-Bayesian inference will be done for each element of the vector during
-step (4), do_bayesian_inference.</p>
-<p>(4) do_bayesian_inference
-Call sample_theta to do the Bayesian inference for each model to check.
-(Unlike the other pipeline that starts with an input .csv file,
-set_calib_curve does not need to be called prior to this step since the
-calibration curve is set with set_sim.)</p>
-<p>(5) do_bayesian_summary
-Calculate summary statistics for the best model sampled by calling
-do_bayesian_inference (the best model is the one with the best WAIC).</p>
-<p>(6) plot_best_solution
-Create a plot of the best solution.</p>
+    <p>This is the core function that implements the Bayesian inference. Currently,
+the only supported density model is a truncated Gaussian mixture. If a
+starting parameter vector (<code>th0</code>) is not provided, it is set by calling
+init_trunc_gauss_mix; the same vector is used for all sampling chains. Named
+elements of the variable control must consist of one of the following four
+options (defaults in parentheses):</p>
+<ul>
+<li><p><code>num_chains</code>
+Number of chains (4)</p></li>
+<li><p><code>samps_per_chain</code>
+Number of samples per chain (2000)</p></li>
+<li><p><code>warmup</code>
+Number of warmup samples (<code>samps_per_chain/2</code>)</p></li>
+<li><p><code>stan_control</code>
+Additional control parameters to pass to stan (<code><a href='https://rdrr.io/r/base/list.html'>list()</a></code>)</p></li>
+</ul>
+
     </div>
 
-    <pre class="usage"><span class='fu'>set_sim</span><span class='op'>(</span><span class='va'>data_dir</span>, <span class='va'>analysis_name</span>, <span class='va'>sim</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>sample_theta</span><span class='op'>(</span>
+  <span class='va'>rc_meas</span>,
+  <span class='va'>density_model</span>,
+  <span class='va'>hp</span>,
+  <span class='va'>calib_df</span>,
+  th0 <span class='op'>=</span> <span class='cn'>NA</span>,
+  init_seed <span class='op'>=</span> <span class='cn'>NA</span>,
+  stan_seed <span class='op'>=</span> <span class='cn'>NA</span>,
+  control <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data_dir</th>
-      <td><p>The directory in which to store analysis data</p></td>
+      <th>rc_meas</th>
+      <td><p>The radiocarbon measurements (see import_rc_data).</p></td>
     </tr>
     <tr>
-      <th>analysis_name</th>
-      <td><p>A unique name for a given analysis in data_dir</p></td>
+      <th>density_model</th>
+      <td><p>The density model (see set_density_model).</p></td>
     </tr>
     <tr>
-      <th>sim</th>
-      <td><p>The simulation object (see simulate_rc_data)</p></td>
+      <th>hp</th>
+      <td><p>Hyperparameters for the priors and to specify the spacing of the
+Riemann sum that approximates the integral for the likelihood.</p></td>
+    </tr>
+    <tr>
+      <th>calib_df</th>
+      <td><p>The calibration data frame (see load_calib_curve).</p></td>
+    </tr>
+    <tr>
+      <th>th0</th>
+      <td><p>An optional parameter vector to initialize the Stan chains. If not
+provided, it is set by calling init_trunc_gauss_mix.</p></td>
+    </tr>
+    <tr>
+      <th>init_seed</th>
+      <td><p>An optional random number seed for determining the starting
+parameter vector using a maximum likelihood fit. If not provided, it is
+drawn. It should not be provided if th0 is provided.</p></td>
+    </tr>
+    <tr>
+      <th>stan_seed</th>
+      <td><p>An optional random number seed for the call to Stan. If not
+provided, it is drawn.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code>bayesian_soln</code>, a list-like object of class bd_bayesian_soln with the
+following fields:</p><ul>
+<li><p><code>fit</code>
+The result of the call to stan</p></li>
+<li><p><code>final_th0</code>
+The final <code>th0</code> value; i.e., never NA.</p></li>
+<li><p><code>final_init_seed</code>
+The final init_seed value; i.e., never NA unless <code>th0</code> is
+provided.</p></li>
+<li><p><code>final_stan_seed</code>
+The final <code>stan_seed</code> value; i.e., never NA.</p></li>
+<li><p><code>final_control</code>
+The final control parameters used; i.e., if a parameter is not
+provided.</p></li>
+<li><p><code>optional_inputs</code>
+A record of the actual input values for the optional inputs, which are
+<code>th0</code>, <code>init_seed</code>, <code>stan_seed</code>, and <code>control</code>.</p></li>
+</ul>
+
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'>
+<ul>
+<li><p><code><a href='import_rc_data.html'>import_rc_data()</a></code> for the format of <code>rc_meas</code></p></li>
+<li><p><code><a href='set_density_model.html'>set_density_model()</a></code> for the format of <code>density_model</code></p></li>
+<li><p><code><a href='load_calib_curve.html'>load_calib_curve()</a></code> for the format of <code>calib_df</code></p></li>
+</ul>
+</div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

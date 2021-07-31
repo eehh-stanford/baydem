@@ -18,9 +18,47 @@ set_sim(data_dir, analysis_name, sim)
 This is one of a set of helper functions for undertaking a typical analysis
 of radiocarbon dates. As the analysis proceeds, results are stored in a save
 file called analysis_name.rds in the folder data_dir. Where results are
-non-determistic, random number seeds are set and stored to ensure that, even
-if processing is interupted, results are fully reproducible.
-}
-\seealso{
-\code{\link[=set_sim]{set_sim()}} for an overview of the "standard pipeline"
+non-deterministic, random number seeds are set and stored to ensure that,
+even if processing is interrupted, results are fully reproducible.
+
+There are, in fact, two distinct pipelines for (a) simulations and (b)
+analyses that use existing radiocarbon measurements saved in a .csv file.
+Since this is the first helper function used in the standard pipeline for
+simulations, that pipeline is described here. See set_rc_meas for the
+pipeline when using an input .csv file.
+
+The standard pipeline for simulations is (see the vignette standard_pipeline
+for additional details):
+
+(0) simulate_rc_data
+Define the simulation parameters and create simulated data using
+simulate_rc_data.
+
+(1) set_sim
+Set the simulated data for the analysis
+
+(2) calc_tau_range
+Determine the range of calendar dates that span the radiocarbon
+measurements (or specify the range directly)
+
+(3) set_density_model
+Set the parametric model to be used for Bayesian inference. Currently,
+only a truncated Gaussian mixture is supported, which requires setting
+the calendar date range for truncation (likely using the result from step
+(3)) and choosing the number of mixture components, K. If K is a vector,
+Bayesian inference will be done for each element of the vector during
+step (4), do_bayesian_inference.
+
+(4) do_bayesian_inference
+Call sample_theta to do the Bayesian inference for each model to check.
+(Unlike the other pipeline that starts with an input .csv file,
+set_calib_curve does not need to be called prior to this step since the
+calibration curve is set with set_sim.)
+
+(5) do_bayesian_summary
+Calculate summary statistics for the best model sampled by calling
+do_bayesian_inference (the best model is the one with the best WAIC).
+
+(6) plot_best_solution
+Create a plot of the best solution.
 }
