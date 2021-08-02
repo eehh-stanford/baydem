@@ -1,12 +1,16 @@
 # baydem
 The R package baydem (for bayESIAN demOGRAPHY) provides tools for reconstructing past and present demography.
 
+# Quickstart
+Use of the two options below to install baydem and its dependencies, then read the vignette for the standard pipeline:
+
+TODO: add vignettte link
+
 # Installation
-There are three options for installing and using the package:
+There are two options for installing and using the package:
 
 (1) Install on an existing computer with necessary dependencies
 (2) Build a Docker image using the Dockerfile
-(3) Use a Docker image from Docker Hub
 
 ## Option 1: Install on an existing computer with necessary dependencies
 Details will vary based on the machine and operating system since certain R packages on which baydem depends require the installation of tools outside R. The following should be sufficient:
@@ -18,13 +22,17 @@ https://www.rdocumentation.org/packages/devtools
 http://mc-stan.org/rstan/
 
 (c) Install baydem
-```
+
+Having completed the preceding steps, install baydem with the following commands in R:
+
+```bash
 library(devtools)
 install_github("eehh-stanford/baydem")
 ```
 
 ## Option 2: Build a Docker image using the Dockerfile
-First, clone the database and build the Docker image.
+First, clone the database and build the Docker image (rather than cloning the entire directory, one can also just download Dockerfile and setup.R from the github repository and place them in the working directory).
+
 ```bash
 git clone https://github.com/eehh-stanford/baydem
 cd baydem
@@ -47,7 +55,3 @@ library(devtools)
 install_local(".",force=T,dep=F)
 test()
 ```
-
-
-## Option 3: Use a Docker image from Docker Hub
-TODO: update example
