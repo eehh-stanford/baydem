@@ -1,3 +1,31 @@
+functions {
+  row_vector calc_logh(int N, int G, int K, vector pi, vector s, vector mu, vector tau, real dtau, matrix Mt) {
+    row_vector[N] h;
+    row_vector[N] logh;
+    row_vector[G] f;
+    row_vector[G] logf;
+    vector[K] logpi = log(pi);
+
+    logf = to_row_vector(rep_vector(0,G));
+    for (g in 1:G) {
+      vector[K] lse = logpi;
+      for (k in 1:K) {
+        lse[k] += normal_lpdf(tau[g]|mu[k],s[k]);
+      }
+      logf[g] = log_sum_exp(lse);
+    }
+    f = exp(logf);
+
+    // The following line truncates the distribution by normalizing the density to
+    // integrate to 1 on the interval of tau, which is assumed to run from tau_min
+    // to tau_max.
+    f = f / sum(f) / dtau;
+    h = f * Mt;
+    logh = log(h);
+    return logh;
+  }
+}
+
 data {
   int N; // Number of observations
   int G; // Number of grid pints
@@ -18,67 +46,9 @@ parameters {
   vector<lower=0>[K] s;
 }
 
-// Do calculations inside a function so that variables are not created in
-// transformed_parameters that are exported. If this is not done, the return
-// object (and save files) can be very large.
-//functions {
-//  calc_h() {
-//
-//    row_vector[N] h;
-//    row_vector[N] logh;
-//    row_vector[G] f;
-//    row_vector[G] logf;
-//    vector[K] logpi = log(pi);
-//
-//    logf = to_row_vector(rep_vector(0,G));
-//    for (g in 1:G) {
-//      vector[K] lse = logpi;
-//      for (k in 1:K) {
-//        lse[k] += normal_lpdf(tau[g]|mu[k],s[k]);
-//      }
-//      logf[g] = log_sum_exp(lse);
-//    }
-//    f = exp(logf);
-//
-//    // The following line truncates the distribution by normalizing the density
-//    // to integrate to 1 on the interval of tau, which is assumed to run from
-//    tau_min to tau_max.
-//    f = f / sum(f) / dtau;
-//    h = f * Mt;
-//    return abs_diff / avg_scale;
-//  }
-//}
-//
-//transformed parameters {
-//  row_vector[N] h;
-//  row_vector[N] logh;
-//  h = calc_h();
-//  logh = log(h);
-//}
-
 transformed parameters {
-  row_vector[N] h;
   row_vector[N] logh;
-  row_vector[G] f;
-  row_vector[G] logf;
-  vector[K] logpi = log(pi);
-
-  logf = to_row_vector(rep_vector(0,G));
-  for (g in 1:G) {
-    vector[K] lse = logpi;
-    for (k in 1:K) {
-      lse[k] += normal_lpdf(tau[g]|mu[k],s[k]);
-    }
-    logf[g] = log_sum_exp(lse);
-  }
-  f = exp(logf);
-
-  // The following line truncates the distribution by normalizing the density to
-  // integrate to 1 on the interval of tau, which is assumed to run from tau_min
-  // to tau_max.
-  f = f / sum(f) / dtau;
-  h = f * Mt;
-  logh = log(h);
+  logh = calc_logh(N, G, K, pi, s, mu, tau, dtau, Mt);
 }
 
 model {
