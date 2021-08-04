@@ -24,3 +24,7 @@ tests/testthat/Rplots.pdf
 Rplots.pdf
 
 *~
+
+vignettes/rc_data.csv
+vignettes/rc_example.rds
+vignettes/sim_example.rds

@@ -57,13 +57,3 @@ model {
   mu ~ uniform(tau_min,tau_max);
   target += sum(logh);
 }
-
-generated quantities {
-  vector[N] log_post_vect;
-  for (n in 1:N) {
-    log_post_vect[n] = logh[n]
-                       + dirichlet_lpdf( pi | rep_vector(alpha_d,K))
-                       + gamma_lpdf( s | alpha_s, alpha_r)
-                       + uniform_lpdf( mu | tau_min, tau_max);
-  }
-}
