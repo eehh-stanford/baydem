@@ -82,7 +82,7 @@
       <h1 data-toc-skip>Summarizing sets of radiocarbon dates using baydem’s standard pipeline</h1>
                         <h4 class="author">Michael Holton Price</h4>
             
-            <h4 class="date">2021-07-31</h4>
+            <h4 class="date">2021-08-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/eehh-stanford/baydem/blob/master/vignettes/standard_pipeline.Rmd"><code>vignettes/standard_pipeline.Rmd</code></a></small>
       <div class="hidden name"><code>standard_pipeline.Rmd</code></div>
@@ -214,6 +214,52 @@
     dtau <span class="op">=</span> <span class="fl">1</span>
   <span class="op">)</span>
 <span class="fu"><a href="../reference/do_bayesian_inference.html">do_bayesian_inference</a></span><span class="op">(</span><span class="va">data_dir</span>,<span class="va">analysis_name</span>,<span class="va">hp</span><span class="op">)</span>
+<span class="co">#&gt; Warning in readLines(file, warn = TRUE): incomplete final line found on '/tmp/</span>
+<span class="co">#&gt; RtmpoTUeB6/temp_libpath659c7407ccd5/baydem/stan/gaussmix.stan'</span>
+<span class="co">#&gt; Trying to compile a simple C file</span>
+<span class="co">#&gt; Running /usr/lib/R/bin/R CMD SHLIB foo.c</span>
+<span class="co">#&gt; gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG   -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/Rcpp/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/unsupported"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/BH/include" -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/src/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppParallel/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1      -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-tbZjLv/r-base-4.1.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c foo.c -o foo.o</span>
+<span class="co">#&gt; In file included from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Core:88,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Dense:1,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13,</span>
+<span class="co">#&gt;                  from &lt;command-line&gt;:</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name ‘namespace’</span>
+<span class="co">#&gt;   628 | namespace Eigen {</span>
+<span class="co">#&gt;       | ^~~~~~~~~</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:17: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token</span>
+<span class="co">#&gt;   628 | namespace Eigen {</span>
+<span class="co">#&gt;       |                 ^</span>
+<span class="co">#&gt; In file included from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Dense:1,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13,</span>
+<span class="co">#&gt;                  from &lt;command-line&gt;:</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Core:96:10: fatal error: complex: No such file or directory</span>
+<span class="co">#&gt;    96 | #include &lt;complex&gt;</span>
+<span class="co">#&gt;       |          ^~~~~~~~~</span>
+<span class="co">#&gt; compilation terminated.</span>
+<span class="co">#&gt; make: *** [/usr/lib/R/etc/Makeconf:168: foo.o] Error 1</span>
+<span class="co">#&gt; Warning in readLines(file, warn = TRUE): incomplete final line found on '/tmp/</span>
+<span class="co">#&gt; RtmpoTUeB6/temp_libpath659c7407ccd5/baydem/stan/gaussmix.stan'</span>
+<span class="co">#&gt; Trying to compile a simple C file</span>
+<span class="co">#&gt; Running /usr/lib/R/bin/R CMD SHLIB foo.c</span>
+<span class="co">#&gt; gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG   -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/Rcpp/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/unsupported"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/BH/include" -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/src/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppParallel/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1      -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-tbZjLv/r-base-4.1.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c foo.c -o foo.o</span>
+<span class="co">#&gt; In file included from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Core:88,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Dense:1,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13,</span>
+<span class="co">#&gt;                  from &lt;command-line&gt;:</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name ‘namespace’</span>
+<span class="co">#&gt;   628 | namespace Eigen {</span>
+<span class="co">#&gt;       | ^~~~~~~~~</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:17: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token</span>
+<span class="co">#&gt;   628 | namespace Eigen {</span>
+<span class="co">#&gt;       |                 ^</span>
+<span class="co">#&gt; In file included from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Dense:1,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13,</span>
+<span class="co">#&gt;                  from &lt;command-line&gt;:</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Core:96:10: fatal error: complex: No such file or directory</span>
+<span class="co">#&gt;    96 | #include &lt;complex&gt;</span>
+<span class="co">#&gt;       |          ^~~~~~~~~</span>
+<span class="co">#&gt; compilation terminated.</span>
+<span class="co">#&gt; make: *** [/usr/lib/R/etc/Makeconf:168: foo.o] Error 1</span>
 <span class="co">#&gt; Warning: There were 322 divergent transitions after warmup. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
 <span class="co">#&gt; to find out why this is a problem and how to eliminate them.</span>
@@ -227,6 +273,29 @@
 <span class="co">#&gt; Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.</span>
 <span class="co">#&gt; Running the chains for more iterations may help. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#tail-ess</span>
+<span class="co">#&gt; Warning in readLines(file, warn = TRUE): incomplete final line found on '/tmp/</span>
+<span class="co">#&gt; RtmpoTUeB6/temp_libpath659c7407ccd5/baydem/stan/gaussmix.stan'</span>
+<span class="co">#&gt; Trying to compile a simple C file</span>
+<span class="co">#&gt; Running /usr/lib/R/bin/R CMD SHLIB foo.c</span>
+<span class="co">#&gt; gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG   -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/Rcpp/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/unsupported"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/BH/include" -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/src/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppParallel/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1      -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-tbZjLv/r-base-4.1.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c foo.c -o foo.o</span>
+<span class="co">#&gt; In file included from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Core:88,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Dense:1,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13,</span>
+<span class="co">#&gt;                  from &lt;command-line&gt;:</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name ‘namespace’</span>
+<span class="co">#&gt;   628 | namespace Eigen {</span>
+<span class="co">#&gt;       | ^~~~~~~~~</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:17: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token</span>
+<span class="co">#&gt;   628 | namespace Eigen {</span>
+<span class="co">#&gt;       |                 ^</span>
+<span class="co">#&gt; In file included from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Dense:1,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13,</span>
+<span class="co">#&gt;                  from &lt;command-line&gt;:</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Core:96:10: fatal error: complex: No such file or directory</span>
+<span class="co">#&gt;    96 | #include &lt;complex&gt;</span>
+<span class="co">#&gt;       |          ^~~~~~~~~</span>
+<span class="co">#&gt; compilation terminated.</span>
+<span class="co">#&gt; make: *** [/usr/lib/R/etc/Makeconf:168: foo.o] Error 1</span>
 <span class="co">#&gt; Warning: There were 577 divergent transitions after warmup. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
 <span class="co">#&gt; to find out why this is a problem and how to eliminate them.</span>
@@ -369,23 +438,92 @@
     dtau <span class="op">=</span> <span class="fl">1</span>
   <span class="op">)</span>
 <span class="fu"><a href="../reference/do_bayesian_inference.html">do_bayesian_inference</a></span><span class="op">(</span><span class="va">data_dir</span>,<span class="va">analysis_name</span>,<span class="va">hp</span><span class="op">)</span>
-<span class="co">#&gt; Warning: There were 593 divergent transitions after warmup. See</span>
+<span class="co">#&gt; Warning in readLines(file, warn = TRUE): incomplete final line found on '/tmp/</span>
+<span class="co">#&gt; RtmpoTUeB6/temp_libpath659c7407ccd5/baydem/stan/gaussmix.stan'</span>
+<span class="co">#&gt; Trying to compile a simple C file</span>
+<span class="co">#&gt; Running /usr/lib/R/bin/R CMD SHLIB foo.c</span>
+<span class="co">#&gt; gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG   -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/Rcpp/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/unsupported"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/BH/include" -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/src/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppParallel/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1      -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-tbZjLv/r-base-4.1.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c foo.c -o foo.o</span>
+<span class="co">#&gt; In file included from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Core:88,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Dense:1,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13,</span>
+<span class="co">#&gt;                  from &lt;command-line&gt;:</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name ‘namespace’</span>
+<span class="co">#&gt;   628 | namespace Eigen {</span>
+<span class="co">#&gt;       | ^~~~~~~~~</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:17: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token</span>
+<span class="co">#&gt;   628 | namespace Eigen {</span>
+<span class="co">#&gt;       |                 ^</span>
+<span class="co">#&gt; In file included from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Dense:1,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13,</span>
+<span class="co">#&gt;                  from &lt;command-line&gt;:</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Core:96:10: fatal error: complex: No such file or directory</span>
+<span class="co">#&gt;    96 | #include &lt;complex&gt;</span>
+<span class="co">#&gt;       |          ^~~~~~~~~</span>
+<span class="co">#&gt; compilation terminated.</span>
+<span class="co">#&gt; make: *** [/usr/lib/R/etc/Makeconf:168: foo.o] Error 1</span>
+<span class="co">#&gt; Warning in readLines(file, warn = TRUE): incomplete final line found on '/tmp/</span>
+<span class="co">#&gt; RtmpoTUeB6/temp_libpath659c7407ccd5/baydem/stan/gaussmix.stan'</span>
+<span class="co">#&gt; Trying to compile a simple C file</span>
+<span class="co">#&gt; Running /usr/lib/R/bin/R CMD SHLIB foo.c</span>
+<span class="co">#&gt; gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG   -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/Rcpp/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/unsupported"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/BH/include" -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/src/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppParallel/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1      -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-tbZjLv/r-base-4.1.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c foo.c -o foo.o</span>
+<span class="co">#&gt; In file included from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Core:88,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Dense:1,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13,</span>
+<span class="co">#&gt;                  from &lt;command-line&gt;:</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name ‘namespace’</span>
+<span class="co">#&gt;   628 | namespace Eigen {</span>
+<span class="co">#&gt;       | ^~~~~~~~~</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:17: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token</span>
+<span class="co">#&gt;   628 | namespace Eigen {</span>
+<span class="co">#&gt;       |                 ^</span>
+<span class="co">#&gt; In file included from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Dense:1,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13,</span>
+<span class="co">#&gt;                  from &lt;command-line&gt;:</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Core:96:10: fatal error: complex: No such file or directory</span>
+<span class="co">#&gt;    96 | #include &lt;complex&gt;</span>
+<span class="co">#&gt;       |          ^~~~~~~~~</span>
+<span class="co">#&gt; compilation terminated.</span>
+<span class="co">#&gt; make: *** [/usr/lib/R/etc/Makeconf:168: foo.o] Error 1</span>
+<span class="co">#&gt; Warning: There were 287 divergent transitions after warmup. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
 <span class="co">#&gt; to find out why this is a problem and how to eliminate them.</span>
 <span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span>
-<span class="co">#&gt; Warning: The largest R-hat is 1.35, indicating chains have not mixed.</span>
-<span class="co">#&gt; Running the chains for more iterations may help. See</span>
-<span class="co">#&gt; http://mc-stan.org/misc/warnings.html#r-hat</span>
 <span class="co">#&gt; Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.</span>
 <span class="co">#&gt; Running the chains for more iterations may help. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#bulk-ess</span>
 <span class="co">#&gt; Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.</span>
 <span class="co">#&gt; Running the chains for more iterations may help. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#tail-ess</span>
-<span class="co">#&gt; Warning: There were 599 divergent transitions after warmup. See</span>
+<span class="co">#&gt; Warning in readLines(file, warn = TRUE): incomplete final line found on '/tmp/</span>
+<span class="co">#&gt; RtmpoTUeB6/temp_libpath659c7407ccd5/baydem/stan/gaussmix.stan'</span>
+<span class="co">#&gt; Trying to compile a simple C file</span>
+<span class="co">#&gt; Running /usr/lib/R/bin/R CMD SHLIB foo.c</span>
+<span class="co">#&gt; gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG   -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/Rcpp/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/unsupported"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/BH/include" -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/src/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppParallel/include/"  -I"/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/rstan/include" -DEIGEN_NO_DEBUG  -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DBOOST_NO_AUTO_PTR  -include '/home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1      -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-tbZjLv/r-base-4.1.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c foo.c -o foo.o</span>
+<span class="co">#&gt; In file included from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Core:88,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Dense:1,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13,</span>
+<span class="co">#&gt;                  from &lt;command-line&gt;:</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type name ‘namespace’</span>
+<span class="co">#&gt;   628 | namespace Eigen {</span>
+<span class="co">#&gt;       | ^~~~~~~~~</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:17: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token</span>
+<span class="co">#&gt;   628 | namespace Eigen {</span>
+<span class="co">#&gt;       |                 ^</span>
+<span class="co">#&gt; In file included from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Dense:1,</span>
+<span class="co">#&gt;                  from /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13,</span>
+<span class="co">#&gt;                  from &lt;command-line&gt;:</span>
+<span class="co">#&gt; /home/mhprice/R/x86_64-pc-linux-gnu-library/4.1/RcppEigen/include/Eigen/Core:96:10: fatal error: complex: No such file or directory</span>
+<span class="co">#&gt;    96 | #include &lt;complex&gt;</span>
+<span class="co">#&gt;       |          ^~~~~~~~~</span>
+<span class="co">#&gt; compilation terminated.</span>
+<span class="co">#&gt; make: *** [/usr/lib/R/etc/Makeconf:168: foo.o] Error 1</span>
+<span class="co">#&gt; Warning: There were 708 divergent transitions after warmup. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
 <span class="co">#&gt; to find out why this is a problem and how to eliminate them.</span>
-<span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></code></pre></div>
+<span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span>
+<span class="co">#&gt; Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.</span>
+<span class="co">#&gt; Running the chains for more iterations may help. See</span>
+<span class="co">#&gt; http://mc-stan.org/misc/warnings.html#tail-ess</span></code></pre></div>
 <p>“rc_example.rds” now contains the Bayesian inference information:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">analysis</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">rc_save_file</span><span class="op">)</span>

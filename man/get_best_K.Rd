@@ -4,11 +4,14 @@
 \alias{get_best_K}
 \title{Get the number of mixtures, K, of the best model in the input list}
 \usage{
-get_best_K(bayesian_solutions)
+get_best_K(bayesian_solutions, return_waic = FALSE)
 }
 \arguments{
 \item{bayesian_solutions}{The list of Bayesian "solutions" (see
 do_bayesian_inference).}
+
+\item{return_waic}{(default: FALSE) Whether to return the vector of WAIC
+values along with K_best in a list.}
 }
 \value{
 The best value of K

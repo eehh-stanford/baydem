@@ -85,13 +85,18 @@
 <a href="#baydem" class="anchor"></a>baydem</h1></div>
 <p>The R package baydem (for bayESIAN demOGRAPHY) provides tools for reconstructing past and present demography.</p>
 </div>
+<div id="quickstart" class="section level1">
+<h1 class="hasAnchor">
+<a href="#quickstart" class="anchor"></a>Quickstart</h1>
+<p>Use of the two options below to install baydem and its dependencies, then read the vignette for the standard pipeline:</p>
+<p>TODO: add vignettte link</p>
+</div>
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h1>
-<p>There are three options for installing and using the package:</p>
+<p>There are two options for installing and using the package:</p>
 <p>(1) Install on an existing computer with necessary dependencies</p>
 <p>(2) Build a Docker image using the Dockerfile</p>
-<p>(3) Use a Docker image from Docker Hub</p>
 <div id="option-1-install-on-an-existing-computer-with-necessary-dependencies" class="section level2">
 <h2 class="hasAnchor">
 <a href="#option-1-install-on-an-existing-computer-with-necessary-dependencies" class="anchor"></a>Option 1: Install on an existing computer with necessary dependencies</h2>
@@ -99,13 +104,14 @@
 <p>(a) Install devtools with its dependencies <a href="https://www.rdocumentation.org/packages/devtools" class="uri">https://www.rdocumentation.org/packages/devtools</a></p>
 <p>(b) Install rstan with its dependencies <a href="http://mc-stan.org/rstan/" class="uri">http://mc-stan.org/rstan/</a></p>
 <p>(c) Install baydem</p>
-<pre><code><a href="https://devtools.r-lib.org/">library(devtools)
-install_github("eehh-stanford/baydem")</a></code></pre>
+<p>Having completed the preceding steps, install baydem with the following commands in R:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" title="1"><span class="ex">library</span>(devtools)</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="ex">install_github</span>(<span class="st">"eehh-stanford/baydem"</span>)</a></code></pre></div>
 </div>
 <div id="option-2-build-a-docker-image-using-the-dockerfile" class="section level2">
 <h2 class="hasAnchor">
 <a href="#option-2-build-a-docker-image-using-the-dockerfile" class="anchor"></a>Option 2: Build a Docker image using the Dockerfile</h2>
-<p>First, clone the database and build the Docker image.</p>
+<p>First, clone the database and build the Docker image (rather than cloning the entire directory, one can also just download Dockerfile and setup.R from the github repository and place them in the working directory).</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"><span class="fu">git</span> clone https://github.com/eehh-stanford/baydem</a>
 <a class="sourceLine" id="cb2-2" title="2"><span class="bu">cd</span> baydem</a>
 <a class="sourceLine" id="cb2-3" title="3"><span class="ex">docker</span> build -t michaelholtonprice/baydem .</a></code></pre></div>
@@ -118,11 +124,6 @@ install_github("eehh-stanford/baydem")</a></code></pre>
 <a class="sourceLine" id="cb4-4" title="4"><span class="ex">library</span>(devtools)</a>
 <a class="sourceLine" id="cb4-5" title="5"><span class="ex">install_local</span>(<span class="st">"."</span>,force=T,dep=F)</a>
 <a class="sourceLine" id="cb4-6" title="6"><span class="fu">test()</span></a></code></pre></div>
-</div>
-<div id="option-3-use-a-docker-image-from-docker-hub" class="section level2">
-<h2 class="hasAnchor">
-<a href="#option-3-use-a-docker-image-from-docker-hub" class="anchor"></a>Option 3: Use a Docker image from Docker Hub</h2>
-<p>TODO: update example</p>
 </div>
 </div>
 
