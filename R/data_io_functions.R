@@ -512,8 +512,10 @@ do_bayesian_inference <- function(data_dir,
     # in real time.
     saveRDS(analysis,data_file)
   }
-  analysis$K_best <- get_best_K(analysis$bayesian_solutions)
+  best_K_result <- get_best_K(analysis$bayesian_solutions,return_waic=TRUE)
+  analysis$K_best <- best_K_result$K_best
   analysis$m_K_best <- which(analysis$density_model$K == analysis$K_best)
+  analysis$waic_vect <- best_K_result$waic_vect
   saveRDS(analysis,data_file)
 }
 
@@ -525,14 +527,16 @@ do_bayesian_inference <- function(data_dir,
 #' based on the widely applicable information criterion (WAIC).
 #'
 #' @param bayesian_solutions The list of Bayesian "solutions" (see
-#' do_bayesian_inference).
+#'   do_bayesian_inference).
+#' @param return_waic (default: FALSE) Whether to return the vector of WAIC
+#'   values along with K_best in a list.
 #'
 #' @seealso [do_bayesian_inference()]
 #'
 #' @returns The best value of K
 #'
 #' @export
-get_best_K <- function(bayesian_solutions) {
+get_best_K <- function(bayesian_solutions, return_waic=FALSE) {
   waic_vect <- rep(NA,length(bayesian_solutions))
   for (m_K in 1:length(bayesian_solutions)) {
     log_lik_mat <- rstan::extract(bayesian_solutions[[m_K]]$fit,"logh")[[1]]
@@ -541,7 +545,12 @@ get_best_K <- function(bayesian_solutions) {
   }
   m_K_best <- which.min(waic_vect)
   TH <- extract_param(bayesian_solutions[[m_K_best]]$fit)
-  return(ncol(TH)/3)
+  K_best <- ncol(TH)/3
+  if (return_waic) {
+    return(list(K_best=K_best,waic_vect=waic_vect))
+  } else {
+    return(K_best)
+  }
 }
 
 #' @title

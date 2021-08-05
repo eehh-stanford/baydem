@@ -2012,11 +2012,6 @@ expect_equal(
 )
 
 expect_equal(
-  is.numeric(analysis$m_K),
-  TRUE
-)
-
-expect_equal(
   is.numeric(analysis$m_K_best),
   TRUE
 )
@@ -2065,6 +2060,20 @@ bayesian_solutions <- analysis$bayesian_solutions
 expect_error(
   K_best <- get_best_K(bayesian_solutions),
   NA
+)
+expect_equal(
+  length(K_best),
+  1
+)
+
+expect_error(
+  best_K_result <- get_best_K(bayesian_solutions,return_waic=TRUE),
+  NA
+)
+
+expect_equal(
+  names(best_K_result),
+  c("K_best", "waic_vect")
 )
 
 waic_vect <- rep(NA,length(bayesian_solutions))
@@ -2137,7 +2146,8 @@ saveRDS(list(rc_meas=rc_meas,
              bayesian_solutions=analysis0$bayesian_solutions,
              hp=analysis0$hp,
              K_best=analysis0$K_best,
-             m_K_best=analysis0$m_K_best),
+             m_K_best=analysis0$m_K_best,
+             waic_vect=analysis0$waic_vect),
         path_to_analysis_file)
 expect_error(
   do_bayesian_summary(data_dir,
@@ -2148,15 +2158,8 @@ expect_error(
 # Check that analysis has the right fields
 analysis <- readRDS(path_to_analysis_file)
 expect_equal(
-  names(analysis),
-  c("rc_meas",
-    "density_model",
-    "calib_df",
-    "bayesian_solutions",
-    "hp",
-    "K_best",
-    "m_K_best",
-    "bayesian_summary")
+  "bayesian_summary" %in% names(analysis),
+  TRUE
 )
 
 # Extract bayesian_solutions and bayesian_summary for use below
