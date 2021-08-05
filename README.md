@@ -33,6 +33,8 @@ install_github("eehh-stanford/baydem")
 ## Option 2: Build a Docker image using the Dockerfile
 First, clone the database and build the Docker image (rather than cloning the entire directory, one can also just download Dockerfile and setup.R from the github repository and place them in the working directory).
 
+To force all docker material to be (re)downloaded prior to creating the Docker image -- a step you should be certain you want to take -- use: "docker system prune -a"
+
 ```bash
 git clone https://github.com/eehh-stanford/baydem
 cd baydem
