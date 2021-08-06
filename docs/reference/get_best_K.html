@@ -131,7 +131,7 @@ based on the widely applicable information criterion (WAIC)." />
 based on the widely applicable information criterion (WAIC).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_best_K</span><span class='op'>(</span><span class='va'>bayesian_solutions</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_best_K</span><span class='op'>(</span><span class='va'>bayesian_solutions</span>, return_waic <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,6 +140,11 @@ based on the widely applicable information criterion (WAIC).</p>
       <th>bayesian_solutions</th>
       <td><p>The list of Bayesian "solutions" (see
 do_bayesian_inference).</p></td>
+    </tr>
+    <tr>
+      <th>return_waic</th>
+      <td><p>(default: FALSE) Whether to return the vector of WAIC
+values along with K_best in a list.</p></td>
     </tr>
     </table>
 

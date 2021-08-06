@@ -48,7 +48,8 @@ the seeds for stan.
 The best model is identified based on the widely applicable information
 criterion (WAIC) and the corresponding index (in density_model$K) and value
 are stored in, respectively, m_K_best and K_best (currently, only a truncated
-Gaussian mixture is supported for the density model specification).
+Gaussian mixture is supported for the density model specification). The
+vector of WAIC values is stored in waic_vect.
 }
 \seealso{
 \code{\link[=set_sim]{set_sim()}} for an overview of the "standard pipeline"

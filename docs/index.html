@@ -112,6 +112,7 @@
 <h2 class="hasAnchor">
 <a href="#option-2-build-a-docker-image-using-the-dockerfile" class="anchor"></a>Option 2: Build a Docker image using the Dockerfile</h2>
 <p>First, clone the database and build the Docker image (rather than cloning the entire directory, one can also just download Dockerfile and setup.R from the github repository and place them in the working directory).</p>
+<p>To force all docker material to be (re)downloaded prior to creating the Docker image – a step you should be certain you want to take – use: “docker system prune -a”</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"><span class="fu">git</span> clone https://github.com/eehh-stanford/baydem</a>
 <a class="sourceLine" id="cb2-2" title="2"><span class="bu">cd</span> baydem</a>
 <a class="sourceLine" id="cb2-3" title="3"><span class="ex">docker</span> build -t michaelholtonprice/baydem .</a></code></pre></div>

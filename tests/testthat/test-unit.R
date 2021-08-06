@@ -2012,7 +2012,22 @@ expect_equal(
 )
 
 expect_equal(
+  any(is.na(analysis$waic_vect)),
+  FALSE
+)
+
+ expect_equal(
+  length(analysis$waic_vect),
+  num_models
+)
+
+expect_equal(
   is.numeric(analysis$m_K_best),
+  TRUE
+)
+
+expect_equal(
+  is.numeric(analysis$K_best),
   TRUE
 )
 

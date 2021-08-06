@@ -415,7 +415,8 @@ set_calib_curve <- function(data_dir,analysis_name,calibration_curve) {
 #' The best model is identified based on the widely applicable information
 #' criterion (WAIC) and the corresponding index (in density_model$K) and value
 #' are stored in, respectively, m_K_best and K_best (currently, only a truncated
-#' Gaussian mixture is supported for the density model specification).
+#' Gaussian mixture is supported for the density model specification). The
+#' vector of WAIC values is stored in waic_vect.
 #'
 #' @param data_dir The directory in which to store analysis data.
 #' @param analysis_name A unique name for a given analysis in data_dir.
@@ -496,6 +497,7 @@ do_bayesian_inference <- function(data_dir,
   # analysis$density_model may be a vector. Loop over values of K to do
   # inference
   analysis$bayesian_solutions <- list()
+  analysis$waic_vect <- rep(NA,num_models)
   for (m_K in 1:num_models) {
     K <- analysis$density_model$K[m_K]
     modified_density_model <- analysis$density_model
@@ -508,14 +510,19 @@ do_bayesian_inference <- function(data_dir,
                    init_seed=seed_mat[m_K,1],
                    stan_seed=seed_mat[m_K,2],
                    control=control)
+    # Update waic_vect
+    # TODO: consider moving the waic calculation into a stand-alone function
+    log_lik_mat <- rstan::extract(analysis$bayesian_solutions[[m_K]]$fit,
+                                  "logh")[[1]]
+    waic_analysis <- loo::waic(log_lik_mat)
+    analysis$waic_vect[m_K] <- waic_analysis$estimates["waic","Estimate"]
     # Save the analysis to file after each optimization so it can be assessed
     # in real time.
     saveRDS(analysis,data_file)
   }
-  best_K_result <- get_best_K(analysis$bayesian_solutions,return_waic=TRUE)
-  analysis$K_best <- best_K_result$K_best
-  analysis$m_K_best <- which(analysis$density_model$K == analysis$K_best)
-  analysis$waic_vect <- best_K_result$waic_vect
+  # Identify the best model
+  analysis$m_K_best <- which.min(analysis$waic_vect)
+  analysis$K_best <- analysis$density_model$K[analysis$m_K_best]
   saveRDS(analysis,data_file)
 }
 
