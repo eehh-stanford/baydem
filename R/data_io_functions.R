@@ -412,11 +412,14 @@ set_calib_curve <- function(data_dir,analysis_name,calibration_curve) {
 #' seeds for initializing the parameter vector and the second column provides
 #' the seeds for stan.
 #'
-#' The best model is identified based on the widely applicable information
-#' criterion (WAIC) and the corresponding index (in density_model$K) and value
-#' are stored in, respectively, m_K_best and K_best (currently, only a truncated
-#' Gaussian mixture is supported for the density model specification). The
-#' vector of WAIC values is stored in waic_vect.
+#' The best model is identified based on the Pareto smoothed importance
+#' sampling (PSIS) approximation of the leave-one-out (loo) cross-validation
+#' (CV), PSIS-LOO CV (just loo in the code). The corresponding index (in
+#' density_model$K) and K-value are stored in, respectively, m_K_best and
+#' K_best (currently, only a truncated  Gaussian mixture is supported for the
+#' density model specification). The vector of loo values is stored in
+#' loo_vect. The model with the highest loo is prefered. WAIC values are also
+#' calculated and stored in waic_vect.
 #'
 #' @param data_dir The directory in which to store analysis data.
 #' @param analysis_name A unique name for a given analysis in data_dir.
@@ -498,6 +501,7 @@ do_bayesian_inference <- function(data_dir,
   # inference
   analysis$bayesian_solutions <- list()
   analysis$waic_vect <- rep(NA,num_models)
+  analysis$loo_vect  <- rep(NA,num_models)
   for (m_K in 1:num_models) {
     K <- analysis$density_model$K[m_K]
     modified_density_model <- analysis$density_model
@@ -511,11 +515,16 @@ do_bayesian_inference <- function(data_dir,
                    stan_seed=seed_mat[m_K,2],
                    control=control)
     # Update waic_vect
-    # TODO: consider moving the waic calculation into a stand-alone function
+    # TODO: consider moving the loo/waic calculation into a stand-alone function
     log_lik_mat <- rstan::extract(analysis$bayesian_solutions[[m_K]]$fit,
                                   "logh")[[1]]
+    # Calculate WAIC
     waic_analysis <- loo::waic(log_lik_mat)
     analysis$waic_vect[m_K] <- waic_analysis$estimates["waic","Estimate"]
+    # Calculation PSIS-LOO CV
+    loo_analysis <- loo::loo(log_lik_mat)
+    analysis$loo_vect[m_K] <- loo_analysis["estimates"][[1]]["elpd_loo",
+                                                             "Estimate"]
     # Save the analysis to file after each optimization so it can be assessed
     # in real time.
     saveRDS(analysis,data_file)
@@ -524,40 +533,6 @@ do_bayesian_inference <- function(data_dir,
   analysis$m_K_best <- which.min(analysis$waic_vect)
   analysis$K_best <- analysis$density_model$K[analysis$m_K_best]
   saveRDS(analysis,data_file)
-}
-
-#' @title
-#' Get the number of mixtures, K, of the best model in the input list
-#'
-#' @description
-#' Get the best number of mixture components (K) from the Bayesian inference
-#' based on the widely applicable information criterion (WAIC).
-#'
-#' @param bayesian_solutions The list of Bayesian "solutions" (see
-#'   do_bayesian_inference).
-#' @param return_waic (default: FALSE) Whether to return the vector of WAIC
-#'   values along with K_best in a list.
-#'
-#' @seealso [do_bayesian_inference()]
-#'
-#' @returns The best value of K
-#'
-#' @export
-get_best_K <- function(bayesian_solutions, return_waic=FALSE) {
-  waic_vect <- rep(NA,length(bayesian_solutions))
-  for (m_K in 1:length(bayesian_solutions)) {
-    log_lik_mat <- rstan::extract(bayesian_solutions[[m_K]]$fit,"logh")[[1]]
-    waic_analysis <- loo::waic(log_lik_mat)
-    waic_vect[m_K] <- waic_analysis$estimates["waic","Estimate"]
-  }
-  m_K_best <- which.min(waic_vect)
-  TH <- extract_param(bayesian_solutions[[m_K_best]]$fit)
-  K_best <- ncol(TH)/3
-  if (return_waic) {
-    return(list(K_best=K_best,waic_vect=waic_vect))
-  } else {
-    return(K_best)
-  }
 }
 
 #' @title

@@ -1569,9 +1569,8 @@ expect_equal(
 #           set_density_model      (9e)
 #           set_calib_curve        (9f)
 #           do_bayesian_inference  (9g)
-#           get_best_K             (9h)
-#           do_bayesian_summary    (9i)
-#           plot_best_solution     (9j)
+#           do_bayesian_summary    (9h)
+#           plot_best_solution     (9i)
 # ------------------------------------------------------------------------------
 
 # (9a) import_rc_data
@@ -2012,6 +2011,15 @@ expect_equal(
 )
 
 expect_equal(
+  any(is.na(analysis$loo_vect)),
+  FALSE
+)
+
+ expect_equal(
+  length(analysis$loo_vect),
+  num_models
+)
+expect_equal(
   any(is.na(analysis$waic_vect)),
   FALSE
 )
@@ -2069,38 +2077,30 @@ for (m_K in 1:length(analysis$bayesian_solutions)) {
   )
 }
 
-
-# (9h) get_best_K
 bayesian_solutions <- analysis$bayesian_solutions
-expect_error(
-  K_best <- get_best_K(bayesian_solutions),
-  NA
-)
-expect_equal(
-  length(K_best),
-  1
-)
-
-expect_error(
-  best_K_result <- get_best_K(bayesian_solutions,return_waic=TRUE),
-  NA
-)
-
-expect_equal(
-  names(best_K_result),
-  c("K_best", "waic_vect")
-)
-
+loo_vect  <- rep(NA,length(bayesian_solutions))
 waic_vect <- rep(NA,length(bayesian_solutions))
 for (m_K in 1:length(bayesian_solutions)) {
   log_lik_mat <- rstan::extract(bayesian_solutions[[m_K]]$fit,"logh")[[1]]
   waic_analysis <- loo::waic(log_lik_mat)
   waic_vect[m_K] <- waic_analysis$estimates["waic","Estimate"]
+  loo_analysis <- loo::loo(log_lik_mat)
+  loo_vect[m_K] <- loo_analysis["estimates"][[1]]["elpd_loo",
+                                                   "Estimate"]
 }
-m_K_best <- which.min(waic_vect)
+m_K_best <- which.max(loo_vect)
 
 expect_equal(
-  K_best,
+  analysis$loo_vect,
+  loo_vect
+)
+
+expect_equal(
+  analysis$waic_vect,
+  waic_vect
+)
+expect_equal(
+  analysis$K_best,
   c(2,3)[m_K_best]
 )
 
@@ -2111,10 +2111,11 @@ expect_equal(
 
 expect_equal(
   analysis$K_best,
-  K_best
+  c(2,3)[m_K_best]
 )
 
-# (9i) do_bayesian_summary
+
+# (9h) do_bayesian_summary
 #      [Currently, do_bayesian_summary is not checked when sim is in analysis.
 #       However, the functioning of summarize_bayesian_inference with th_sim
 #       is checked, and the vignette standard_pipeline.Rmd validates the
@@ -2162,6 +2163,7 @@ saveRDS(list(rc_meas=rc_meas,
              hp=analysis0$hp,
              K_best=analysis0$K_best,
              m_K_best=analysis0$m_K_best,
+             loo_vect=analysis0$waic_vect,
              waic_vect=analysis0$waic_vect),
         path_to_analysis_file)
 expect_error(
@@ -2186,7 +2188,7 @@ expect_error(
   "A summary has already been done for this analysis"
 )
 
-# (9j) plot_best_solution
+# (9i) plot_best_solution
 success <- file.remove(path_to_bad_analysis_file)
 expect_error(
   plot_best_solution(data_dir,bad_analysis_name),

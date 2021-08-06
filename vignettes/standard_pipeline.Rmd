@@ -156,7 +156,7 @@ print(names(analysis))
 ```
 
 ## Step 5: Do Bayesian summary
-Call `do_bayesian_summary` to calculate summary information for the best model from the preceding step. The best model is the one with the lowest WAIC value among the different models with different numbers of mixture conponents (2, 3, and 4).
+Call `do_bayesian_summary` to calculate summary information for the best model from the preceding step. The best model is the one with the highest loo value (PSIS-LOO CV; see Vehtari at al. (2017) -- "Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC", as well as the documentation for the R package loo) among the different models with different numbers of mixture components (2, 3, and 4).
 
 ```{r}
 do_bayesian_summary(data_dir,analysis_name)
@@ -170,7 +170,7 @@ print(names(analysis))
 ```
 
 ## Step 6: Plot best model
-Call `plot_best_solution` to plot the best solution (best WAIC). Since this is a simulation, a known density can be added, so use `add_known_density=TRUE`.
+Call `plot_best_solution` to plot the best solution (best loo). Since this is a simulation, a known density can be added, so use `add_known_density=TRUE`.
 
 
 ```{r, fig.width=8, fig.height=6}
@@ -302,7 +302,7 @@ print(names(analysis))
 ```
 
 ## Step 7: Plot best model
-Call `plot_best_solution` to plot the best solution (best WAIC).
+Call `plot_best_solution` to plot the best solution (best loo).
 
 ```{r, fig.width=8, fig.height=6}
 plot_best_solution(data_dir,analysis_name)

@@ -45,11 +45,14 @@ dimensions \code{num_models} by 2. The first column of the matrix provides the
 seeds for initializing the parameter vector and the second column provides
 the seeds for stan.
 
-The best model is identified based on the widely applicable information
-criterion (WAIC) and the corresponding index (in density_model$K) and value
-are stored in, respectively, m_K_best and K_best (currently, only a truncated
-Gaussian mixture is supported for the density model specification). The
-vector of WAIC values is stored in waic_vect.
+The best model is identified based on the Pareto smoothed importance
+sampling (PSIS) approximation of the leave-one-out (loo) cross-validation
+(CV), PSIS-LOO CV (just loo in the code). The corresponding index (in
+density_model$K) and K-value are stored in, respectively, m_K_best and
+K_best (currently, only a truncated  Gaussian mixture is supported for the
+density model specification). The vector of loo values is stored in
+loo_vect. The model with the highest loo is prefered. WAIC values are also
+calculated and stored in waic_vect.
 }
 \seealso{
 \code{\link[=set_sim]{set_sim()}} for an overview of the "standard pipeline"

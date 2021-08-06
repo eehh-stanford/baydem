@@ -82,7 +82,7 @@
       <h1 data-toc-skip>Summarizing sets of radiocarbon dates using baydem’s standard pipeline</h1>
                         <h4 class="author">Michael Holton Price</h4>
             
-            <h4 class="date">2021-08-05</h4>
+            <h4 class="date">2021-08-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/eehh-stanford/baydem/blob/master/vignettes/standard_pipeline.Rmd"><code>vignettes/standard_pipeline.Rmd</code></a></small>
       <div class="hidden name"><code>standard_pipeline.Rmd</code></div>
@@ -215,10 +215,12 @@
   <span class="op">)</span>
 <span class="fu"><a href="../reference/do_bayesian_inference.html">do_bayesian_inference</a></span><span class="op">(</span><span class="va">data_dir</span>,<span class="va">analysis_name</span>,<span class="va">hp</span><span class="op">)</span>
 <span class="co">#&gt; Warning in readLines(file, warn = TRUE): incomplete final line found on '/tmp/</span>
-<span class="co">#&gt; RtmpoLXoAd/temp_libpath6683f9ffb1/baydem/stan/gaussmix.stan'</span>
-
+<span class="co">#&gt; RtmpvLJVty/temp_libpath1d77594e9ae3/baydem/stan/gaussmix.stan'</span>
+<span class="co">#&gt; Warning: Relative effective sample sizes ('r_eff' argument) not specified.</span>
+<span class="co">#&gt; For models fit with MCMC, the reported PSIS effective sample sizes and </span>
+<span class="co">#&gt; MCSE estimates will be over-optimistic.</span>
 <span class="co">#&gt; Warning in readLines(file, warn = TRUE): incomplete final line found on '/tmp/</span>
-<span class="co">#&gt; RtmpoLXoAd/temp_libpath6683f9ffb1/baydem/stan/gaussmix.stan'</span>
+<span class="co">#&gt; RtmpvLJVty/temp_libpath1d77594e9ae3/baydem/stan/gaussmix.stan'</span>
 <span class="co">#&gt; Warning: There were 322 divergent transitions after warmup. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
 <span class="co">#&gt; to find out why this is a problem and how to eliminate them.</span>
@@ -232,15 +234,21 @@
 <span class="co">#&gt; Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.</span>
 <span class="co">#&gt; Running the chains for more iterations may help. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#tail-ess</span>
+<span class="co">#&gt; Warning: Relative effective sample sizes ('r_eff' argument) not specified.</span>
+<span class="co">#&gt; For models fit with MCMC, the reported PSIS effective sample sizes and </span>
+<span class="co">#&gt; MCSE estimates will be over-optimistic.</span>
 <span class="co">#&gt; Warning in readLines(file, warn = TRUE): incomplete final line found on '/tmp/</span>
-<span class="co">#&gt; RtmpoLXoAd/temp_libpath6683f9ffb1/baydem/stan/gaussmix.stan'</span>
+<span class="co">#&gt; RtmpvLJVty/temp_libpath1d77594e9ae3/baydem/stan/gaussmix.stan'</span>
 <span class="co">#&gt; Warning: There were 577 divergent transitions after warmup. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
 <span class="co">#&gt; to find out why this is a problem and how to eliminate them.</span>
 <span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span>
 <span class="co">#&gt; Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.</span>
 <span class="co">#&gt; Running the chains for more iterations may help. See</span>
-<span class="co">#&gt; http://mc-stan.org/misc/warnings.html#tail-ess</span></code></pre></div>
+<span class="co">#&gt; http://mc-stan.org/misc/warnings.html#tail-ess</span>
+<span class="co">#&gt; Warning: Relative effective sample sizes ('r_eff' argument) not specified.</span>
+<span class="co">#&gt; For models fit with MCMC, the reported PSIS effective sample sizes and </span>
+<span class="co">#&gt; MCSE estimates will be over-optimistic.</span></code></pre></div>
 <p>“sim_example.rds” now contains the Bayesian inference information:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">analysis</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">sim_save_file</span><span class="op">)</span>
@@ -248,12 +256,13 @@
 <span class="co">#&gt;  [1] "rc_meas"            "calib_df"           "sim"               </span>
 <span class="co">#&gt;  [4] "density_model"      "input_seed"         "base_seed"         </span>
 <span class="co">#&gt;  [7] "seed_mat"           "hp"                 "bayesian_solutions"</span>
-<span class="co">#&gt; [10] "waic_vect"          "m_K_best"           "K_best"</span></code></pre></div>
+<span class="co">#&gt; [10] "waic_vect"          "loo_vect"           "m_K_best"          </span>
+<span class="co">#&gt; [13] "K_best"</span></code></pre></div>
 </div>
 <div id="step-5-do-bayesian-summary" class="section level2">
 <h2 class="hasAnchor">
 <a href="#step-5-do-bayesian-summary" class="anchor"></a>Step 5: Do Bayesian summary</h2>
-<p>Call <code>do_bayesian_summary</code> to calculate summary information for the best model from the preceding step. The best model is the one with the lowest WAIC value among the different models with different numbers of mixture conponents (2, 3, and 4).</p>
+<p>Call <code>do_bayesian_summary</code> to calculate summary information for the best model from the preceding step. The best model is the one with the highest loo value (PSIS-LOO CV; see Vehtari at al. (2017) – “Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC”, as well as the documentation for the R package loo) among the different models with different numbers of mixture components (2, 3, and 4).</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/do_bayesian_summary.html">do_bayesian_summary</a></span><span class="op">(</span><span class="va">data_dir</span>,<span class="va">analysis_name</span><span class="op">)</span></code></pre></div>
 <p>“sim_example.rds” now contains the Bayesian summary information:</p>
@@ -263,13 +272,13 @@
 <span class="co">#&gt;  [1] "rc_meas"            "calib_df"           "sim"               </span>
 <span class="co">#&gt;  [4] "density_model"      "input_seed"         "base_seed"         </span>
 <span class="co">#&gt;  [7] "seed_mat"           "hp"                 "bayesian_solutions"</span>
-<span class="co">#&gt; [10] "waic_vect"          "m_K_best"           "K_best"            </span>
-<span class="co">#&gt; [13] "bayesian_summary"</span></code></pre></div>
+<span class="co">#&gt; [10] "waic_vect"          "loo_vect"           "m_K_best"          </span>
+<span class="co">#&gt; [13] "K_best"             "bayesian_summary"</span></code></pre></div>
 </div>
 <div id="step-6-plot-best-model" class="section level2">
 <h2 class="hasAnchor">
 <a href="#step-6-plot-best-model" class="anchor"></a>Step 6: Plot best model</h2>
-<p>Call <code>plot_best_solution</code> to plot the best solution (best WAIC). Since this is a simulation, a known density can be added, so use <code>add_known_density=TRUE</code>.</p>
+<p>Call <code>plot_best_solution</code> to plot the best solution (best loo). Since this is a simulation, a known density can be added, so use <code>add_known_density=TRUE</code>.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot_best_solution.html">plot_best_solution</a></span><span class="op">(</span><span class="va">data_dir</span>,<span class="va">analysis_name</span>,add_known_density<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="standard_pipeline_files/figure-html/unnamed-chunk-14-1.png" width="768"></p>
@@ -378,10 +387,12 @@
   <span class="op">)</span>
 <span class="fu"><a href="../reference/do_bayesian_inference.html">do_bayesian_inference</a></span><span class="op">(</span><span class="va">data_dir</span>,<span class="va">analysis_name</span>,<span class="va">hp</span><span class="op">)</span>
 <span class="co">#&gt; Warning in readLines(file, warn = TRUE): incomplete final line found on '/tmp/</span>
-<span class="co">#&gt; RtmpoLXoAd/temp_libpath6683f9ffb1/baydem/stan/gaussmix.stan'</span>
-
+<span class="co">#&gt; RtmpvLJVty/temp_libpath1d77594e9ae3/baydem/stan/gaussmix.stan'</span>
+<span class="co">#&gt; Warning: Relative effective sample sizes ('r_eff' argument) not specified.</span>
+<span class="co">#&gt; For models fit with MCMC, the reported PSIS effective sample sizes and </span>
+<span class="co">#&gt; MCSE estimates will be over-optimistic.</span>
 <span class="co">#&gt; Warning in readLines(file, warn = TRUE): incomplete final line found on '/tmp/</span>
-<span class="co">#&gt; RtmpoLXoAd/temp_libpath6683f9ffb1/baydem/stan/gaussmix.stan'</span>
+<span class="co">#&gt; RtmpvLJVty/temp_libpath1d77594e9ae3/baydem/stan/gaussmix.stan'</span>
 <span class="co">#&gt; Warning: There were 593 divergent transitions after warmup. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
 <span class="co">#&gt; to find out why this is a problem and how to eliminate them.</span>
@@ -395,12 +406,18 @@
 <span class="co">#&gt; Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.</span>
 <span class="co">#&gt; Running the chains for more iterations may help. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#tail-ess</span>
+<span class="co">#&gt; Warning: Relative effective sample sizes ('r_eff' argument) not specified.</span>
+<span class="co">#&gt; For models fit with MCMC, the reported PSIS effective sample sizes and </span>
+<span class="co">#&gt; MCSE estimates will be over-optimistic.</span>
 <span class="co">#&gt; Warning in readLines(file, warn = TRUE): incomplete final line found on '/tmp/</span>
-<span class="co">#&gt; RtmpoLXoAd/temp_libpath6683f9ffb1/baydem/stan/gaussmix.stan'</span>
+<span class="co">#&gt; RtmpvLJVty/temp_libpath1d77594e9ae3/baydem/stan/gaussmix.stan'</span>
 <span class="co">#&gt; Warning: There were 599 divergent transitions after warmup. See</span>
 <span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
 <span class="co">#&gt; to find out why this is a problem and how to eliminate them.</span>
-<span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></code></pre></div>
+<span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span>
+<span class="co">#&gt; Warning: Relative effective sample sizes ('r_eff' argument) not specified.</span>
+<span class="co">#&gt; For models fit with MCMC, the reported PSIS effective sample sizes and </span>
+<span class="co">#&gt; MCSE estimates will be over-optimistic.</span></code></pre></div>
 <p>“rc_example.rds” now contains the Bayesian inference information:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">analysis</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="va">rc_save_file</span><span class="op">)</span>
@@ -408,7 +425,7 @@
 <span class="co">#&gt;  [1] "rc_meas"            "density_model"      "calib_df"          </span>
 <span class="co">#&gt;  [4] "input_seed"         "base_seed"          "seed_mat"          </span>
 <span class="co">#&gt;  [7] "hp"                 "bayesian_solutions" "waic_vect"         </span>
-<span class="co">#&gt; [10] "m_K_best"           "K_best"</span></code></pre></div>
+<span class="co">#&gt; [10] "loo_vect"           "m_K_best"           "K_best"</span></code></pre></div>
 </div>
 <div id="step-6-do-bayesian-summary" class="section level2">
 <h2 class="hasAnchor">
@@ -423,12 +440,13 @@
 <span class="co">#&gt;  [1] "rc_meas"            "density_model"      "calib_df"          </span>
 <span class="co">#&gt;  [4] "input_seed"         "base_seed"          "seed_mat"          </span>
 <span class="co">#&gt;  [7] "hp"                 "bayesian_solutions" "waic_vect"         </span>
-<span class="co">#&gt; [10] "m_K_best"           "K_best"             "bayesian_summary"</span></code></pre></div>
+<span class="co">#&gt; [10] "loo_vect"           "m_K_best"           "K_best"            </span>
+<span class="co">#&gt; [13] "bayesian_summary"</span></code></pre></div>
 </div>
 <div id="step-7-plot-best-model" class="section level2">
 <h2 class="hasAnchor">
 <a href="#step-7-plot-best-model" class="anchor"></a>Step 7: Plot best model</h2>
-<p>Call <code>plot_best_solution</code> to plot the best solution (best WAIC).</p>
+<p>Call <code>plot_best_solution</code> to plot the best solution (best loo).</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot_best_solution.html">plot_best_solution</a></span><span class="op">(</span><span class="va">data_dir</span>,<span class="va">analysis_name</span><span class="op">)</span></code></pre></div>
 <p><img src="standard_pipeline_files/figure-html/unnamed-chunk-29-1.png" width="768"></p>
