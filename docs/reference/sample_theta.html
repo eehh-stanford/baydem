@@ -50,6 +50,8 @@ elements of the variable control must consist of one of the following four
 options (defaults in parentheses):
 
 num_chains
+The calibration_curve to use for masking is separately input to maintain
+consistency with previous versions of baydem.
 Number of chains (4)
 samps_per_chain
 Number of samples per chain (2000)
@@ -57,8 +59,13 @@ warmup
 Number of warmup samples (samps_per_chain/2)
 stan_control
 Additional control parameters to pass to stan (list())
+mask
+Whether to mask the likelihood sum based on individual calibration
+(FALSE)
 
-" />
+
+The calibration_curve to use for masking is separately input to maintain
+consistency with previous versions of baydem." />
 
 
 
@@ -152,7 +159,9 @@ init_trunc_gauss_mix; the same vector is used for all sampling chains. Named
 elements of the variable control must consist of one of the following four
 options (defaults in parentheses):</p>
 <ul>
-<li><p><code>num_chains</code>
+<li><p><code>num_chains</code></p>
+<p>The calibration_curve to use for masking is separately input to maintain</p>
+<p>consistency with previous versions of baydem.
 Number of chains (4)</p></li>
 <li><p><code>samps_per_chain</code>
 Number of samples per chain (2000)</p></li>
@@ -160,8 +169,13 @@ Number of samples per chain (2000)</p></li>
 Number of warmup samples (<code>samps_per_chain/2</code>)</p></li>
 <li><p><code>stan_control</code>
 Additional control parameters to pass to stan (<code><a href='https://rdrr.io/r/base/list.html'>list()</a></code>)</p></li>
+<li><p><code>mask</code>
+Whether to mask the likelihood sum based on individual calibration
+(FALSE)</p></li>
 </ul>
 
+<p>The calibration_curve to use for masking is separately input to maintain
+consistency with previous versions of baydem.</p>
     </div>
 
     <pre class="usage"><span class='fu'>sample_theta</span><span class='op'>(</span>
@@ -172,6 +186,7 @@ Additional control parameters to pass to stan (<code><a href='https://rdrr.io/r/
   th0 <span class='op'>=</span> <span class='cn'>NA</span>,
   init_seed <span class='op'>=</span> <span class='cn'>NA</span>,
   stan_seed <span class='op'>=</span> <span class='cn'>NA</span>,
+  calibration_curve <span class='op'>=</span> <span class='st'>"intcal20"</span>,
   control <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
@@ -210,6 +225,12 @@ drawn. It should not be provided if th0 is provided.</p></td>
       <th>stan_seed</th>
       <td><p>An optional random number seed for the call to Stan. If not
 provided, it is drawn.</p></td>
+    </tr>
+    <tr>
+      <th>calibration_curve</th>
+      <td><p>The calibration curve to use for masking (only used
+control$mask is TRUE). The default is "intcal20". Other options are
+"shcal20" and "marine20". For further options see Bchron::BchronCalibrate.</p></td>
     </tr>
     </table>
 

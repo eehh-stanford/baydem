@@ -12,6 +12,12 @@
 #'
 #' \itemize{
 #'   \item{\code{num_chains}}
+#'
+#'
+#'
+#' The calibration_curve to use for masking is separately input to maintain
+#'
+#' consistency with previous versions of baydem.
 #'     {Number of chains (4)}
 #'   \item{\code{samps_per_chain}}
 #'     {Number of samples per chain (2000)}
@@ -19,7 +25,13 @@
 #'     {Number of warmup samples (\code{samps_per_chain/2})}
 #'   \item{\code{stan_control}}
 #'     {Additional control parameters to pass to stan (\code{list()})}
+#'   \item{\code{mask}}
+#'     {Whether to mask the likelihood sum based on individual calibration
+#'      (FALSE)}
 #' }
+#'
+#' The calibration_curve to use for masking is separately input to maintain
+#' consistency with previous versions of baydem.
 #'
 #' @param rc_meas The radiocarbon measurements (see import_rc_data).
 #' @param density_model The density model (see set_density_model).
@@ -33,6 +45,9 @@
 #'   drawn. It should not be provided if th0 is provided.
 #' @param stan_seed An optional random number seed for the call to Stan. If not
 #'   provided, it is drawn.
+#' @param calibration_curve The calibration curve to use for masking (only used
+#'   control$mask is TRUE). The default is "intcal20". Other options are
+#'   "shcal20" and "marine20". For further options see Bchron::BchronCalibrate.
 #'
 #' @return
 #' \code{bayesian_soln}, a list-like object of class bd_bayesian_soln with the
@@ -68,13 +83,15 @@ sample_theta <- function(rc_meas,
                          th0=NA,
                          init_seed=NA,
                          stan_seed=NA,
+                         calibration_curve="intcal20",
                          control=list()) {
 
   for (param_name in names(control)) {
     if (!(param_name %in% c("num_chains",
                             "samps_per_chain",
                             "warmup",
-                            "stan_control"))) {
+                            "stan_control",
+                            "mask"))) {
       stop(paste0("Unsupported named parameter in control = ",param_name))
     }
   }
@@ -107,6 +124,7 @@ sample_theta <- function(rc_meas,
   have_samps_per_chain <- "samps_per_chain" %in% names(control)
   have_warmup          <- "warmup"          %in% names(control)
   have_stan_control    <- "stan_control"    %in% names(control)
+  have_mask            <- "mask"            %in% names(control)
 
   if (have_num_chains) {
     num_chains <- control$num_chains
@@ -132,11 +150,18 @@ sample_theta <- function(rc_meas,
     stan_control <- NA
   }
 
+  if (have_mask) {
+    mask <- control$mask
+  } else {
+    mask <- FALSE
+  }
+
   final_control <- list(
     num_chains = num_chains,
     samps_per_chain = samps_per_chain,
     warmup = warmup,
-    stan_control = stan_control
+    stan_control = stan_control,
+    mask = mask
   )
 
   if (density_model$type == "trunc_gauss_mix") {
@@ -145,8 +170,10 @@ sample_theta <- function(rc_meas,
     tau_min <- density_model$tau_min
     tau_max <- density_model$tau_max
     tau <- seq(tau_min, tau_max, by = hp$dtau)
-    M <- calc_meas_matrix(tau, rc_meas$phi_m, rc_meas$sig_m, calib_df)
-    dtau <- hp$dtau
+
+    alpha_s <- hp$alpha_s
+    alpha_r <- hp$alpha_r
+    alpha_d <- hp$alpha_d
 
     K <- density_model$K
     if (all(is.na(th0))) {
@@ -171,20 +198,93 @@ sample_theta <- function(rc_meas,
       init_list[[cc]] <- init0
     }
 
-    Mt <- t(M)
-    N <- dim(M)[1]
-    G <- dim(M)[2]
-    alpha_s <- hp$alpha_s
-    alpha_r <- hp$alpha_r
-    alpha_d <- hp$alpha_d
+    N <- length(rc_meas$phi_m)
+    G <- length(tau)
     K <- density_model$K
-    file_path <- system.file("stan/gaussmix.stan",
-      package = "baydem"
-    )
-    options(mc.cores = parallel::detectCores())
-    # There are four possible calls depending on whether have_stan_control is
-    # TRUE and have_stan_seed is TRUE
+    if (!mask) {
+      # Do not mask the likelihood
+      dtau <- hp$dtau
+      M <- calc_meas_matrix(tau, rc_meas$phi_m, rc_meas$sig_m, calib_df)
+      Mt <- t(M)
 
+      file_path <- system.file("stan/gaussmix.stan",
+        package = "baydem"
+      )
+    } else {
+      # Mask the likelihood to speed up calculations. This very slightly
+      # changes the likelihood value used for Bayesian updating, but the
+      # effect is small.
+      # Calibrate the dates using Bchron. The ranges of dates returned by the
+      # Bchron calibration is used for the masking
+      N <- length(rc_meas$trc_m)
+      calibrations <-
+        Bchron::BchronCalibrate(ages=round(rc_meas$trc_m),
+                                ageSds=round(rc_meas$sig_trc_m),
+                                calCurves=rep(calibration_curve,N))
+      # Calculate stacked_log_M and subsetting vectors. stacked_log_M contains
+      # stacked measurement matrix values (logged), where the stacking is by
+      # sample index, n. subset_length contains the length of each subset,
+      # G_n = subset_length[n], and M_offset and tau_offset are, respectively,
+      # the offsets to give the subsetting location for stacked_log_M and
+      # tau.
+      stacked_log_M   <- c()
+      subset_length <- rep(NA, N)
+      M_offset      <- rep(NA, N)
+      tau_offset    <- rep(NA, N)
+
+      dtau <- hp$dtau
+      for (n in 1:N) {
+        # Get the minimum and maximum calendar dates (AD = 1950 - years BP)
+        # for this obsercation, accounting for the grid spacing.
+        calib <- calibrations[[n]]
+        min_date_AD <- min(1950 - calib$ageGrid)
+        max_date_AD <- max(1950 - calib$ageGrid)
+
+
+        if(dtau != 1) {
+          tau_min_n <- min_date_AD - ( min_date_AD %% dtau)
+          tau_max_n <- max_date_AD + (-max_date_AD %% dtau)
+        } else {
+          tau_min_n <- min_date_AD
+          tau_max_n <- max_date_AD
+        }
+
+        if (tau_min_n < tau_min) {
+          tau_min_n <- tau_min
+        }
+
+        if (tau_max_n > tau_max) {
+          tau_max_n <- tau_max
+        }
+
+        # Calculate the subset measurement matrix value, and add them to
+        # stacked_log_M. Also update the subsetting vectors.
+        tau_n <- seq(tau_min_n, tau_max_n, by = dtau)
+        M_n <- calc_meas_matrix(tau_n,
+                                rc_meas$phi_m[n],
+                                rc_meas$sig_m[n],
+                                calib_df)
+        M_offset[n] = length(stacked_log_M)
+        G_n <- ncol(M_n)
+        subset_length[n] <- G_n
+        tau_offset[n] <- which(tau == tau_min_n) - 1
+        stacked_log_M <- c(stacked_log_M, log(M_n))
+      }
+      # Because stan does not support vectors of integrs (or even casting from
+      # a real to an integer), place the minimum and maximum values of the
+      # index vectors into the environment.
+      stacked_log_M_length <- length(stacked_log_M)
+      subset_length_min <- min(subset_length)
+      subset_length_max <- max(subset_length)
+      M_offset_min <- min(M_offset)
+      M_offset_max <- max(M_offset)
+      tau_offset_min <- min(tau_offset)
+      tau_offset_max <- max(tau_offset)
+      file_path <- system.file("stan/gaussmix_masked.stan", package = "baydem")
+    }
+    options(mc.cores = parallel::detectCores())
+    # There are two possible calls depending on whether have_stan_control is
+    # TRUE.
     if (have_stan_control) {
       fit <- rstan::stan(file_path,
                          chains = num_chains,

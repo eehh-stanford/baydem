@@ -13,6 +13,7 @@ sample_theta(
   th0 = NA,
   init_seed = NA,
   stan_seed = NA,
+  calibration_curve = "intcal20",
   control = list()
 )
 }
@@ -35,6 +36,10 @@ drawn. It should not be provided if th0 is provided.}
 
 \item{stan_seed}{An optional random number seed for the call to Stan. If not
 provided, it is drawn.}
+
+\item{calibration_curve}{The calibration curve to use for masking (only used
+control$mask is TRUE). The default is "intcal20". Other options are
+"shcal20" and "marine20". For further options see Bchron::BchronCalibrate.}
 }
 \value{
 \code{bayesian_soln}, a list-like object of class bd_bayesian_soln with the
@@ -67,6 +72,10 @@ options (defaults in parentheses):
 
 \itemize{
 \item{\code{num_chains}}
+
+The calibration_curve to use for masking is separately input to maintain
+
+consistency with previous versions of baydem.
 {Number of chains (4)}
 \item{\code{samps_per_chain}}
 {Number of samples per chain (2000)}
@@ -74,7 +83,13 @@ options (defaults in parentheses):
 {Number of warmup samples (\code{samps_per_chain/2})}
 \item{\code{stan_control}}
 {Additional control parameters to pass to stan (\code{list()})}
+\item{\code{mask}}
+{Whether to mask the likelihood sum based on individual calibration
+(FALSE)}
 }
+
+The calibration_curve to use for masking is separately input to maintain
+consistency with previous versions of baydem.
 }
 \seealso{
 \itemize{

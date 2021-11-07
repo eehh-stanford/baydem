@@ -727,7 +727,8 @@ hp <-
 input_control <- list(num_chains=2,
                       samps_per_chain=1800,
                       warmup=600,
-                      stan_control=list(adapt_delta=.99))
+                      stan_control=list(adapt_delta=.99),
+                      mask=FALSE)
 expect_error(
   soln <- sample_theta(
     sim$data$rc_meas,
@@ -831,6 +832,54 @@ expect_error(
     control=list(invalid=NA)
   ),
   "Unsupported named parameter in control = invalid"
+)
+
+# Check that sampling works if mask is TRUE
+input_control <- list(num_chains=2,
+                      samps_per_chain=1800,
+                      warmup=600,
+                      stan_control=list(adapt_delta=.99),
+                      mask=TRUE)
+expect_error(
+  soln <- sample_theta(
+    sim$data$rc_meas,
+    density_model,
+    hp,
+    calib_df,
+    calibration_curve="intcal20",
+    control=input_control
+  ),
+  NA
+)
+
+expect_is(
+  soln,
+  "bd_bayesian_soln"
+)
+
+expect_equal(
+  names(soln),
+  c("fit",
+    "final_th0",
+    "final_init_seed",
+    "final_stan_seed",
+    "final_control",
+    "optional_inputs")
+)
+
+expect_is(
+  soln$fit,
+  "stanfit"
+)
+
+expect_equal(
+  soln$final_control,
+  input_control
+)
+
+expect_equal(
+  soln$optional_inputs,
+  list(th0=NA,init_seed=NA,stan_seed=NA,control=input_control)
 )
 
 # (3b) summarize_bayesian_inference
