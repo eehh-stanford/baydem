@@ -46,8 +46,7 @@ functions {
       logf[g] = log_sum_exp(lse);
     }
     f = exp(logf);
-    //real log_norm_factor = log(sum(f)) + log(dtau);
-    log_norm_factor = dtau;
+    log_norm_factor = log(sum(f)) + log(dtau);
 
     // Iterate over observations to calculate the log-likelihood, logh
     for (n in 1:N) {
