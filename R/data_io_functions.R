@@ -481,9 +481,10 @@ do_bayesian_inference <- function(data_dir,
     set.seed(base_seed)
     seed_mat <- matrix(sample.int(1000000,2*num_models),ncol=2)
   } else if(is.matrix(input_seed)) {
-      if(dim(input_seed) != c(num_models,2))
+    if (nrow(input_seed) != num_models || ncol(input_seed) != 2) {
       stop(paste0("If input_seed is a matrix, it must have dimensions ",
                   "num_models x 2 (see function details)"))
+    }
     base_seed <- NA
     seed_mat <- input_seed
   } else {
